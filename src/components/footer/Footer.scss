@@ -1,0 +1,84 @@
+@use "../../../src/index.scss" as *;
+
+.footer {
+  background-color: $secondary-color;
+  color: #fff;
+  padding: 40px 20px 20px;
+
+  .footer__top {
+    display: grid;
+    gap: 30px;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    margin-bottom: 30px;
+
+    h3 {
+      font-size: 1.8rem;
+      margin-bottom: 10px;
+    }
+
+    h4 {
+      font-size: 1.2rem;
+      margin-bottom: 8px;
+      color: #f0f0f0;
+    }
+
+    p,
+    li,
+    a {
+      font-size: 0.95rem;
+      line-height: 1.5;
+      color: #e0e0e0;
+    }
+
+    a {
+      text-decoration: none;
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+
+      li {
+        margin-bottom: 6px;
+      }
+    }
+
+    .footer__input-group {
+      display: flex;
+      margin-top: 10px;
+
+      input {
+        flex: 1;
+        padding: 8px;
+        border: none;
+        border-radius: 4px 0 0 4px;
+        outline: none;
+      }
+
+      button {
+        padding: 8px 14px;
+        background-color: $primary-color;
+        color: #fff;
+        border: none;
+        border-radius: 0 4px 4px 0;
+        cursor: pointer;
+
+        &:hover {
+          background-color: #009e8e;
+        }
+      }
+    }
+  }
+
+  .footer__bottom {
+    text-align: center;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-top: 15px;
+    font-size: 0.9rem;
+    color: #ccc;
+  }
+}
