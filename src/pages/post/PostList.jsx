@@ -27,6 +27,8 @@ const PostList = () => {
   const [posts, setPosts] = useState(mockPosts);
   const [filterArea, setFilterArea] = useState("");
   const [filterPrice, setFilterPrice] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(5);
 
   const areas = [...new Set(mockPosts.map((p) => p.area))];
 
@@ -42,7 +44,18 @@ const PostList = () => {
 
   useEffect(() => {
     handleFilter();
+    setCurrentPage(1);
   }, [filterArea, filterPrice]);
+
+  // Pagination calculations
+  const totalPages = Math.max(1, Math.ceil(posts.length / pageSize));
+  const currentPageSafe = Math.min(currentPage, totalPages);
+  const startIndex = (currentPageSafe - 1) * pageSize;
+  const endIndex = startIndex + pageSize;
+  const paginatedPosts = posts.slice(startIndex, endIndex);
+
+  const handlePrev = () => setCurrentPage((p) => Math.max(1, p - 1));
+  const handleNext = () => setCurrentPage((p) => Math.min(totalPages, p + 1));
 
   return (
     <main className="page-content postlist-page">
@@ -71,12 +84,39 @@ const PostList = () => {
             <option value="low">Dưới 3 triệu</option>
             <option value="high">Trên 3 triệu</option>
           </select>
+
+          <select
+            value={pageSize}
+            onChange={(e) => {
+              setPageSize(Number(e.target.value));
+              setCurrentPage(1);
+            }}
+          >
+            <option value={3}>3 / trang</option>
+            <option value={5}>5 / trang</option>
+            <option value={10}>10 / trang</option>
+          </select>
         </div>
 
         <div className="postlist-cards">
-          {posts.map((post) => (
+          {paginatedPosts.map((post) => (
             <PostCard key={post.id} post={post} />
           ))}
+        </div>
+
+        <div className="pagination">
+          <button onClick={handlePrev} disabled={currentPageSafe === 1}>
+            ← Trước
+          </button>
+          <span className="page-info">
+            Trang {currentPageSafe}/{totalPages}
+          </span>
+          <button
+            onClick={handleNext}
+            disabled={currentPageSafe === totalPages}
+          >
+            Sau →
+          </button>
         </div>
       </div>
     </main>
