@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { Container, Row, Col, Card, Button, ListGroup } from "react-bootstrap";
 import Reviews from "../components/reviews/Reviews";
 import { MOCK_PROPERTIES } from "../components/property/PropertyList";
+import { BookAppointmentButton } from "../components/appointment";
 
 function PropertyDetail() {
   const { id } = useParams();
@@ -88,10 +89,17 @@ function PropertyDetail() {
                   <strong>Email:</strong> {property.owner.email}
                 </ListGroup.Item>
               </ListGroup>
-              <Button variant="primary" className="w-100 mt-3">
+              <BookAppointmentButton
+                propertyId={property.id}
+                propertyOwnerId={property.owner?.id || "owner-" + property.id}
+                propertyTitle={property.title}
+              />
+              <Button variant="primary" className="w-100 mt-2">
+                <i className="bi bi-telephone me-2"></i>
                 Gọi ngay
               </Button>
               <Button variant="outline-primary" className="w-100 mt-2">
+                <i className="bi bi-chat-dots me-2"></i>
                 Nhắn tin
               </Button>
             </Card.Body>

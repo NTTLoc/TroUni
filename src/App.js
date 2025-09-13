@@ -32,6 +32,9 @@ import FavoritesPage from "./pages/dashboard/FavoritesPage";
 import ProfilePage from "./pages/account/Profile";
 import SettingsPage from "./pages/dashboard/SettingsPage";
 import { StudentRoommateMatchForm, RoommateMatchingPage } from "./components";
+import TenantAppointments from "./pages/appointments/TenantAppointments";
+import OwnerAppointments from "./pages/appointments/OwnerAppointments";
+import NotificationsPage from "./pages/dashboard/NotificationsPage";
 
 function App() {
   return (
@@ -131,6 +134,8 @@ function App() {
               >
                 <Route path="profile" element={<ProfilePage />} />
                 <Route path="favorites" element={<FavoritesPage />} />
+                <Route path="appointments" element={<TenantAppointments />} />
+                <Route path="notifications" element={<NotificationsPage />} />
                 <Route path="settings" element={<SettingsPage />} />
               </Route>
               <Route
@@ -143,6 +148,8 @@ function App() {
               >
                 <Route path="profile" element={<ProfilePage />} />
                 <Route path="my-properties" element={<MyProperties />} />
+                <Route path="appointments" element={<OwnerAppointments />} />
+                <Route path="notifications" element={<NotificationsPage />} />
                 <Route path="post-property" element={<PostProperty />} />
                 <Route path="settings" element={<SettingsPage />} />
               </Route>

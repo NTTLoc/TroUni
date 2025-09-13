@@ -401,6 +401,25 @@ function NavigationBar() {
               <i className="bi bi-sun-fill" style={{ color: "#FFD600" }}></i>
             )}
           </Button>
+          {currentUser && (
+            <Button
+              variant="outline-secondary"
+              onClick={() => navigate('/dashboard/notifications')}
+              style={{
+                fontSize: 22,
+                borderRadius: 50,
+                width: 44,
+                height: 44,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                position: "relative"
+              }}
+              title="Thông báo"
+            >
+              <i className="bi bi-bell"></i>
+            </Button>
+          )}
           {currentUser ? (
             <Dropdown align="end">
               <Dropdown.Toggle
