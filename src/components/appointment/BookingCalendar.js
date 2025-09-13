@@ -3,7 +3,16 @@ import { Calendar, momentLocalizer } from "react-big-calendar";
 import moment from "moment";
 import "moment/locale/vi";
 import "react-big-calendar/lib/css/react-big-calendar.css";
-import { Card, Button, Modal, Form, Alert, Badge, Row, Col } from "react-bootstrap";
+import {
+  Card,
+  Button,
+  Modal,
+  Form,
+  Alert,
+  Badge,
+  Row,
+  Col,
+} from "react-bootstrap";
 import { useAuth } from "../../contexts/AuthContext";
 import { toast } from "react-toastify";
 import { AppointmentService } from "../../services/AppointmentService";
@@ -53,10 +62,12 @@ const BookingCalendar = ({ propertyId, propertyOwnerId, onBookingSuccess }) => {
       if (!propertyId) return;
 
       try {
-        const result = await AppointmentService.getAppointmentsByProperty(propertyId);
-        
+        const result = await AppointmentService.getAppointmentsByProperty(
+          propertyId
+        );
+
         if (result.success) {
-          const appointments = result.appointments.map(appointment => ({
+          const appointments = result.appointments.map((appointment) => ({
             id: appointment.id,
             title: `Lịch hẹn - ${appointment.visitorName}`,
             start: appointment.startTime,
@@ -70,7 +81,7 @@ const BookingCalendar = ({ propertyId, propertyOwnerId, onBookingSuccess }) => {
               message: appointment.message,
             },
           }));
-          
+
           setEvents(appointments);
         } else {
           toast.error("Không thể tải lịch hẹn");
@@ -132,7 +143,11 @@ const BookingCalendar = ({ propertyId, propertyOwnerId, onBookingSuccess }) => {
       const endTime = new Date(selectedSlot.end);
 
       // Validate appointment time
-      const validation = AppointmentService.validateAppointmentTime(startTime, endTime, propertyId);
+      const validation = AppointmentService.validateAppointmentTime(
+        startTime,
+        endTime,
+        propertyId
+      );
       if (!validation.valid) {
         toast.error(validation.message);
         setLoading(false);
@@ -152,7 +167,9 @@ const BookingCalendar = ({ propertyId, propertyOwnerId, onBookingSuccess }) => {
         status: "pending",
       };
 
-      const result = await AppointmentService.createAppointment(appointmentData);
+      const result = await AppointmentService.createAppointment(
+        appointmentData
+      );
 
       if (!result.success) {
         toast.error(result.error || "Có lỗi xảy ra khi đặt lịch");
@@ -163,7 +180,7 @@ const BookingCalendar = ({ propertyId, propertyOwnerId, onBookingSuccess }) => {
       // Send notification to property owner
       await NotificationService.notifyAppointmentCreated({
         ...appointmentData,
-        id: result.id
+        id: result.id,
       });
 
       // Add to local events
