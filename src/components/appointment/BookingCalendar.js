@@ -178,10 +178,15 @@ const BookingCalendar = ({ propertyId, propertyOwnerId, onBookingSuccess }) => {
       }
 
       // Send notification to property owner
-      await NotificationService.notifyAppointmentCreated({
-        ...appointmentData,
-        id: result.id,
-      });
+      try {
+        await NotificationService.notifyAppointmentCreated({
+          ...appointmentData,
+          id: result.id,
+        });
+      } catch (error) {
+        console.error("Error sending notification:", error);
+        // Don't fail the booking if notification fails
+      }
 
       // Add to local events
       const newEvent = {

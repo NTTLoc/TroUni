@@ -31,6 +31,26 @@ export default function TenantDashboard() {
               Phòng yêu thích
             </Link>
             <Link
+              to="/dashboard/tenant/appointments"
+              className={`list-group-item list-group-item-action${
+                location.pathname.includes("/dashboard/tenant/appointments")
+                  ? " active"
+                  : ""
+              }`}
+            >
+              Lịch hẹn xem phòng
+            </Link>
+            <Link
+              to="/dashboard/tenant/notifications"
+              className={`list-group-item list-group-item-action${
+                location.pathname.includes("/dashboard/tenant/notifications")
+                  ? " active"
+                  : ""
+              }`}
+            >
+              Thông báo
+            </Link>
+            <Link
               to="/dashboard/tenant/settings"
               className={`list-group-item list-group-item-action${
                 location.pathname.includes("/dashboard/tenant/settings")
