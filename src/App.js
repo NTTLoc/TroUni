@@ -16,6 +16,7 @@ import Register from "./components/auth/Register";
 import PostProperty from "./components/property/PostProperty";
 import MyProperties from "./components/property/MyProperties";
 import Footer from "./components/Footer";
+import MobileTabBar from "./components/MobileTabBar";
 import ChatList from "./components/chat/ChatList";
 import Chat from "./components/chat/Chat";
 import About from "./pages/About";
@@ -171,6 +172,7 @@ function App() {
             </Routes>
           </main>
           <Footer />
+          <MobileTabBar />
           <ToastContainer />
         </div>
       </AuthProvider>

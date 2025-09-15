@@ -1,12 +1,16 @@
-import React from "react";
+import React, { useState, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { Container, Row, Col, Card, Button, ListGroup } from "react-bootstrap";
 import Reviews from "../components/reviews/Reviews";
 import { MOCK_PROPERTIES } from "../components/property/PropertyList";
 import { BookAppointmentButton } from "../components/appointment";
+import { useAuth } from "../contexts/AuthContext";
 
 function PropertyDetail() {
   const { id } = useParams();
+  const { currentUser } = useAuth();
+  const [fabOpen, setFabOpen] = useState(false);
+  const bookingRef = useRef(null);
   const property = MOCK_PROPERTIES.find((p) => p.id === id);
 
   if (!property) {
@@ -18,7 +22,7 @@ function PropertyDetail() {
   }
 
   return (
-    <Container className="py-5">
+    <Container className="py-5 position-relative">
       <h1 className="mb-4">{property.title}</h1>
 
       {/* Image Gallery */}
@@ -90,6 +94,7 @@ function PropertyDetail() {
                 </ListGroup.Item>
               </ListGroup>
               <BookAppointmentButton
+                ref={bookingRef}
                 propertyId={property.id}
                 propertyOwnerId={property.owner?.id || "owner-" + property.id}
                 propertyTitle={property.title}
@@ -106,6 +111,48 @@ function PropertyDetail() {
           </Card>
         </Col>
       </Row>
+      {/* Floating Action Button on mobile */}
+      <div className="fab-container d-md-none">
+        <div className={`fab-actions ${fabOpen ? "open" : ""}`}>
+          <Button
+            variant="light"
+            className="fab-action"
+            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+            title="Lên đầu trang"
+          >
+            <i className="bi bi-arrow-up"></i>
+          </Button>
+          <Button
+            variant="light"
+            className="fab-action"
+            onClick={() =>
+              document
+                .querySelector(".reviews-carousel")
+                ?.scrollIntoView({ behavior: "smooth" })
+            }
+            title="Xem đánh giá"
+          >
+            <i className="bi bi-stars"></i>
+          </Button>
+          <Button
+            variant="success"
+            className="fab-action"
+            onClick={() => bookingRef.current?.open()}
+            title="Đặt lịch"
+          >
+            <i className="bi bi-calendar-check"></i>
+          </Button>
+        </div>
+        <Button
+          variant="primary"
+          className="fab-main"
+          onClick={() => setFabOpen(!fabOpen)}
+          aria-expanded={fabOpen}
+          aria-label="Mở hành động nhanh"
+        >
+          <i className={`bi ${fabOpen ? "bi-x" : "bi-plus"}`}></i>
+        </Button>
+      </div>
     </Container>
   );
 }
