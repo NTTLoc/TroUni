@@ -200,7 +200,15 @@ import {
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import { useTheme } from "../contexts/ThemeContext";
-import { collection, query, where, onSnapshot } from "firebase/firestore";
+import {
+  collection,
+  query,
+  where,
+  onSnapshot,
+  doc,
+  updateDoc,
+  serverTimestamp,
+} from "firebase/firestore";
 import { db } from "../firebase/config";
 import { toast } from "react-toastify";
 
@@ -211,6 +219,7 @@ function NavigationBar() {
   const [expanded, setExpanded] = useState(false);
   const [unreadNotifications, setUnreadNotifications] = useState(0);
   const [showPremium, setShowPremium] = useState(false);
+  const [userPlan, setUserPlan] = useState(null);
 
   const handleLogout = async () => {
     try {
@@ -223,8 +232,10 @@ function NavigationBar() {
   useEffect(() => {
     if (!currentUser) {
       setUnreadNotifications(0);
+      setUserPlan(null);
       return;
     }
+    setUserPlan(currentUser.plan || localStorage.getItem("userPlan") || null);
     const q = query(
       collection(db, "notifications"),
       where("recipientId", "==", currentUser.uid),
@@ -235,6 +246,20 @@ function NavigationBar() {
     });
     return () => unsub();
   }, [currentUser]);
+
+  const handleSelectPlan = async (plan) => {
+    if (!currentUser) return;
+    try {
+      const userRef = doc(db, "users", currentUser.uid);
+      await updateDoc(userRef, { plan, planUpdatedAt: serverTimestamp() });
+      localStorage.setItem("userPlan", plan);
+      setUserPlan(plan);
+      toast.success(`Đã cập nhật gói: ${plan.toUpperCase()}`);
+    } catch (e) {
+      console.error("Failed to update plan", e);
+      toast.error("Cập nhật gói thất bại");
+    }
+  };
 
   const handleNavClick = () => {
     setExpanded(false);
@@ -424,6 +449,19 @@ function NavigationBar() {
               title="Gói Premium cho chủ trọ"
             >
               <i className="bi bi-crown" />
+              {userPlan && userPlan !== "basic" && (
+                <span
+                  className="badge text-bg-warning"
+                  style={{
+                    position: "absolute",
+                    bottom: -6,
+                    right: -6,
+                    fontSize: 10,
+                  }}
+                >
+                  {userPlan === "elite" ? "Elite" : "Pro"}
+                </span>
+              )}
             </Button>
           )}
           <Button
@@ -602,8 +640,8 @@ function NavigationBar() {
           <Modal.Body>
             <div className="row g-3">
               <div className="col-md-4">
-                <div className="card h-100">
-                  <div className="card-body">
+                <div className="card h-100 premium-basic">
+                  <div className="card-body d-flex flex-column">
                     <h5 className="card-title">Basic</h5>
                     <p className="text-muted">Miễn phí</p>
                     <ul className="mb-3">
@@ -612,9 +650,9 @@ function NavigationBar() {
                       <li>Hỗ trợ qua email</li>
                     </ul>
                     <Button
-                      variant="outline-primary"
-                      className="w-100"
-                      onClick={() => toast.info("Bạn đang ở gói Basic")}
+                      variant="outline-secondary"
+                      className="w-100 mt-auto"
+                      onClick={() => handleSelectPlan("basic")}
                     >
                       Giữ gói
                     </Button>
@@ -622,11 +660,8 @@ function NavigationBar() {
                 </div>
               </div>
               <div className="col-md-4">
-                <div
-                  className="card h-100 border-warning"
-                  style={{ boxShadow: "0 4px 16px rgba(245,158,11,0.2)" }}
-                >
-                  <div className="card-body">
+                <div className="card h-100 premium-pro">
+                  <div className="card-body d-flex flex-column">
                     <h5 className="card-title">Pro</h5>
                     <p className="text-muted">299.000đ/tháng</p>
                     <ul className="mb-3">
@@ -635,9 +670,9 @@ function NavigationBar() {
                       <li>+ Thống kê lượt xem</li>
                     </ul>
                     <Button
-                      variant="warning"
-                      className="w-100"
-                      onClick={() => toast.success("Đăng ký Pro - đang xử lý")}
+                      variant="primary"
+                      className="w-100 mt-auto"
+                      onClick={() => handleSelectPlan("pro")}
                     >
                       Nâng cấp Pro
                     </Button>
@@ -645,11 +680,8 @@ function NavigationBar() {
                 </div>
               </div>
               <div className="col-md-4">
-                <div
-                  className="card h-100 border-warning"
-                  style={{ borderWidth: 2 }}
-                >
-                  <div className="card-body">
+                <div className="card h-100 premium-elite">
+                  <div className="card-body d-flex flex-column">
                     <h5 className="card-title">Elite</h5>
                     <p className="text-muted">599.000đ/tháng</p>
                     <ul className="mb-3">
@@ -659,11 +691,9 @@ function NavigationBar() {
                       <li>+ Hỗ trợ ưu tiên</li>
                     </ul>
                     <Button
-                      variant="dark"
-                      className="w-100"
-                      onClick={() =>
-                        toast.success("Đăng ký Elite - đang xử lý")
-                      }
+                      variant={theme === "dark" ? "warning" : "dark"}
+                      className="w-100 mt-auto"
+                      onClick={() => handleSelectPlan("elite")}
                     >
                       Nâng cấp Elite
                     </Button>

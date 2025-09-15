@@ -342,6 +342,49 @@ body[data-theme="dark"] {
   align-items: center;
   z-index: 1050;
 }
+
+/* Premium tier cards - professional palette */
+.card.premium-basic {
+  border: 1px solid #e5e7eb;
+}
+.card.premium-pro {
+  border: 1px solid #bfdbfe;
+  box-shadow: 0 6px 20px rgba(59,130,246,0.15);
+}
+.card.premium-elite {
+  border: 1px solid #fbbf24;
+  box-shadow: 0 6px 20px rgba(251,191,36,0.2);
+}
+body[data-theme="dark"] .card.premium-basic { border-color: #374151; }
+body[data-theme="dark"] .card.premium-pro { border-color: #60a5fa; box-shadow: 0 6px 20px rgba(96,165,250,0.18); }
+body[data-theme="dark"] .card.premium-elite { border-color: #f59e0b; box-shadow: 0 6px 20px rgba(245,158,11,0.25); }
+/* Ensure Elite CTA visible in dark */
+body[data-theme="dark"] .premium-elite .btn-dark {
+  background: linear-gradient(90deg, #f59e0b, #fbbf24) !important;
+  color: #111 !important;
+  border: none !important;
+}
+
+/* Property premium badges */
+.badge-premium-pro {
+  background: linear-gradient(90deg, #3b82f6, #60a5fa);
+  color: #fff;
+}
+.badge-premium-elite {
+  background: linear-gradient(90deg, #f59e0b, #fbbf24);
+  color: #111;
+}
+/* unified placement for premium badge on cards */
+.badge-premium {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 12px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+}
 body[data-theme="dark"] .mobile-tabbar {
   background: #23272b;
   border-top-color: #333;

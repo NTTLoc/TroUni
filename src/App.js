@@ -29,6 +29,7 @@ import ScrollToTop from "./components/ScrollToTop";
 import TenantDashboard from "./pages/dashboard/TenantDashboard";
 import OwnerDashboard from "./pages/dashboard/OwnerDashboard";
 import AdminDashboard from "./pages/dashboard/AdminDashboard";
+import ManagerDashboard from "./pages/dashboard/ManagerDashboard";
 import FavoritesPage from "./pages/dashboard/FavoritesPage";
 import ProfilePage from "./pages/account/Profile";
 import SettingsPage from "./pages/dashboard/SettingsPage";
@@ -167,6 +168,19 @@ function App() {
                 <Route path="users" element={<AdminUsersPage />} />
                 <Route path="posts" element={<AdminPostsPage />} />
                 <Route path="reports" element={<AdminReportsPage />} />
+                <Route path="settings" element={<SettingsPage />} />
+              </Route>
+              <Route
+                path="/dashboard/manager"
+                element={
+                  <PrivateRoute allowedRoles={["manager"]}>
+                    <ManagerDashboard />
+                  </PrivateRoute>
+                }
+              >
+                <Route index element={<ProfilePage />} />
+                <Route path="profile" element={<ProfilePage />} />
+                <Route path="notifications" element={<NotificationsPage />} />
                 <Route path="settings" element={<SettingsPage />} />
               </Route>
             </Routes>
