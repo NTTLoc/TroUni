@@ -31,6 +31,26 @@ export default function OwnerDashboard() {
               Quản lý phòng
             </Link>
             <Link
+              to="/dashboard/owner/appointments"
+              className={`list-group-item list-group-item-action${
+                location.pathname.includes("/dashboard/owner/appointments")
+                  ? " active"
+                  : ""
+              }`}
+            >
+              Quản lý lịch hẹn
+            </Link>
+            <Link
+              to="/dashboard/owner/notifications"
+              className={`list-group-item list-group-item-action${
+                location.pathname.includes("/dashboard/owner/notifications")
+                  ? " active"
+                  : ""
+              }`}
+            >
+              Thông báo
+            </Link>
+            <Link
               to="/dashboard/owner/post-property"
               className={`list-group-item list-group-item-action${
                 location.pathname.includes("/dashboard/owner/post-property")
