@@ -14,6 +14,11 @@ const BookAppointmentButton = forwardRef(
         toast.error("Vui lòng đăng nhập để đặt lịch xem phòng");
         return;
       }
+      if (navigator.vibrate) {
+        try {
+          navigator.vibrate(10);
+        } catch (_) {}
+      }
       setShowBookingModal(true);
     };
 
