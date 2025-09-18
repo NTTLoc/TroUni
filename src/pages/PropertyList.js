@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Container, Row, Col, Card, Form, Button } from "react-bootstrap";
 import { Link } from "react-router-dom";
 
@@ -8,6 +8,19 @@ function PropertyList() {
     priceRange: "all",
     location: "",
   });
+
+  // Restore filters from URL or sessionStorage
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const saved = sessionStorage.getItem("propertyFilters");
+    const initial = saved ? JSON.parse(saved) : {};
+    const next = { ...filters };
+    if (params.get("type")) next.type = params.get("type");
+    if (params.get("priceRange")) next.priceRange = params.get("priceRange");
+    if (params.get("location")) next.location = params.get("location");
+    setFilters({ ...next, ...initial });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const properties = [
     {
@@ -218,6 +231,13 @@ function PropertyList() {
       ...prev,
       [name]: value,
     }));
+    // Persist to sessionStorage
+    setTimeout(() => {
+      sessionStorage.setItem(
+        "propertyFilters",
+        JSON.stringify({ ...filters, [name]: value })
+      );
+    }, 0);
   };
 
   const filteredProperties = properties.filter((property) => {
@@ -333,12 +353,23 @@ function PropertyList() {
           ) : (
             filteredProperties.map((property) => (
               <Col key={property.id} md={4} className="mb-4">
-                <Card className="shadow-lg h-100 border-0 property-card-hover">
+                <Card className="shadow-lg h-100 border-0 property-card-hover position-relative">
                   <Card.Img
                     variant="top"
                     src={property.images[0]}
                     style={{ height: 220, objectFit: "cover" }}
                   />
+                  {(property.plan === "elite" || property.plan === "pro") && (
+                    <span
+                      className={`badge badge-premium ${
+                        property.plan === "elite"
+                          ? "badge-premium-elite"
+                          : "badge-premium-pro"
+                      }`}
+                    >
+                      {property.plan === "elite" ? "Elite" : "Pro"}
+                    </span>
+                  )}
                   <Card.Body>
                     <Card.Title>{property.title}</Card.Title>
                     <Card.Text>

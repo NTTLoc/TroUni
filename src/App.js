@@ -16,6 +16,7 @@ import Register from "./components/auth/Register";
 import PostProperty from "./components/property/PostProperty";
 import MyProperties from "./components/property/MyProperties";
 import Footer from "./components/Footer";
+import MobileTabBar from "./components/MobileTabBar";
 import ChatList from "./components/chat/ChatList";
 import Chat from "./components/chat/Chat";
 import About from "./pages/About";
@@ -28,10 +29,14 @@ import ScrollToTop from "./components/ScrollToTop";
 import TenantDashboard from "./pages/dashboard/TenantDashboard";
 import OwnerDashboard from "./pages/dashboard/OwnerDashboard";
 import AdminDashboard from "./pages/dashboard/AdminDashboard";
+import ManagerDashboard from "./pages/dashboard/ManagerDashboard";
 import FavoritesPage from "./pages/dashboard/FavoritesPage";
 import ProfilePage from "./pages/account/Profile";
 import SettingsPage from "./pages/dashboard/SettingsPage";
 import { StudentRoommateMatchForm, RoommateMatchingPage } from "./components";
+import TenantAppointments from "./pages/appointments/TenantAppointments";
+import OwnerAppointments from "./pages/appointments/OwnerAppointments";
+import NotificationsPage from "./pages/dashboard/NotificationsPage";
 
 function App() {
   return (
@@ -131,6 +136,8 @@ function App() {
               >
                 <Route path="profile" element={<ProfilePage />} />
                 <Route path="favorites" element={<FavoritesPage />} />
+                <Route path="appointments" element={<TenantAppointments />} />
+                <Route path="notifications" element={<NotificationsPage />} />
                 <Route path="settings" element={<SettingsPage />} />
               </Route>
               <Route
@@ -143,6 +150,8 @@ function App() {
               >
                 <Route path="profile" element={<ProfilePage />} />
                 <Route path="my-properties" element={<MyProperties />} />
+                <Route path="appointments" element={<OwnerAppointments />} />
+                <Route path="notifications" element={<NotificationsPage />} />
                 <Route path="post-property" element={<PostProperty />} />
                 <Route path="settings" element={<SettingsPage />} />
               </Route>
@@ -161,9 +170,23 @@ function App() {
                 <Route path="reports" element={<AdminReportsPage />} />
                 <Route path="settings" element={<SettingsPage />} />
               </Route>
+              <Route
+                path="/dashboard/manager"
+                element={
+                  <PrivateRoute allowedRoles={["manager"]}>
+                    <ManagerDashboard />
+                  </PrivateRoute>
+                }
+              >
+                <Route index element={<ProfilePage />} />
+                <Route path="profile" element={<ProfilePage />} />
+                <Route path="notifications" element={<NotificationsPage />} />
+                <Route path="settings" element={<SettingsPage />} />
+              </Route>
             </Routes>
           </main>
           <Footer />
+          <MobileTabBar />
           <ToastContainer />
         </div>
       </AuthProvider>

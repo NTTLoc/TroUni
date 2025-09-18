@@ -1,6 +1,23 @@
 import React, { useState } from "react";
-import { Card, Button, Form, Badge, Container, Row, Col, Modal, Alert } from "react-bootstrap";
-import { FaHeart, FaMapMarkerAlt, FaGraduationCap, FaUsers, FaFilter, FaSearch } from "react-icons/fa";
+import {
+  Card,
+  Button,
+  Form,
+  Badge,
+  Container,
+  Row,
+  Col,
+  Modal,
+  Alert,
+} from "react-bootstrap";
+import {
+  FaHeart,
+  FaMapMarkerAlt,
+  FaGraduationCap,
+  FaUsers,
+  FaFilter,
+  FaSearch,
+} from "react-icons/fa";
 
 const MOCK_ROOMMATES = [
   {
@@ -16,9 +33,10 @@ const MOCK_ROOMMATES = [
     avatar: "https://randomuser.me/api/portraits/women/44.jpg",
     habits: ["Sạch sẽ", "Không hút thuốc", "Thích yên tĩnh"],
     interests: ["Đọc sách", "Yoga", "Nấu ăn"],
-    description: "Tôi là một lập trình viên thích sự gọn gàng và yên tĩnh. Tìm bạn cùng phòng có chung sở thích và lối sống tích cực.",
+    description:
+      "Tôi là một lập trình viên thích sự gọn gàng và yên tĩnh. Tìm bạn cùng phòng có chung sở thích và lối sống tích cực.",
     gender: "female",
-    roomType: "Ở ghép 2 người"
+    roomType: "Ở ghép 2 người",
   },
   {
     id: 2,
@@ -33,9 +51,10 @@ const MOCK_ROOMMATES = [
     avatar: "https://randomuser.me/api/portraits/women/65.jpg",
     habits: ["Sạch sẽ", "Không thức khuya", "Thân thiện"],
     interests: ["Âm nhạc", "Du lịch", "Phim ảnh"],
-    description: "Giáo viên trẻ, thân thiện và dễ gần. Mong muốn tìm được bạn cùng phòng để chia sẻ cuộc sống và tiết kiệm chi phí.",
+    description:
+      "Giáo viên trẻ, thân thiện và dễ gần. Mong muốn tìm được bạn cùng phòng để chia sẻ cuộc sống và tiết kiệm chi phí.",
     gender: "female",
-    roomType: "Ở ghép 2-3 người"
+    roomType: "Ở ghép 2-3 người",
   },
   {
     id: 3,
@@ -50,9 +69,10 @@ const MOCK_ROOMMATES = [
     avatar: "https://randomuser.me/api/portraits/women/68.jpg",
     habits: ["Học tập chăm chỉ", "Thích giao lưu", "Năng động"],
     interests: ["Thể thao", "Học ngoại ngữ", "Café"],
-    description: "Sinh viên năm cuối ngành Kinh tế, năng động và thích giao lưu. Tìm bạn cùng phòng để cùng nhau phát triển.",
+    description:
+      "Sinh viên năm cuối ngành Kinh tế, năng động và thích giao lưu. Tìm bạn cùng phòng để cùng nhau phát triển.",
     gender: "female",
-    roomType: "Ký túc xá"
+    roomType: "Ký túc xá",
   },
   {
     id: 4,
@@ -67,9 +87,10 @@ const MOCK_ROOMMATES = [
     avatar: "https://randomuser.me/api/portraits/men/32.jpg",
     habits: ["Sạch sẽ", "Thích công nghệ", "Tập gym"],
     interests: ["Gaming", "Công nghệ", "Thể thao"],
-    description: "Kỹ sư phần mềm, thích công nghệ và thể thao. Tìm bạn cùng phòng có chung sở thích và lối sống tích cực.",
+    description:
+      "Kỹ sư phần mềm, thích công nghệ và thể thao. Tìm bạn cùng phòng có chung sở thích và lối sống tích cực.",
     gender: "male",
-    roomType: "Căn hộ mini"
+    roomType: "Căn hộ mini",
   },
   {
     id: 5,
@@ -84,9 +105,10 @@ const MOCK_ROOMMATES = [
     avatar: "https://randomuser.me/api/portraits/men/65.jpg",
     habits: ["Thân thiện", "Thích du lịch", "Sáng tạo"],
     interests: ["Photography", "Du lịch", "Ẩm thực"],
-    description: "Nhân viên marketing năng động, thích khám phá và sáng tạo. Mong muốn tìm bạn cùng phòng để chia sẻ những trải nghiệm thú vị.",
+    description:
+      "Nhân viên marketing năng động, thích khám phá và sáng tạo. Mong muốn tìm bạn cùng phòng để chia sẻ những trải nghiệm thú vị.",
     gender: "male",
-    roomType: "Phòng trọ cao cấp"
+    roomType: "Phòng trọ cao cấp",
   },
   {
     id: 6,
@@ -101,10 +123,11 @@ const MOCK_ROOMMATES = [
     avatar: "https://randomuser.me/api/portraits/men/68.jpg",
     habits: ["Học tập", "Thích game", "Thân thiện"],
     interests: ["Gaming", "Anime", "Công nghệ"],
-    description: "Sinh viên IT năm 3, thích công nghệ và gaming. Tìm bạn cùng phòng có chung sở thích để cùng học tập và giải trí.",
+    description:
+      "Sinh viên IT năm 3, thích công nghệ và gaming. Tìm bạn cùng phòng có chung sở thích để cùng học tập và giải trí.",
     gender: "male",
-    roomType: "Ký túc xá"
-  }
+    roomType: "Ký túc xá",
+  },
 ];
 
 const MOCK_STATS = {
@@ -130,26 +153,32 @@ function RoommateMatchingPage() {
   const [savedRoommates, setSavedRoommates] = useState([]);
 
   const handleFilterChange = (key, value) => {
-    setFilters(prev => ({ ...prev, [key]: value }));
+    setFilters((prev) => ({ ...prev, [key]: value }));
   };
 
   const filteredRoommates = MOCK_ROOMMATES.filter((r) => {
     if (filters.gender && filters.gender !== "all") {
       if (filters.gender !== r.gender) return false;
     }
-    if (filters.location && !r.location.toLowerCase().includes(filters.location.toLowerCase())) {
+    if (
+      filters.location &&
+      !r.location.toLowerCase().includes(filters.location.toLowerCase())
+    ) {
       return false;
     }
-    if (filters.university && !r.university.toLowerCase().includes(filters.university.toLowerCase())) {
+    if (
+      filters.university &&
+      !r.university.toLowerCase().includes(filters.university.toLowerCase())
+    ) {
       return false;
     }
     return true;
   });
 
   const handleSaveRoommate = (roommateId) => {
-    setSavedRoommates(prev => 
-      prev.includes(roommateId) 
-        ? prev.filter(id => id !== roommateId)
+    setSavedRoommates((prev) =>
+      prev.includes(roommateId)
+        ? prev.filter((id) => id !== roommateId)
         : [...prev, roommateId]
     );
   };
@@ -174,11 +203,12 @@ function RoommateMatchingPage() {
             <Col lg={6}>
               <div className="hero-content">
                 <h1 className="display-4 fw-bold mb-4">
-                  Tìm bạn cùng trọ <span className="text-gradient">hoàn hảo</span>
+                  Tìm bạn cùng trọ{" "}
+                  <span className="text-gradient">hoàn hảo</span>
                 </h1>
                 <p className="lead mb-4">
-                  Kết nối với hàng nghìn sinh viên và người trẻ để tìm bạn cùng phòng phù hợp. 
-                  Chia sẻ chi phí, tạo kỷ niệm đẹp!
+                  Kết nối với hàng nghìn sinh viên và người trẻ để tìm bạn cùng
+                  phòng phù hợp. Chia sẻ chi phí, tạo kỷ niệm đẹp!
                 </p>
                 <div className="hero-stats">
                   <Row>
@@ -212,9 +242,9 @@ function RoommateMatchingPage() {
             </Col>
             <Col lg={6} className="d-none d-lg-block">
               <div className="hero-image">
-                <img 
-                  src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=600&q=80" 
-                  alt="Roommate matching" 
+                <img
+                  src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=600&q=80"
+                  alt="Roommate matching"
                   className="img-fluid rounded-4 shadow-lg"
                 />
               </div>
@@ -237,13 +267,15 @@ function RoommateMatchingPage() {
                     placeholder="Tìm theo tên, trường học, khu vực..."
                     className="search-input"
                     value={filters.location}
-                    onChange={(e) => handleFilterChange('location', e.target.value)}
+                    onChange={(e) =>
+                      handleFilterChange("location", e.target.value)
+                    }
                   />
                 </div>
               </Col>
               <Col md={4} className="text-end">
-                <Button 
-                  variant="outline-primary" 
+                <Button
+                  variant="outline-primary"
                   onClick={() => setShowFilters(!showFilters)}
                   className="filter-btn"
                 >
@@ -252,7 +284,7 @@ function RoommateMatchingPage() {
                 </Button>
               </Col>
             </Row>
-            
+
             {/* Advanced Filters */}
             {showFilters && (
               <div className="advanced-filters mt-4 pt-4 border-top">
@@ -262,7 +294,9 @@ function RoommateMatchingPage() {
                       <Form.Label>Giới tính</Form.Label>
                       <Form.Select
                         value={filters.gender}
-                        onChange={(e) => handleFilterChange('gender', e.target.value)}
+                        onChange={(e) =>
+                          handleFilterChange("gender", e.target.value)
+                        }
                       >
                         <option value="all">Tất cả</option>
                         <option value="female">Nữ</option>
@@ -279,7 +313,9 @@ function RoommateMatchingPage() {
                             type="number"
                             placeholder="Từ"
                             value={filters.minBudget}
-                            onChange={(e) => handleFilterChange('minBudget', e.target.value)}
+                            onChange={(e) =>
+                              handleFilterChange("minBudget", e.target.value)
+                            }
                           />
                         </Col>
                         <Col>
@@ -287,7 +323,9 @@ function RoommateMatchingPage() {
                             type="number"
                             placeholder="Đến"
                             value={filters.maxBudget}
-                            onChange={(e) => handleFilterChange('maxBudget', e.target.value)}
+                            onChange={(e) =>
+                              handleFilterChange("maxBudget", e.target.value)
+                            }
                           />
                         </Col>
                       </Row>
@@ -300,7 +338,9 @@ function RoommateMatchingPage() {
                         type="text"
                         placeholder="Tên trường"
                         value={filters.university}
-                        onChange={(e) => handleFilterChange('university', e.target.value)}
+                        onChange={(e) =>
+                          handleFilterChange("university", e.target.value)
+                        }
                       />
                     </Form.Group>
                   </Col>
@@ -309,7 +349,9 @@ function RoommateMatchingPage() {
                       <Form.Label>Loại phòng</Form.Label>
                       <Form.Select
                         value={filters.roomType}
-                        onChange={(e) => handleFilterChange('roomType', e.target.value)}
+                        onChange={(e) =>
+                          handleFilterChange("roomType", e.target.value)
+                        }
                       >
                         <option value="">Tất cả</option>
                         <option value="Ở ghép">Ở ghép</option>
@@ -363,8 +405,12 @@ function RoommateMatchingPage() {
                         className="save-btn p-0"
                         onClick={() => handleSaveRoommate(roommate.id)}
                       >
-                        <FaHeart 
-                          className={savedRoommates.includes(roommate.id) ? "text-danger" : "text-muted"} 
+                        <FaHeart
+                          className={
+                            savedRoommates.includes(roommate.id)
+                              ? "text-danger"
+                              : "text-muted"
+                          }
                         />
                       </Button>
                     </div>
@@ -372,7 +418,10 @@ function RoommateMatchingPage() {
 
                   {/* Match Score */}
                   <div className="match-score mb-3">
-                    <Badge bg={getMatchColor(roommate.match)} className="match-badge">
+                    <Badge
+                      bg={getMatchColor(roommate.match)}
+                      className="match-badge"
+                    >
                       {roommate.match}% Phù hợp
                     </Badge>
                   </div>
@@ -400,7 +449,12 @@ function RoommateMatchingPage() {
                   {/* Habits */}
                   <div className="habits mb-3">
                     {roommate.habits.slice(0, 2).map((habit, index) => (
-                      <Badge key={index} bg="light" text="dark" className="me-1 mb-1">
+                      <Badge
+                        key={index}
+                        bg="light"
+                        text="dark"
+                        className="me-1 mb-1"
+                      >
                         {habit}
                       </Badge>
                     ))}
@@ -413,16 +467,15 @@ function RoommateMatchingPage() {
 
                   {/* Description */}
                   <p className="description text-muted small">
-                    {roommate.description.length > 100 
-                      ? `${roommate.description.substring(0, 100)}...` 
-                      : roommate.description
-                    }
+                    {roommate.description.length > 100
+                      ? `${roommate.description.substring(0, 100)}...`
+                      : roommate.description}
                   </p>
 
                   {/* Actions */}
                   <div className="actions mt-auto">
-                    <Button 
-                      variant="primary" 
+                    <Button
+                      variant="primary"
                       className="w-100 mb-2"
                       onClick={() => openDetailModal(roommate)}
                     >
@@ -430,13 +483,21 @@ function RoommateMatchingPage() {
                     </Button>
                     <Row>
                       <Col>
-                        <Button variant="outline-success" size="sm" className="w-100">
+                        <Button
+                          variant="outline-success"
+                          size="sm"
+                          className="w-100"
+                        >
                           <i className="bi bi-chat-dots me-1"></i>
                           Nhắn tin
                         </Button>
                       </Col>
                       <Col>
-                        <Button variant="outline-primary" size="sm" className="w-100">
+                        <Button
+                          variant="outline-primary"
+                          size="sm"
+                          className="w-100"
+                        >
                           <i className="bi bi-person-plus me-1"></i>
                           Kết bạn
                         </Button>
@@ -454,16 +515,23 @@ function RoommateMatchingPage() {
             <div className="empty-state">
               <i className="bi bi-search display-1 text-muted mb-3"></i>
               <h4>Không tìm thấy bạn cùng trọ phù hợp</h4>
-              <p className="text-muted">Thử điều chỉnh bộ lọc để tìm thêm kết quả</p>
-              <Button variant="primary" onClick={() => setFilters({
-                location: "",
-                minBudget: "",
-                maxBudget: "",
-                gender: "all",
-                age: "",
-                roomType: "",
-                university: "",
-              })}>
+              <p className="text-muted">
+                Thử điều chỉnh bộ lọc để tìm thêm kết quả
+              </p>
+              <Button
+                variant="primary"
+                onClick={() =>
+                  setFilters({
+                    location: "",
+                    minBudget: "",
+                    maxBudget: "",
+                    gender: "all",
+                    age: "",
+                    roomType: "",
+                    university: "",
+                  })
+                }
+              >
                 Xóa bộ lọc
               </Button>
             </div>
@@ -472,7 +540,12 @@ function RoommateMatchingPage() {
       </Container>
 
       {/* Detail Modal */}
-      <Modal show={showDetailModal} onHide={() => setShowDetailModal(false)} size="lg" centered>
+      <Modal
+        show={showDetailModal}
+        onHide={() => setShowDetailModal(false)}
+        size="lg"
+        centered
+      >
         {selectedRoommate && (
           <>
             <Modal.Header closeButton>
@@ -482,7 +555,7 @@ function RoommateMatchingPage() {
                     src={selectedRoommate.avatar}
                     alt={selectedRoommate.name}
                     className="rounded-circle me-3"
-                    style={{ width: 50, height: 50, objectFit: 'cover' }}
+                    style={{ width: 50, height: 50, objectFit: "cover" }}
                   />
                   <div>
                     <h5 className="mb-0">{selectedRoommate.name}</h5>
@@ -496,12 +569,24 @@ function RoommateMatchingPage() {
                 <Col md={6}>
                   <h6>Thông tin cơ bản</h6>
                   <ul className="list-unstyled">
-                    <li><strong>Tuổi:</strong> {selectedRoommate.age}</li>
-                    <li><strong>Nghề nghiệp:</strong> {selectedRoommate.job}</li>
-                    <li><strong>Trường học:</strong> {selectedRoommate.university}</li>
-                    <li><strong>Khu vực:</strong> {selectedRoommate.location}</li>
-                    <li><strong>Ngân sách:</strong> {selectedRoommate.budget}</li>
-                    <li><strong>Loại phòng:</strong> {selectedRoommate.roomType}</li>
+                    <li>
+                      <strong>Tuổi:</strong> {selectedRoommate.age}
+                    </li>
+                    <li>
+                      <strong>Nghề nghiệp:</strong> {selectedRoommate.job}
+                    </li>
+                    <li>
+                      <strong>Trường học:</strong> {selectedRoommate.university}
+                    </li>
+                    <li>
+                      <strong>Khu vực:</strong> {selectedRoommate.location}
+                    </li>
+                    <li>
+                      <strong>Ngân sách:</strong> {selectedRoommate.budget}
+                    </li>
+                    <li>
+                      <strong>Loại phòng:</strong> {selectedRoommate.roomType}
+                    </li>
                   </ul>
                 </Col>
                 <Col md={6}>
@@ -513,7 +598,7 @@ function RoommateMatchingPage() {
                       </Badge>
                     ))}
                   </div>
-                  
+
                   <h6>Sở thích</h6>
                   <div className="mb-3">
                     {selectedRoommate.interests.map((interest, index) => (
@@ -524,7 +609,7 @@ function RoommateMatchingPage() {
                   </div>
                 </Col>
               </Row>
-              
+
               <div className="mt-3">
                 <h6>Giới thiệu bản thân</h6>
                 <p>{selectedRoommate.description}</p>
@@ -535,11 +620,16 @@ function RoommateMatchingPage() {
                   <i className="bi bi-heart-fill text-danger me-2"></i>
                   <strong>Độ tương thích: {selectedRoommate.match}%</strong>
                 </div>
-                <small>Dựa trên sở thích, thói quen và yêu cầu về phòng ở</small>
+                <small>
+                  Dựa trên sở thích, thói quen và yêu cầu về phòng ở
+                </small>
               </Alert>
             </Modal.Body>
             <Modal.Footer>
-              <Button variant="secondary" onClick={() => setShowDetailModal(false)}>
+              <Button
+                variant="secondary"
+                onClick={() => setShowDetailModal(false)}
+              >
                 Đóng
               </Button>
               <Button variant="outline-primary">

@@ -188,17 +188,38 @@
 // }
 
 // export default NavigationBar;
-import React, { useState } from "react";
-import { Navbar, Nav, Container, Button, Dropdown } from "react-bootstrap";
+import React, { useState, useEffect } from "react";
+import {
+  Navbar,
+  Nav,
+  Container,
+  Button,
+  Dropdown,
+  Modal,
+} from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import { useTheme } from "../contexts/ThemeContext";
+import {
+  collection,
+  query,
+  where,
+  onSnapshot,
+  doc,
+  updateDoc,
+  serverTimestamp,
+} from "firebase/firestore";
+import { db } from "../firebase/config";
+import { toast } from "react-toastify";
 
 function NavigationBar() {
   const { currentUser, logout } = useAuth();
   const navigate = useNavigate();
   const { theme, toggleTheme } = useTheme();
   const [expanded, setExpanded] = useState(false);
+  const [unreadNotifications, setUnreadNotifications] = useState(0);
+  const [showPremium, setShowPremium] = useState(false);
+  const [userPlan, setUserPlan] = useState(null);
 
   const handleLogout = async () => {
     try {
@@ -206,6 +227,37 @@ function NavigationBar() {
       navigate("/");
     } catch (error) {
       console.error("Failed to log out:", error);
+    }
+  };
+  useEffect(() => {
+    if (!currentUser) {
+      setUnreadNotifications(0);
+      setUserPlan(null);
+      return;
+    }
+    setUserPlan(currentUser.plan || localStorage.getItem("userPlan") || null);
+    const q = query(
+      collection(db, "notifications"),
+      where("recipientId", "==", currentUser.uid),
+      where("read", "==", false)
+    );
+    const unsub = onSnapshot(q, (snap) => {
+      setUnreadNotifications(snap.size || 0);
+    });
+    return () => unsub();
+  }, [currentUser]);
+
+  const handleSelectPlan = async (plan) => {
+    if (!currentUser) return;
+    try {
+      const userRef = doc(db, "users", currentUser.uid);
+      await updateDoc(userRef, { plan, planUpdatedAt: serverTimestamp() });
+      localStorage.setItem("userPlan", plan);
+      setUserPlan(plan);
+      toast.success(`Đã cập nhật gói: ${plan.toUpperCase()}`);
+    } catch (e) {
+      console.error("Failed to update plan", e);
+      toast.error("Cập nhật gói thất bại");
     }
   };
 
@@ -374,6 +426,44 @@ function NavigationBar() {
           </Nav>
         </Navbar.Collapse>
         <div className="d-flex align-items-center ms-auto gap-2">
+          {currentUser?.role === "owner" && (
+            <Button
+              variant={theme === "light" ? "outline-warning" : "outline-light"}
+              onClick={() => setShowPremium(true)}
+              style={{
+                fontSize: 22,
+                borderRadius: 50,
+                width: 44,
+                height: 44,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                position: "relative",
+                background:
+                  theme === "dark"
+                    ? "linear-gradient(135deg,#FDE68A,#F59E0B)"
+                    : undefined,
+                color: theme === "dark" ? "#1f2937" : "#F59E0B",
+                borderColor: "#F59E0B",
+              }}
+              title="Gói Premium cho chủ trọ"
+            >
+              <i className="bi bi-crown" />
+              {userPlan && userPlan !== "basic" && (
+                <span
+                  className="badge text-bg-warning"
+                  style={{
+                    position: "absolute",
+                    bottom: -6,
+                    right: -6,
+                    fontSize: 10,
+                  }}
+                >
+                  {userPlan === "elite" ? "Elite" : "Pro"}
+                </span>
+              )}
+            </Button>
+          )}
           <Button
             variant={theme === "light" ? "outline-dark" : "outline-warning"}
             onClick={toggleTheme}
@@ -401,6 +491,44 @@ function NavigationBar() {
               <i className="bi bi-sun-fill" style={{ color: "#FFD600" }}></i>
             )}
           </Button>
+          {currentUser && (
+            <Button
+              variant="outline-secondary"
+              onClick={() => navigate("/dashboard/notifications")}
+              style={{
+                fontSize: 22,
+                borderRadius: 50,
+                width: 44,
+                height: 44,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                position: "relative",
+              }}
+              title="Thông báo"
+            >
+              <i className="bi bi-bell"></i>
+              {unreadNotifications > 0 && (
+                <span
+                  style={{
+                    position: "absolute",
+                    top: -4,
+                    right: -4,
+                    background: "#dc2626",
+                    color: "#fff",
+                    borderRadius: 999,
+                    fontSize: 10,
+                    lineHeight: "14px",
+                    padding: "0 5px",
+                    minWidth: 14,
+                    textAlign: "center",
+                  }}
+                >
+                  {unreadNotifications > 99 ? "99+" : unreadNotifications}
+                </span>
+              )}
+            </Button>
+          )}
           {currentUser ? (
             <Dropdown align="end">
               <Dropdown.Toggle
@@ -497,6 +625,84 @@ function NavigationBar() {
             </>
           )}
         </div>
+        {/* Premium Modal for Owners */}
+        <Modal
+          show={showPremium}
+          onHide={() => setShowPremium(false)}
+          size="lg"
+          centered
+        >
+          <Modal.Header closeButton>
+            <Modal.Title>
+              <i className="bi bi-crown me-2" /> Gói Premium cho Chủ trọ
+            </Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <div className="row g-3">
+              <div className="col-md-4">
+                <div className="card h-100 premium-basic">
+                  <div className="card-body d-flex flex-column">
+                    <h5 className="card-title">Basic</h5>
+                    <p className="text-muted">Miễn phí</p>
+                    <ul className="mb-3">
+                      <li>Đăng tin thường</li>
+                      <li>Giới hạn nổi bật</li>
+                      <li>Hỗ trợ qua email</li>
+                    </ul>
+                    <Button
+                      variant="outline-secondary"
+                      className="w-100 mt-auto"
+                      onClick={() => handleSelectPlan("basic")}
+                    >
+                      Giữ gói
+                    </Button>
+                  </div>
+                </div>
+              </div>
+              <div className="col-md-4">
+                <div className="card h-100 premium-pro">
+                  <div className="card-body d-flex flex-column">
+                    <h5 className="card-title">Pro</h5>
+                    <p className="text-muted">299.000đ/tháng</p>
+                    <ul className="mb-3">
+                      <li>+ Ưu tiên hiển thị 3 ngày</li>
+                      <li>+ Huy hiệu "Tin uy tín"</li>
+                      <li>+ Thống kê lượt xem</li>
+                    </ul>
+                    <Button
+                      variant="primary"
+                      className="w-100 mt-auto"
+                      onClick={() => handleSelectPlan("pro")}
+                    >
+                      Nâng cấp Pro
+                    </Button>
+                  </div>
+                </div>
+              </div>
+              <div className="col-md-4">
+                <div className="card h-100 premium-elite">
+                  <div className="card-body d-flex flex-column">
+                    <h5 className="card-title">Elite</h5>
+                    <p className="text-muted">599.000đ/tháng</p>
+                    <ul className="mb-3">
+                      <li>+ Ưu tiên hiển thị 7 ngày</li>
+                      <li>+ Huy hiệu "Top chủ trọ"</li>
+                      <li>+ Gợi ý đẩy tin tự động</li>
+                      <li>+ Hỗ trợ ưu tiên</li>
+                    </ul>
+                    <Button
+                      variant={theme === "dark" ? "warning" : "dark"}
+                      className="w-100 mt-auto"
+                      onClick={() => handleSelectPlan("elite")}
+                    >
+                      Nâng cấp Elite
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </Modal.Body>
+        </Modal>
       </Container>
     </Navbar>
   );
