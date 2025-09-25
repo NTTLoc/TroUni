@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "./AuthForm.scss";
-import { createUserApi, loginApi } from "../../utils/api";
+import { createUserApi, loginApi, loginGoogleApi } from "../../utils/api";
 import { notification } from "antd";
 import { useAuth } from "../../hooks/useAuth";
+import { useGoogleLogin } from "@react-oauth/google";
 
 const AuthForm = ({ isRegister }) => {
   const [agreePolicy, setAgreePolicy] = useState(false);
@@ -11,55 +12,73 @@ const AuthForm = ({ isRegister }) => {
   const navigate = useNavigate();
   const { setAuth } = useAuth();
 
+  const handleAuthSuccess = (res) => {
+    if (res?.code === "SUCCESS" && res?.data) {
+      // Lưu token
+      localStorage.setItem("access_token", res.data.token);
+
+      // Lưu thông tin user
+      localStorage.setItem(
+        "user",
+        JSON.stringify({
+          id: res.data.id,
+          username: res.data.username,
+          email: res.data.email,
+          role: res.data.role,
+        })
+      );
+
+      // Update state toàn cục
+      setAuth({
+        isAuthenticated: true,
+        user: {
+          id: res.data.id,
+          username: res.data.username,
+          email: res.data.email,
+          role: res.data.role,
+        },
+      });
+
+      navigate("/");
+    }
+  };
+
   const onFinish = async (e) => {
     e.preventDefault();
 
     const formData = new FormData(e.target);
-    const name = formData.get("name");
     const email = formData.get("email");
     const password = formData.get("password");
+    const username = formData.get("username");
 
-    if (isRegister) {
-      const res = await createUserApi(name, email, password);
+    try {
+      const res = isRegister
+        ? await createUserApi(username, email, password)
+        : await loginApi(email, password);
 
-      if (res) {
-        notification.success({
-          message: "CREATE USER",
-          description: "Success",
-        });
-        navigate("/login");
-      } else {
-        notification.error({
-          message: "CREATE USER",
-          description: "error",
-        });
-      }
-    } else {
-      const res = await loginApi(email, password);
-
-      if (res && res.EC === 0) {
-        localStorage.setItem("access_token", res.access_token);
-        notification.success({
-          message: "LOGIN USER",
-          description: "Success",
-        });
-        setAuth({
-          isAuthenticated: true,
-          user: {
-            email: res?.user?.email ?? "",
-            name: res?.user?.name ?? "",
-            role: res?.user?.role ?? "",
-          },
-        });
-        navigate("/");
-      } else {
-        notification.error({
-          message: "LOGIN USER",
-          description: res?.EM ?? "error",
-        });
-      }
+      handleAuthSuccess(res);
+    } catch (err) {
+      console.log(">>> API error: ", err);
     }
   };
+
+  const handleGoogleLogin = useGoogleLogin({
+    onSuccess: async (tokenResponse) => {
+      try {
+        // tokenResponse chứa access_token của Google
+        const res = await loginGoogleApi(tokenResponse.access_token);
+        handleAuthSuccess(res);
+      } catch (err) {
+        console.log(">>> Google login error: ", err);
+      }
+    },
+    onError: () => {
+      notification.error({
+        message: "Google Login",
+        description: "Đăng nhập thất bại",
+      });
+    },
+  });
 
   return (
     <div className="page-container">
@@ -70,11 +89,11 @@ const AuthForm = ({ isRegister }) => {
             <img src="/logo.png" alt="TroUni logo" className="register__logo" />
             <h2>"Đăng ký tài khoản TroUni"</h2>
 
-            <form onSubmit={onFinish} className="register__form">
+            <form className="register__form" onSubmit={onFinish}>
               <label>Họ tên</label>
               <input
                 type="text"
-                name="name"
+                name="username"
                 placeholder="Nhập họ tên"
                 required
               />
@@ -94,9 +113,6 @@ const AuthForm = ({ isRegister }) => {
                 placeholder="Tạo mật khẩu"
                 required
               />
-
-              {/* <label>Xác nhận mật khẩu</label>
-              <input type="password" placeholder="Nhập lại mật khẩu" required /> */}
 
               <div className="register__checkbox">
                 <input
@@ -128,7 +144,11 @@ const AuthForm = ({ isRegister }) => {
                 <hr />
               </div>
 
-              <button type="button" className="login__google">
+              <button
+                type="button"
+                className="login__google"
+                onClick={() => handleGoogleLogin()}
+              >
                 <img
                   src="https://img.icons8.com/color/16/000000/google-logo.png"
                   alt="Google icon"
@@ -158,7 +178,7 @@ const AuthForm = ({ isRegister }) => {
             />
             <h2>Đăng nhập vào TroUni</h2>
 
-            <form onSubmit={onFinish} className="login__form">
+            <form className="login__form" onSubmit={onFinish}>
               <label>Email</label>
               <input
                 type="email"
@@ -187,7 +207,11 @@ const AuthForm = ({ isRegister }) => {
                 <hr />
               </div>
 
-              <button type="button" className="login__google">
+              <button
+                type="button"
+                className="login__google"
+                onClick={() => handleGoogleLogin()}
+              >
                 <img
                   src="https://img.icons8.com/color/16/000000/google-logo.png"
                   alt="Google icon"

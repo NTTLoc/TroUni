@@ -1,0 +1,27 @@
+.price-filter {
+  background: var(--bg2);
+  border-radius: 8px;
+  margin-bottom: 20px;
+
+  h4 {
+    font-size: 16px;
+    margin-bottom: 10px;
+    padding: 15px;
+  }
+
+  .range-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+
+    .range-item {
+      padding: 8px 15px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+
+      &:hover {
+        background-color: var(--hover);
+      }
+    }
+  }
+}

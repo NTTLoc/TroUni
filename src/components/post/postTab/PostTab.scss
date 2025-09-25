@@ -1,0 +1,19 @@
+.post-tabs {
+  display: flex;
+  gap: 20px;
+  border-bottom: 1px solid #fff;
+
+  button {
+    background: none;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+    padding: 5px;
+    color: var(--text);
+
+    &.active {
+      color: #00bfa6;
+      border-bottom: 3px solid #00bfa6;
+    }
+  }
+}

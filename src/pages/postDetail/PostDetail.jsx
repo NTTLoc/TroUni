@@ -1,52 +1,43 @@
 import React from "react";
-import { useParams, Link } from "react-router-dom";
-import Navbar from "../../components/navbar/NavBar";
-import Footer from "../../components/footer/Footer";
 import "./PostDetail.scss";
-
-// Dữ liệu mẫu giống PostList
-const posts = [
-  {
-    id: "1",
-    title: "Phòng trọ gần ĐH Bách Khoa",
-    location: "Quận 10, TP.HCM",
-    price: "2.000.000",
-    description: "Phòng mới xây, gần trường, có máy lạnh và wifi miễn phí.",
-    image: "https://via.placeholder.com/600x400",
-  },
-  {
-    id: "2",
-    title: "Chung cư mini tiện nghi",
-    location: "Thủ Đức, TP.HCM",
-    price: "3.500.000",
-    description: "Phòng đầy đủ nội thất, có chỗ giữ xe, bảo vệ 24/7.",
-    image: "https://via.placeholder.com/600x400",
-  },
-];
+import { useParams } from "react-router-dom";
+import dummyPosts from "../../utils/mockData";
+import PostGallery from "../../components/postDetail/postGallery/PostGallery";
+import PostMainInfo from "../../components/postDetail/postMainInfo/PostMainInfo";
+import PostOwner from "../../components/postDetail/postOwner/PostOwner";
+import PostContact from "../../components/postDetail/postContact/PostContact";
+import RelatedPosts from "../../components/postDetail/relatedPosts/RelatedPosts";
+import PostDescription from "../../components/postDetail/postDescription/PostDescription";
 
 const PostDetail = () => {
-  const { id } = useParams();
-  const post = posts.find((p) => p.id === id);
+  const { id } = useParams(); // lấy id từ URL
+  const post = dummyPosts.find((p) => p.id === Number(id));
 
-  if (!post) return <div>Không tìm thấy bài đăng.</div>;
+  if (!post) {
+    return <div className="post-detail">Không tìm thấy bài đăng</div>;
+  }
 
   return (
-    <div className="page-container">
-      <Navbar />
-      <main className="page-content post-detail">
-        <div className="post-detail__container">
-          <h2>{post.title}</h2>
-          <img src={post.image} alt={post.title} />
-          <p>
-            <strong>Vị trí:</strong> {post.location}
-          </p>
-          <p>
-            <strong>Giá:</strong> {post.price} VNĐ / tháng
-          </p>
-          <p>{post.description}</p>
+    <div className="post-detail">
+      {/* Cột trái */}
+      <div className="post-detail__left">
+        <div className="left-top">
+          <PostGallery images={post.images} />
+          <PostMainInfo post={post} />
         </div>
-      </main>
-      <Footer />
+
+        <PostDescription
+          description={post.descDetail}
+          phone={post.owner?.phone}
+        />
+        <RelatedPosts posts={dummyPosts.slice(0, 4)} />
+      </div>
+
+      {/* Cột phải */}
+      <div className="post-detail__right">
+        <PostOwner owner={post.owner} />
+        <PostContact />
+      </div>
     </div>
   );
 };

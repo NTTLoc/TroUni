@@ -1,0 +1,38 @@
+.post-page {
+  display: flex;
+  gap: 2rem;
+  padding: 1.5rem;
+  background: var(--bg);
+
+  .post-left {
+    flex: 3;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    background: var(--bg2);
+    padding: 20px;
+    border-radius: 8px;
+
+    .top {
+      display: flex;
+      flex-direction: column;
+      border-radius: 8px;
+    }
+
+    .bottom {
+      display: flex;
+      flex-direction: column;
+      border-radius: 8px;
+    }
+  }
+
+  .post-right {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    position: sticky;
+    top: 80px; // cố định khi scroll
+    height: fit-content;
+  }
+}

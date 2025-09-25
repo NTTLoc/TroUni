@@ -60,7 +60,7 @@
 
     .login__submit {
       margin-top: 10px;
-      background: $primary-color;
+      background: var(--primary);
       color: white;
       border: none;
       padding: 10px;
@@ -198,7 +198,7 @@
 
     .register__submit {
       margin-top: 10px;
-      background: $primary-color;
+      background: var(--primary);
       color: white;
       border: none;
       padding: 10px;

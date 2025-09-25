@@ -2,8 +2,8 @@ export const path = {
   // PUBLIC
   ABOUT: "/about",
   CONTACT: "/contact",
-  POST: "/post",
-  DETAIL: "/postdetail/:id",
+  POST: "/posts",
+  DETAIL: "/posts/:id",
   LOGIN: "/login",
   REGISTER: "/register",
 

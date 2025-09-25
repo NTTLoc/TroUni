@@ -10,42 +10,55 @@ function App() {
   const { setAuth, appLoading, setAppLoading } = useAuth();
 
   useEffect(() => {
-    const fetchAccount = async () => {
-      setAppLoading(true);
+    let isMounted = true;
 
-      const res = await axios.get(`/v1/api/account`);
-      if (res) {
-        setAuth({
-          isAuthenticated: false,
-          user: {
-            email: res.email,
-            name: res.name,
-          },
-        });
+    const fetchAccount = async () => {
+      try {
+        setAppLoading(true);
+        const res = await axios.get("/auth/me");
+
+        if (isMounted && res) {
+          setAuth({
+            isAuthenticated: true,
+            user: {
+              email: res.email ?? "",
+              name: res.name ?? "",
+              role: res.role ?? "USER", // thêm nếu backend có role
+            },
+          });
+        }
+      } catch (error) {
+        console.warn("Không lấy được tài khoản:", error?.message);
+        if (isMounted) {
+          setAuth({
+            isAuthenticated: false,
+            user: { email: "", name: "" },
+          });
+        }
+      } finally {
+        if (isMounted) setAppLoading(false);
       }
-      setAppLoading(false);
     };
 
     fetchAccount();
-  }, []);
+
+    return () => {
+      isMounted = false; // cleanup
+    };
+  }, [setAuth, setAppLoading]);
 
   return (
-    <div>
-      {appLoading === true ? (
-        <div
-          style={{
-            position: "fixed",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-          }}
-        >
-          <Spin />
+    <div className="app-layout">
+      {appLoading ? (
+        <div className="loading-overlay">
+          <Spin size="large" />
         </div>
       ) : (
         <>
           <Navbar />
-          <Outlet />
+          <main className="main-content">
+            <Outlet />
+          </main>
           <Footer />
         </>
       )}

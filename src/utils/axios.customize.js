@@ -1,41 +1,46 @@
 import axios from "axios";
 
-// Set config defaults when creating the instance
+// Tạo instance axios
 const instance = axios.create({
   baseURL: import.meta.env.VITE_BACKEND_URL,
+  headers: {
+    "Content-Type": "application/json", // mặc định gửi JSON
+    Accept: "application/json",
+  },
 });
 
-// Alter defaults after instance has been created
-
-// Add a request interceptor
+// Request interceptor
 instance.interceptors.request.use(
   function (config) {
-    // Do something before request is sent
-    config.headers.Authorization = `Bearer ${localStorage.getItem(
-      "access_token"
-    )}`;
-
+    const token = localStorage.getItem("access_token");
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
     return config;
   },
   function (error) {
-    // Do something with request error
     return Promise.reject(error);
   }
 );
 
-// Add a response interceptor
+// Response interceptor
 instance.interceptors.response.use(
   function (response) {
-    // Any status code that lie within the range of 2xx cause this function to trigger
-    // Do something with response data
-    if (response && response.data) return response.data;
-    return response;
+    // Chỉ trả về response.data cho gọn
+    return response?.data ?? response;
   },
   function (error) {
-    // Any status codes that falls outside the range of 2xx cause this function to trigger
-    // Do something with response error
-    console.log(">>> Check error: ", error);
-    if (error?.response?.data) return error?.response?.data;
+    console.error(">>> Axios error:", {
+      status: error?.response?.status,
+      message: error?.response?.data?.message || error.message,
+      data: error?.response?.data,
+    });
+
+    // Nếu backend trả JSON (Spring Boot thường có body với `message`)
+    if (error?.response?.data) {
+      return Promise.reject(error.response.data);
+    }
+
     return Promise.reject(error);
   }
 );

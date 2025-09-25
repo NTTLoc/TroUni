@@ -1,0 +1,74 @@
+.post-description {
+  background: var(--bg);
+  border-radius: 10px;
+  padding: 1.2rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  line-height: 1.6;
+
+  h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 0.8rem;
+    color: var(--text);
+  }
+
+  .desc {
+    font-size: 0.95rem;
+    color: var(--text);
+    white-space: pre-line;
+    max-height: 120px;
+    overflow: hidden;
+
+    &.expanded {
+      max-height: none;
+    }
+  }
+
+  .phone-box {
+    margin-top: 1rem;
+    padding: 0.6rem 1rem;
+    background: var(--bg2);
+    border-radius: 8px;
+    font-size: 0.95rem;
+
+    strong {
+      font-weight: 600;
+      margin-right: 4px;
+    }
+
+    .show-btn {
+      background: none;
+      border: none;
+      color: var(--primary);
+      font-weight: 600;
+      margin-left: 6px;
+      cursor: pointer;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+
+  .toggle-btn {
+    margin-top: 0.8rem;
+    font-size: 0.9rem;
+    color: #00bfa6;
+    text-align: center;
+    cursor: pointer;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+
+    &:hover {
+      text-decoration: underline;
+      color: #00a791;
+    }
+
+    svg {
+      font-size: 0.9rem;
+    }
+  }
+}

@@ -1,62 +1,43 @@
 import React from "react";
-import "../../components/footer/Footer.scss";
+import {
+  MailOutlined,
+  PhoneOutlined,
+  EnvironmentOutlined,
+  ClockCircleOutlined,
+} from "@ant-design/icons";
+import "./Footer.scss";
 
 const Footer = () => {
   return (
     <footer className="footer">
-      <div className="footer__top">
-        <div className="footer__about">
-          <h3>TroUni</h3>
-          <p>
-            Nền tảng tìm kiếm phòng trọ đáng tin cậy cho sinh viên. Chúng tôi
-            kết nối bạn với hàng ngàn lựa chọn phù hợp và an toàn.
-          </p>
-        </div>
-
-        <div className="footer__links">
-          <h4>Về chúng tôi</h4>
-          <ul>
-            <li>
-              <a href="#">Giới thiệu</a>
-            </li>
-            <li>
-              <a href="#">Blog</a>
-            </li>
-            <li>
-              <a href="#">Liên hệ</a>
-            </li>
-          </ul>
-        </div>
-
-        <div className="footer__links">
-          <h4>Hỗ trợ</h4>
-          <ul>
-            <li>
-              <a href="#">Trung tâm trợ giúp</a>
-            </li>
-            <li>
-              <a href="#">Câu hỏi thường gặp</a>
-            </li>
-            <li>
-              <a href="#">Báo cáo vi phạm</a>
-            </li>
-          </ul>
-        </div>
-
-        <div className="footer__subscribe">
-          <h4>Nhận thông báo mới</h4>
-          <p>Đăng ký nhận email để không bỏ lỡ phòng trọ tốt.</p>
-          <div className="footer__input-group">
-            <input type="email" placeholder="Email của bạn" />
-            <button>Gửi</button>
-          </div>
-        </div>
-      </div>
-
-      <div className="footer__bottom">
+      <div className="footer-col">
+        <h4>Trọ UNI</h4>
         <p>
-          &copy; {new Date().getFullYear()} TroUni. Tất cả bản quyền được bảo
-          lưu.
+          Tìm kiếm phòng trọ, căn hộ cho thuê nhanh chóng, an toàn và tiện lợi.
+        </p>
+      </div>
+      <div className="footer-col">
+        <h4>Liên Kết Nhanh</h4>
+        <ul>
+          <li>Trang Chủ</li>
+          <li>Phòng Trọ</li>
+          <li>Giới Thiệu</li>
+          <li>Liên Hệ</li>
+        </ul>
+      </div>
+      <div className="footer-col">
+        <h4>Liên Hệ</h4>
+        <p>
+          <EnvironmentOutlined /> TP. HCM
+        </p>
+        <p>
+          <PhoneOutlined /> 0359 176 711
+        </p>
+        <p>
+          <MailOutlined /> quannse184831@fpt.edu.vn
+        </p>
+        <p>
+          <ClockCircleOutlined /> Thứ 2 - Chủ Nhật: 8:00 - 22:00
         </p>
       </div>
     </footer>

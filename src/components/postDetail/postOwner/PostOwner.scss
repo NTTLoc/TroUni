@@ -1,0 +1,78 @@
+.post-owner {
+  display: grid;
+  gap: 8px;
+  padding: 1rem;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  background: var(--bg);
+
+  p {
+    font-size: 0.9rem;
+    color: var(--text1);
+  }
+
+  .info {
+    display: flex;
+    align-items: center;
+
+    &__details {
+      h4 {
+        font-size: 1rem;
+        font-weight: 600;
+      }
+    }
+
+    .avatar {
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-right: 10px;
+    }
+  }
+
+  .activity {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+  }
+
+  .total-act {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+  }
+
+  .btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+
+    &__chat {
+      flex: 1;
+      padding: 10px;
+      background: transparent;
+      border-radius: 10px;
+      color: var(--text);
+      border: 1px solid var(--border);
+
+      &:hover {
+        background: var(--bg2);
+      }
+    }
+
+    &__call {
+      flex: 1;
+      padding: 10px;
+      background: var(--primary);
+      border-radius: 10px;
+      color: var(--text);
+      border: none;
+
+      &:hover {
+        background: var(--secondary);
+      }
+    }
+  }
+}

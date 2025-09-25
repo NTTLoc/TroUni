@@ -3,7 +3,7 @@ import Account from "../../pages/account/Account";
 import AuthForm from "../../pages/auth/AuthForm";
 import Contact from "../../pages/contact/Contact";
 import HomePage from "../../pages/home/HomePage";
-import PostList from "../../pages/post/PostList";
+import PostList from "../../pages/post/Post";
 import PostDetail from "../../pages/postDetail/PostDetail";
 import { path } from "../../utils/constants";
 

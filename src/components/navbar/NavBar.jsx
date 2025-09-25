@@ -1,104 +1,140 @@
-import React, { useState } from "react";
-import { Link, NavLink, useNavigate } from "react-router-dom";
+import React from "react";
+import { Link, useNavigate } from "react-router-dom";
 import "./NavBar.scss";
 import SearchBar from "../searchbar/SearchBar";
 import { path } from "../../utils/constants";
 import { useAuth } from "../../hooks/useAuth";
 import useTheme from "../../hooks/useTheme";
+import { Dropdown, Avatar, Space, Badge, Divider, Button } from "antd";
+import {
+  MoonOutlined,
+  SunOutlined,
+  DownOutlined,
+  UserOutlined,
+  HeartOutlined,
+  BellOutlined,
+} from "@ant-design/icons";
+import avatar from "../../assets/image/avatar.jpg";
 
 const Navbar = () => {
-  // const [showAccountMenu, setShowAccountMenu] = useState(false);
   const navigate = useNavigate();
   const { auth, setAuth } = useAuth();
   const { theme, toggleTheme } = useTheme();
 
   const handleLogout = () => {
     localStorage.removeItem("access_token");
-
     setAuth({
       isAuthenticated: false,
-      user: {
-        email: "",
-        name: "",
-      },
+      user: { email: "", name: "" },
     });
     navigate("/");
   };
 
+  // Custom dropdown content
+  const accountPanel = (
+    <div className="account-dropdown">
+      {/* Header user info */}
+      <div className="user-info">
+        <Avatar src={auth.user?.avatar || avatar} size={64} />
+        <div className="details">
+          <h4>{auth.user?.name || "Nguyễn Thanh Thiên Lộc"}</h4>
+          <p>Người theo dõi 0 · Đang theo dõi 0</p>
+          <p className="userid">TK Định danh: VO888292117776</p>
+        </div>
+      </div>
+
+      {/* Coin section */}
+      <div className="wallet">
+        <span>
+          Số dư tài khoản: <b>0</b>
+        </span>
+        <Button type="primary" size="small">
+          Nạp ngay
+        </Button>
+      </div>
+
+      <Divider style={{ margin: "8px 0" }} />
+
+      {/* Tiện ích */}
+      <div className="menu-section">
+        <Link to={path.SAVED}>❤️ Tin đăng đã lưu</Link>
+        <Link to={path.SAVED_SEARCH}>🔖 Tìm kiếm đã lưu</Link>
+        <Link to={path.HISTORY}>🕑 Lịch sử xem tin</Link>
+        <Link to={path.REVIEWS}>⭐ Đánh giá từ tôi</Link>
+      </div>
+
+      <Divider style={{ margin: "8px 0" }} />
+
+      {/* Dịch vụ trả phí */}
+      <div className="menu-section">
+        <Link to={path.PREMIUM}>💰 Số dư:</Link>
+        <Link to={path.PRO}>⚡ Gói PRO</Link>
+      </div>
+
+      <Divider style={{ margin: "8px 0" }} />
+
+      {/* Logout */}
+      <div className="menu-section logout" onClick={handleLogout}>
+        🚪 Đăng xuất
+      </div>
+    </div>
+  );
+
   return (
     <header className="navbar">
+      {/* Logo */}
       <div className="navbar__logo">
         <Link to="/">TroUni</Link>
       </div>
 
+      {/* Search */}
       <SearchBar />
 
+      {/* Links */}
       <nav className="navbar__links">
-        <NavLink
-          to="/"
-          end
-          className={({ isActive }) => (isActive ? "active" : "")}
-        >
-          Trang chủ
-        </NavLink>
-        <NavLink
-          to={path.ABOUT}
-          className={({ isActive }) => (isActive ? "active" : "")}
-        >
-          Giới thiệu
-        </NavLink>
-        <NavLink
-          to={path.CONTACT}
-          className={({ isActive }) => (isActive ? "active" : "")}
-        >
-          Liên hệ
-        </NavLink>
-        <NavLink
-          to={path.POST}
-          className={({ isActive }) => (isActive ? "active" : "")}
-        >
-          Danh sách trọ
-        </NavLink>
+        <Link to={path.SAVED} className="icon-btn">
+          <HeartOutlined />
+        </Link>
+        <Link to={path.NOTIFICATIONS} className="icon-btn">
+          <Badge count={1} size="small">
+            <BellOutlined />
+          </Badge>
+        </Link>
 
-        <div className="dropdown">
-          <button className="dropdown-btn">
-            👤 Welcome {auth?.user?.email}
-          </button>
-          <div className="dropdown-content">
-            {auth.isAuthenticated ? (
-              <div>
-                <Link to={path.ACCOUNT} className="dropdown-item">
-                  Tài khoản
-                </Link>
-                <span onClick={handleLogout} className="dropdown-item">
-                  Đăng xuất
-                </span>
-              </div>
-            ) : (
-              <Link to={path.LOGIN} className="dropdown-item">
-                Đăng nhập
-              </Link>
-            )}
-          </div>
+        <div className="navbar__right">
+          <button className="btn-outline">Quản lý tin</button>
+          <button className="btn-solid">Đăng tin</button>
 
-          <button onClick={toggleTheme} className="theme-btn">
-            {theme === "light" ? "🌙 Dark" : "☀️ Light"}
-          </button>
+          {/* Avatar dropdown */}
+          {auth.isAuthenticated ? (
+            <Dropdown
+              menu={{ items: [] }}
+              dropdownRender={() => accountPanel}
+              trigger={["click"]}
+              placement="bottomRight"
+            >
+              <a onClick={(e) => e.preventDefault()}>
+                <Space className="avatar-menu">
+                  <Avatar
+                    src={auth.user?.avatar || avatar}
+                    size={30}
+                    icon={<UserOutlined />}
+                  />
+                  <DownOutlined />
+                </Space>
+              </a>
+            </Dropdown>
+          ) : (
+            <Link to={path.LOGIN} className="btn-login">
+              Đăng nhập
+            </Link>
+          )}
         </div>
 
-        {/* <div
-          className="navbar__account"
-          onClick={() => setShowAccountMenu(!showAccountMenu)}
-          tabIndex={0}
-        >
-          <span className="account-icon">👤</span>
-          {showAccountMenu && (
-            <div className="account-menu">
-              <Link to="/login">Đăng nhập</Link>
-              <Link to="/register">Đăng ký</Link>
-            </div>
-          )}
-        </div> */}
+        {/* Theme toggle */}
+        <div className="theme-toggle" onClick={toggleTheme}>
+          {theme === "dark" ? <MoonOutlined /> : <SunOutlined />}
+        </div>
       </nav>
     </header>
   );

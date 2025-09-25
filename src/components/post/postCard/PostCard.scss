@@ -1,0 +1,119 @@
+.post-card {
+  display: flex;
+  gap: 15px;
+  padding: 12px;
+  border-bottom: 1px solid #fff;
+  background: var(--bg2);
+  position: relative;
+  text-decoration: none;
+
+  &:hover {
+    background: var(--card-bg);
+  }
+
+  .post-thumb {
+    flex: 0 0 200px;
+    position: relative;
+
+    img {
+      width: 200px;
+      height: 140px;
+      border-radius: 6px;
+      object-fit: cover;
+    }
+
+    .badge {
+      position: absolute;
+      bottom: 8px;
+      left: 8px;
+      background: var(--primary);
+      color: #fff;
+      font-size: 12px;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+
+    .img-count {
+      position: absolute;
+      bottom: 8px;
+      right: 8px;
+      background: rgba(0, 0, 0, 0.6);
+      color: #fff;
+      font-size: 12px;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+  }
+
+  .post-info {
+    flex: 1;
+
+    .title {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 6px;
+      color: var(--text);
+    }
+
+    .desc {
+      font-size: 14px;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+
+    .price-size {
+      margin-bottom: 6px;
+
+      .price {
+        font-size: 18px;
+        font-weight: 700;
+        color: #e53935;
+        margin-right: 12px;
+      }
+
+      .size {
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--text);
+      }
+    }
+
+    .location {
+      font-size: 14px;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+
+    .owner {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: var(--text);
+
+      img {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        object-fit: cover;
+      }
+
+      .count {
+        color: #888;
+        font-size: 12px;
+      }
+    }
+  }
+
+  .post-action {
+    display: flex;
+    align-items: center;
+    font-size: 20px;
+    color: #555;
+    cursor: pointer;
+
+    &:hover {
+      color: #e53935;
+    }
+  }
+}

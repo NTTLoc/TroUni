@@ -1,0 +1,35 @@
+.cta {
+  padding: 4rem 2rem;
+  text-align: center;
+  background: var(--primary);
+  color: white;
+
+  h2 {
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
+  }
+
+  p {
+    font-size: 1rem;
+    margin-bottom: 2rem;
+    opacity: 0.9;
+  }
+
+  .cta-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+
+    .ant-btn-primary {
+      background: var(--bg);
+      border: none;
+      color: var(--text);
+    }
+
+    .ant-btn-default {
+      background: transparent;
+      border: 1px solid #fff;
+      color: var(--text2);
+    }
+  }
+}

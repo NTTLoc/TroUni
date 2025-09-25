@@ -1,0 +1,19 @@
+.post-category {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+
+  button {
+    padding: 8px 14px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    background: #fff;
+    cursor: pointer;
+    font-size: 14px;
+
+    &:hover {
+      border-color: #00c6ff;
+      color: #00c6ff;
+    }
+  }
+}
