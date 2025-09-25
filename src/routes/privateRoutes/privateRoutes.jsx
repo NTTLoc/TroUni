@@ -1,8 +1,16 @@
 import React from "react";
+import { path } from "../../utils/constants";
+import Account from "../../pages/account/Account";
 
-const privateRoutes = () => {
-  const user = JSON.parse(localStorage.getItem("user"));
-  return <div>privateRoutes</div>;
-};
+const PrivateRoutes = [
+  // {
+  //   path: "admin",
+  //   element: <AdminDashboard />,
+  // },
+  {
+    path: path.ACCOUNT,
+    element: <Account />,
+  },
+];
 
-export default privateRoutes;
+export default PrivateRoutes;

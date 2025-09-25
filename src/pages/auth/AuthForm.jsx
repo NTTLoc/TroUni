@@ -3,14 +3,13 @@ import { Link, useNavigate } from "react-router-dom";
 import "./AuthForm.scss";
 import { createUserApi, loginApi } from "../../utils/api";
 import { notification } from "antd";
-import { useContext } from "react";
-import { AuthContext } from "../../components/context/auth.context";
+import { useAuth } from "../../hooks/useAuth";
 
 const AuthForm = ({ isRegister }) => {
   const [agreePolicy, setAgreePolicy] = useState(false);
 
   const navigate = useNavigate();
-  const { setAuth } = useContext(AuthContext);
+  const { setAuth } = useAuth();
 
   const onFinish = async (e) => {
     e.preventDefault();
@@ -49,6 +48,7 @@ const AuthForm = ({ isRegister }) => {
           user: {
             email: res?.user?.email ?? "",
             name: res?.user?.name ?? "",
+            role: res?.user?.role ?? "",
           },
         });
         navigate("/");

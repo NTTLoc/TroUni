@@ -2,12 +2,12 @@ import { Outlet } from "react-router-dom";
 import Navbar from "./components/navbar/NavBar";
 import Footer from "./components/footer/Footer";
 import axios from "./utils/axios.customize";
-import { useContext, useEffect } from "react";
-import { AuthContext } from "./components/context/auth.context";
 import { Spin } from "antd";
+import { useAuth } from "./hooks/useAuth";
+import { useEffect } from "react";
 
 function App() {
-  const { setAuth, appLoading, setAppLoading } = useContext(AuthContext);
+  const { setAuth, appLoading, setAppLoading } = useAuth();
 
   useEffect(() => {
     const fetchAccount = async () => {

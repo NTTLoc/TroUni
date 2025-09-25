@@ -35,3 +35,24 @@ a {
   border-radius: 8px;
   padding: 1rem;
 }
+
+// :root[data-theme="light"] {
+//   --bg: #ffffff;
+//   --text: #1a1a1a;
+//   --primary: #00a896;
+// }
+
+// :root[data-theme="dark"] {
+//   --bg: #1e1e1e;
+//   --text: #f0f0f0;
+//   --primary: #028090;
+// }
+
+// body {
+//   background-color: var(--bg);
+//   color: var(--text);
+//   font-family: "Segoe UI", sans-serif;
+//   margin: 0;
+//   padding: 0;
+//   transition: background-color 0.3s, color 0.3s;
+// }

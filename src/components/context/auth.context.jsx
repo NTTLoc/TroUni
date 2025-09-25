@@ -1,19 +1,23 @@
 import { createContext, useState } from "react";
 
+// Create container to store and share data
 export const AuthContext = createContext({
   isAuthenticated: false,
   user: {
     email: "",
     name: "",
+    role: "",
   },
 });
 
+// create provider to wrap components that need to be shared data
 export const AuthWrapper = (props) => {
   const [auth, setAuth] = useState({
     isAuthenticated: false,
     user: {
       email: "",
       name: "",
+      role: "",
     },
   });
 
@@ -21,6 +25,7 @@ export const AuthWrapper = (props) => {
 
   return (
     <AuthContext.Provider
+      // shared-data
       value={{
         auth,
         setAuth,

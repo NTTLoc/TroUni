@@ -6,4 +6,10 @@ export const path = {
   DETAIL: "/postdetail/:id",
   LOGIN: "/login",
   REGISTER: "/register",
+
+  // PRIVATE
+  ACCOUNT: "/account",
+
+  // NOT FOUND
+  NOTFOUND: "/notfound",
 };

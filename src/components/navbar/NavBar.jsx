@@ -2,18 +2,19 @@ import React, { useState } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import "./NavBar.scss";
 import SearchBar from "../searchbar/SearchBar";
-import { useContext } from "react";
-import { AuthContext } from "../context/auth.context";
+import { path } from "../../utils/constants";
+import { useAuth } from "../../hooks/useAuth";
+import useTheme from "../../hooks/useTheme";
 
 const Navbar = () => {
   // const [showAccountMenu, setShowAccountMenu] = useState(false);
   const navigate = useNavigate();
-  const { auth, setAuth, setCurrent } = useContext(AuthContext);
-  console.log(">>> Check auth: ", auth);
+  const { auth, setAuth } = useAuth();
+  const { theme, toggleTheme } = useTheme();
 
   const handleLogout = () => {
     localStorage.removeItem("access_token");
-    setCurrent("home");
+
     setAuth({
       isAuthenticated: false,
       user: {
@@ -41,19 +42,19 @@ const Navbar = () => {
           Trang chủ
         </NavLink>
         <NavLink
-          to="/about"
+          to={path.ABOUT}
           className={({ isActive }) => (isActive ? "active" : "")}
         >
           Giới thiệu
         </NavLink>
         <NavLink
-          to="/contact"
+          to={path.CONTACT}
           className={({ isActive }) => (isActive ? "active" : "")}
         >
           Liên hệ
         </NavLink>
         <NavLink
-          to="/post"
+          to={path.POST}
           className={({ isActive }) => (isActive ? "active" : "")}
         >
           Danh sách trọ
@@ -65,15 +66,24 @@ const Navbar = () => {
           </button>
           <div className="dropdown-content">
             {auth.isAuthenticated ? (
-              <span onClick={handleLogout} className="dropdown-item">
-                Đăng xuất
-              </span>
+              <div>
+                <Link to={path.ACCOUNT} className="dropdown-item">
+                  Tài khoản
+                </Link>
+                <span onClick={handleLogout} className="dropdown-item">
+                  Đăng xuất
+                </span>
+              </div>
             ) : (
-              <Link to="/login" className="dropdown-item">
+              <Link to={path.LOGIN} className="dropdown-item">
                 Đăng nhập
               </Link>
             )}
           </div>
+
+          <button onClick={toggleTheme} className="theme-btn">
+            {theme === "light" ? "🌙 Dark" : "☀️ Light"}
+          </button>
         </div>
 
         {/* <div

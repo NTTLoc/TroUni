@@ -1,4 +1,5 @@
 import About from "../../pages/about/About";
+import Account from "../../pages/account/Account";
 import AuthForm from "../../pages/auth/AuthForm";
 import Contact from "../../pages/contact/Contact";
 import HomePage from "../../pages/home/HomePage";
