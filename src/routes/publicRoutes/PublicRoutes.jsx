@@ -5,6 +5,7 @@ import Contact from "../../pages/contact/Contact";
 import HomePage from "../../pages/home/HomePage";
 import PostList from "../../pages/post/Post";
 import PostDetail from "../../pages/postDetail/PostDetail";
+import VerifyEmail from "../../pages/verifyEmail/VerifyEmail";
 import { path } from "../../utils/constants";
 
 const PublicRoutes = [
@@ -15,6 +16,7 @@ const PublicRoutes = [
   { path: path.DETAIL, element: <PostDetail /> },
   { path: path.LOGIN, element: <AuthForm /> },
   { path: path.REGISTER, element: <AuthForm isRegister /> },
+  { path: path.VERIFY_EMAIL, element: <VerifyEmail /> },
 ];
 
 export default PublicRoutes;

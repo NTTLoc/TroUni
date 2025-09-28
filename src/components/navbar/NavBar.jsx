@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "./NavBar.scss";
 import SearchBar from "../searchbar/SearchBar";
@@ -20,12 +20,40 @@ const Navbar = () => {
   const navigate = useNavigate();
   const { auth, setAuth } = useAuth();
   const { theme, toggleTheme } = useTheme();
+  const [user, setUser] = useState(null);
+  const [profile, setProfile] = useState(null);
+
+  useEffect(() => {
+    // Lấy data từ localStorage
+    const savedUser = localStorage.getItem("user");
+    const savedProfile = localStorage.getItem("profile");
+
+    if (savedUser) {
+      setUser(JSON.parse(savedUser));
+    }
+
+    if (savedProfile) {
+      setProfile(JSON.parse(savedProfile));
+    }
+  }, []);
 
   const handleLogout = () => {
     localStorage.removeItem("access_token");
+    localStorage.removeItem("user");
     setAuth({
       isAuthenticated: false,
-      user: { email: "", name: "" },
+      user: {
+        id: "",
+        email: "",
+        username: "",
+        role: "",
+        googleAccount: false,
+        phoneVerified: false,
+        idVerificationStatus: "",
+        status: "",
+        createdAt: "",
+        updatedAt: "",
+      },
     });
     navigate("/");
   };
@@ -35,9 +63,14 @@ const Navbar = () => {
     <div className="account-dropdown">
       {/* Header user info */}
       <div className="user-info">
-        <Avatar src={auth.user?.avatar || avatar} size={64} />
+        <Avatar src={profile?.avatarUrl || avatar} />
         <div className="details">
-          <h4>{auth.user?.name || "Nguyễn Thanh Thiên Lộc"}</h4>
+          <h4
+            onClick={() => navigate(path.ACCOUNT)}
+            style={{ cursor: "pointer" }}
+          >
+            {user?.username || "Nguyễn Thanh Thiên Lộc"}
+          </h4>
           <p>Người theo dõi 0 · Đang theo dõi 0</p>
           <p className="userid">TK Định danh: VO888292117776</p>
         </div>
@@ -116,7 +149,7 @@ const Navbar = () => {
               <a onClick={(e) => e.preventDefault()}>
                 <Space className="avatar-menu">
                   <Avatar
-                    src={auth.user?.avatar || avatar}
+                    src={profile?.avatarUrl || avatar}
                     size={30}
                     icon={<UserOutlined />}
                   />

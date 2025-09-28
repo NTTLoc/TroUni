@@ -1,10 +1,10 @@
 import { Outlet } from "react-router-dom";
 import Navbar from "./components/navbar/NavBar";
 import Footer from "./components/footer/Footer";
-import axios from "./utils/axios.customize";
 import { Spin } from "antd";
 import { useAuth } from "./hooks/useAuth";
 import { useEffect } from "react";
+import { getUserDetailsApi } from "./utils/api/userApi";
 
 function App() {
   const { setAuth, appLoading, setAppLoading } = useAuth();
@@ -15,15 +15,24 @@ function App() {
     const fetchAccount = async () => {
       try {
         setAppLoading(true);
-        const res = await axios.get("/auth/me");
+        const res = await getUserDetailsApi();
 
-        if (isMounted && res) {
+        if (isMounted && res?.data) {
+          const userData = res.data;
+
           setAuth({
             isAuthenticated: true,
             user: {
-              email: res.email ?? "",
-              name: res.name ?? "",
-              role: res.role ?? "USER", // thêm nếu backend có role
+              id: userData.id,
+              email: userData.email ?? "",
+              username: userData.username ?? "",
+              role: userData.role ?? "STUDENT",
+              googleAccount: userData.googleAccount ?? false,
+              phoneVerified: userData.phoneVerified ?? false,
+              idVerificationStatus: userData.idVerificationStatus ?? "",
+              status: userData.status ?? "",
+              createdAt: userData.createdAt ?? "",
+              updatedAt: userData.updatedAt ?? "",
             },
           });
         }
@@ -32,7 +41,18 @@ function App() {
         if (isMounted) {
           setAuth({
             isAuthenticated: false,
-            user: { email: "", name: "" },
+            user: {
+              id: "",
+              email: "",
+              username: "",
+              role: "",
+              googleAccount: false,
+              phoneVerified: false,
+              idVerificationStatus: "",
+              status: "",
+              createdAt: "",
+              updatedAt: "",
+            },
           });
         }
       } finally {

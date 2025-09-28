@@ -228,8 +228,9 @@
     gap: 0.8rem;
 
     .ant-avatar {
-      width: 52px;
-      height: 52px;
+      width: 68px;
+      height: 64px;
+      object-fit: cover;
     }
 
     h4 {

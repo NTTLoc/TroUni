@@ -1,18 +1,22 @@
-import React, { useState } from "react";
+import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "./AuthForm.scss";
-import { createUserApi, loginApi, loginGoogleApi } from "../../utils/api";
-import { notification } from "antd";
+import { Badge, notification } from "antd";
 import { useAuth } from "../../hooks/useAuth";
 import { useGoogleLogin } from "@react-oauth/google";
+import { path } from "../../utils/constants";
+import { getUserDetailsApi } from "../../utils/api/userApi";
+import {
+  loginGoogleApi,
+  createUserApi,
+  loginApi,
+} from "../../utils/api/authApi";
 
 const AuthForm = ({ isRegister }) => {
-  const [agreePolicy, setAgreePolicy] = useState(false);
-
   const navigate = useNavigate();
   const { setAuth } = useAuth();
 
-  const handleAuthSuccess = (res) => {
+  const handleAuthSuccess = async (res) => {
     if (res?.code === "SUCCESS" && res?.data) {
       // Lưu token
       localStorage.setItem("access_token", res.data.token);
@@ -25,6 +29,24 @@ const AuthForm = ({ isRegister }) => {
           username: res.data.username,
           email: res.data.email,
           role: res.data.role,
+        })
+      );
+
+      const profileRes = await getUserDetailsApi();
+
+      // Lưu thông tin chi tiết của user
+      localStorage.setItem(
+        "profile",
+        JSON.stringify({
+          id: profileRes.data.id,
+          userId: profileRes.data.userId,
+          fullName: profileRes.data.fullName,
+          gender: profileRes.data.gender,
+          phoneNumber: profileRes.data.phoneNumber,
+          avatarUrl: profileRes.data.avatarUrl,
+          badge: profileRes.data.badge,
+          createdAt: profileRes.data.createdAt,
+          updatedAt: profileRes.data.updatedAt,
         })
       );
 
@@ -52,11 +74,18 @@ const AuthForm = ({ isRegister }) => {
     const username = formData.get("username");
 
     try {
-      const res = isRegister
-        ? await createUserApi(username, email, password)
-        : await loginApi(email, password);
+      if (isRegister) {
+        // gọi API đăng ký
+        const res = await createUserApi(username, email, password);
 
-      handleAuthSuccess(res);
+        if (res?.code === "SUCCESS") {
+          navigate(path.VERIFY_EMAIL, { state: { email } });
+        }
+      } else {
+        // gọi API đăng nhập
+        const res = await loginApi(email, password);
+        handleAuthSuccess(res);
+      }
     } catch (err) {
       console.log(">>> API error: ", err);
     }
@@ -113,26 +142,6 @@ const AuthForm = ({ isRegister }) => {
                 placeholder="Tạo mật khẩu"
                 required
               />
-
-              <div className="register__checkbox">
-                <input
-                  type="checkbox"
-                  id="agreePolicy"
-                  checked={agreePolicy}
-                  onChange={(e) => setAgreePolicy(e.target.checked)}
-                  required
-                />
-                <label htmlFor="agreePolicy">
-                  Tôi đồng ý với{" "}
-                  <a href="/privacy" target="_blank" rel="noopener noreferrer">
-                    Chính sách bảo mật
-                  </a>{" "}
-                  và{" "}
-                  <a href="/terms" target="_blank" rel="noopener noreferrer">
-                    Điều khoản sử dụng
-                  </a>
-                </label>
-              </div>
 
               <button type="submit" className="register__submit">
                 Đăng ký

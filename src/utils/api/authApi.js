@@ -1,4 +1,4 @@
-import axios from "./axios.customize";
+import axios from "../axios.customize";
 
 // Đăng ký user
 const createUserApi = (username, email, password) => {
@@ -28,10 +28,19 @@ const loginGoogleApi = (accessToken) => {
   });
 };
 
+// Xác thực email bằng mã code 6 số
+const verifyEmailApi = (email, code) => {
+  const URL_API = "/email-verification/verify";
+  return axios.post(URL_API, {
+    email,
+    verificationCode: code,
+  });
+};
+
 // Lấy thông tin user hiện tại
 const getUserApi = () => {
   const URL_API = "/auth/me";
   return axios.get(URL_API);
 };
 
-export { createUserApi, loginApi, getUserApi, loginGoogleApi };
+export { createUserApi, loginApi, getUserApi, loginGoogleApi, verifyEmailApi };

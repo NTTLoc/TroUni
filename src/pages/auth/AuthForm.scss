@@ -6,11 +6,12 @@
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background: #f7f7f7;
+  background: var(--bg);
   padding: 20px;
+  border-bottom: 1px solid var(--text);
 
   &__container {
-    background: white;
+    background: var(--card-bg);
     padding: 30px;
     border-radius: 12px;
     width: 100%;
@@ -27,7 +28,7 @@
   h2 {
     margin-bottom: 24px;
     font-size: 1.5rem;
-    color: #333;
+    color: var(--text);
   }
 
   &__form {
@@ -38,7 +39,7 @@
     label {
       margin: 10px 0 4px;
       font-size: 0.9rem;
-      color: #333;
+      color: var(--text);
     }
 
     input {
@@ -66,9 +67,11 @@
       padding: 10px;
       border-radius: 6px;
       cursor: pointer;
+      font-size: 15px;
+      font-weight: 600;
 
       &:hover {
-        background: #009e8e;
+        background: var(--secondary);
       }
     }
 
@@ -96,14 +99,15 @@
       align-items: center;
       justify-content: center;
       gap: 8px;
-      background: white;
+      background: var(--card-bg);
       border: 1px solid #ddd;
       padding: 10px;
       border-radius: 6px;
       cursor: pointer;
+      color: var(--text);
 
       &:hover {
-        background: #f1f1f1;
+        background: var(--border);
       }
     }
   }
@@ -133,11 +137,12 @@
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background: #f7f7f7;
+  background: var(--bg);
   padding: 20px;
+  border-bottom: 1px solid var(--text);
 
   &__container {
-    background: white;
+    background: var(--card-bg);
     padding: 30px;
     border-radius: 12px;
     width: 100%;
@@ -154,7 +159,7 @@
   h2 {
     margin-bottom: 24px;
     font-size: 1.5rem;
-    color: #333;
+    color: var(--text);
   }
 
   &__form {
@@ -165,7 +170,7 @@
     label {
       margin: 10px 0 4px;
       font-size: 0.9rem;
-      color: #333;
+      color: var(--text);
     }
 
     input {
@@ -175,38 +180,19 @@
       margin-bottom: 10px;
     }
 
-    .register__checkbox {
-      display: flex;
-      align-items: center;
-      margin: 10px 0;
-      font-size: 0.9rem;
-      line-height: 1.4;
-
-      input {
-        margin: 6px 5px 0 0;
-      }
-
-      a {
-        color: #0066cc;
-        text-decoration: underline;
-
-        &:hover {
-          color: #004c99;
-        }
-      }
-    }
-
     .register__submit {
-      margin-top: 10px;
+      margin-top: 20px;
       background: var(--primary);
       color: white;
       border: none;
       padding: 10px;
       border-radius: 6px;
       cursor: pointer;
+      font-size: 15px;
+      font-weight: 600;
 
       &:hover {
-        background: #009e8e;
+        background: var(--secondary);
       }
     }
 
@@ -234,14 +220,15 @@
       align-items: center;
       justify-content: center;
       gap: 8px;
-      background: white;
+      background: var(--card-bg);
       border: 1px solid #ddd;
       padding: 10px;
       border-radius: 6px;
       cursor: pointer;
+      color: var(--text);
 
       &:hover {
-        background: #f1f1f1;
+        background: var(--border);
       }
     }
   }

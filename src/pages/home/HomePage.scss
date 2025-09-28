@@ -67,13 +67,14 @@
       }
 
       .btn-secondary {
+        padding: 0.8rem 1.8rem;
         background: transparent;
         border: 2px solid #fff;
         color: #fff;
 
         &:hover {
           background: rgba(213, 213, 213, 0.6);
-          color: var(--primary);
+          color: #fff;
         }
       }
     }

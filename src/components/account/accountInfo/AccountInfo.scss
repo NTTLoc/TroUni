@@ -1,0 +1,50 @@
+/* -------- AccountInfo (Thông tin cá nhân) -------- */
+
+.profile-avatar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 30px;
+
+  h3 {
+    margin-top: 12px;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  .ant-avatar {
+    box-shadow: 0 4px 12px rgba(255, 255, 255, 0.15);
+    border: 2px solid var(--border);
+  }
+}
+
+.ant-form {
+  margin-bottom: 20px;
+
+  .ant-form-item-label label {
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  .ant-input,
+  .ant-select-selector {
+    background: var(--content-side-2);
+    color: var(--text);
+    border-radius: 6px;
+    border: 1px solid var(--border);
+
+    &:hover {
+      box-shadow: 0 0 0 2px var(--hover);
+    }
+  }
+
+  /* chỉ field giới tính mới mất khung khi ở chế độ view */
+  .gender-field .ant-input[disabled] {
+    border: none;
+    background: transparent;
+    box-shadow: none;
+    cursor: default;
+    color: rgba(0, 0, 0, 0.85);
+  }
+}

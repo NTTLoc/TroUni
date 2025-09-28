@@ -11,7 +11,7 @@ const routes = createBrowserRouter([
     children: [
       ...PublicRoutes,
       {
-        element: <CheckAuth allowedRoles={["Admin"]} />,
+        element: <CheckAuth allowedRoles={["STUDENT"]} />,
         children: [...PrivateRoutes],
       },
       // {

@@ -6,6 +6,7 @@ export const path = {
   DETAIL: "/posts/:id",
   LOGIN: "/login",
   REGISTER: "/register",
+  VERIFY_EMAIL: "/verify-email",
 
   // PRIVATE
   ACCOUNT: "/account",

@@ -1,31 +1,54 @@
-import React from "react";
-import { Card, Button, Descriptions } from "antd";
-import { useNavigate } from "react-router-dom";
-import { useAuth } from "../../hooks/useAuth";
+import { useState } from "react";
+import { Row, Col, Card, Menu } from "antd";
+import { UserOutlined, LockOutlined, SettingOutlined } from "@ant-design/icons";
+import AccountInfo from "../../components/account/accountInfo/AccountInfo";
+import AccountSecurity from "../../components/account/accountSecurity/AccountSecurity";
+import AccountSettings from "../../components/account/accountSettings/AccountSettings";
+import "./account.scss";
 
 const Account = () => {
-  const { auth } = useAuth();
-  const navigate = useNavigate();
+  const [activeTab, setActiveTab] = useState("info");
 
   return (
-    <div style={{ padding: 24, maxWidth: 800, margin: "0 auto" }}>
-      <Card title="Thông tin tài khoản" bordered>
-        <Descriptions column={1} bordered>
-          <Descriptions.Item label="Họ tên">
-            {auth?.user?.name}
-          </Descriptions.Item>
-          <Descriptions.Item label="Email">
-            {auth?.user?.email}
-          </Descriptions.Item>
-          <Descriptions.Item label="Vai trò">Người dùng</Descriptions.Item>
-        </Descriptions>
+    <div className="profile-container">
+      <Row gutter={24}>
+        {/* Sidebar */}
+        <Col span={6}>
+          <Card className="profile-sidebar">
+            <Menu
+              mode="inline"
+              selectedKeys={[activeTab]}
+              onClick={(e) => setActiveTab(e.key)}
+              items={[
+                {
+                  key: "info",
+                  icon: <UserOutlined />,
+                  label: "Thông tin cá nhân",
+                },
+                {
+                  key: "security",
+                  icon: <LockOutlined />,
+                  label: "Bảo mật",
+                },
+                {
+                  key: "settings",
+                  icon: <SettingOutlined />,
+                  label: "Cài đặt",
+                },
+              ]}
+            />
+          </Card>
+        </Col>
 
-        <div style={{ marginTop: 24, display: "flex", gap: 12 }}>
-          <Button type="primary" onClick={() => navigate("/change-password")}>
-            Đổi mật khẩu
-          </Button>
-        </div>
-      </Card>
+        {/* Content */}
+        <Col span={18}>
+          <Card className="profile-content">
+            {activeTab === "info" && <AccountInfo />}
+            {activeTab === "security" && <AccountSecurity />}
+            {activeTab === "settings" && <AccountSettings />}
+          </Card>
+        </Col>
+      </Row>
     </div>
   );
 };
