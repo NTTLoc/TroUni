@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./PostDescription.scss";
 import { IoMdArrowDropdown, IoMdArrowDropup } from "react-icons/io";
 
@@ -7,6 +7,10 @@ const PostDescription = ({ description, phone }) => {
   const [expanded, setExpanded] = useState(false);
 
   const maskedPhone = phone?.slice(0, phone.length - 3) + "***"; // ẩn 3 số cuối
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [description]); // hoặc [postId] nếu có
 
   return (
     <div className="post-description">
