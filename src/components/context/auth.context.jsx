@@ -1,53 +1,21 @@
 import { createContext, useState } from "react";
 
-// Create container to store and share data
 export const AuthContext = createContext({
   isAuthenticated: false,
-  user: {
-    id: "",
-    email: "",
-    username: "",
-    role: "",
-    googleAccount: false,
-    phoneVerified: false,
-    idVerificationStatus: "",
-    status: "",
-    createdAt: "",
-    updatedAt: "",
-  },
+  user: null,
 });
 
-// create provider to wrap components that need to be shared data
-export const AuthWrapper = (props) => {
+export const AuthWrapper = ({ children }) => {
   const [auth, setAuth] = useState({
     isAuthenticated: false,
-    user: {
-      id: "",
-      email: "",
-      username: "",
-      role: "",
-      googleAccount: false,
-      phoneVerified: false,
-      idVerificationStatus: "",
-      status: "",
-      createdAt: "",
-      updatedAt: "",
-    },
+    user: null,
   });
 
   const [appLoading, setAppLoading] = useState(true);
 
   return (
-    <AuthContext.Provider
-      // shared-data
-      value={{
-        auth,
-        setAuth,
-        appLoading,
-        setAppLoading,
-      }}
-    >
-      {props.children}
+    <AuthContext.Provider value={{ auth, setAuth, appLoading, setAppLoading }}>
+      {children}
     </AuthContext.Provider>
   );
 };

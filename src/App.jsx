@@ -4,7 +4,8 @@ import Footer from "./components/footer/Footer";
 import { Spin } from "antd";
 import { useAuth } from "./hooks/useAuth";
 import { useEffect } from "react";
-import { getUserDetailsApi } from "./utils/api/userApi";
+import { getUserDetailsApi } from "./services/userApi";
+import { getUserApi } from "./services/authApi";
 
 function App() {
   const { setAuth, appLoading, setAppLoading } = useAuth();
@@ -15,25 +16,14 @@ function App() {
     const fetchAccount = async () => {
       try {
         setAppLoading(true);
-        const res = await getUserDetailsApi();
+        const res = await getUserApi();
 
         if (isMounted && res?.data) {
           const userData = res.data;
 
           setAuth({
             isAuthenticated: true,
-            user: {
-              id: userData.id,
-              email: userData.email ?? "",
-              username: userData.username ?? "",
-              role: userData.role ?? "STUDENT",
-              googleAccount: userData.googleAccount ?? false,
-              phoneVerified: userData.phoneVerified ?? false,
-              idVerificationStatus: userData.idVerificationStatus ?? "",
-              status: userData.status ?? "",
-              createdAt: userData.createdAt ?? "",
-              updatedAt: userData.updatedAt ?? "",
-            },
+            user: userData,
           });
         }
       } catch (error) {
@@ -41,18 +31,7 @@ function App() {
         if (isMounted) {
           setAuth({
             isAuthenticated: false,
-            user: {
-              id: "",
-              email: "",
-              username: "",
-              role: "",
-              googleAccount: false,
-              phoneVerified: false,
-              idVerificationStatus: "",
-              status: "",
-              createdAt: "",
-              updatedAt: "",
-            },
+            user: null,
           });
         }
       } finally {
@@ -63,7 +42,7 @@ function App() {
     fetchAccount();
 
     return () => {
-      isMounted = false; // cleanup
+      isMounted = false;
     };
   }, [setAuth, setAppLoading]);
 

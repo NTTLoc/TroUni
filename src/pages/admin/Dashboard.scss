@@ -1,0 +1,115 @@
+.admin-layout {
+  min-height: 100vh;
+
+  .admin-sider {
+    background: var(--theme-admin-3);
+
+    .logo {
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text);
+      font-weight: 700;
+      font-size: 18px;
+      background: var(--theme-admin-2);
+      margin-bottom: 8px;
+      border-bottom: 1px solid var(--text);
+    }
+
+    // menu item
+    .ant-menu-item {
+      border-radius: 6px;
+      margin: 4px 8px;
+      transition: all 0.3s;
+      color: var(--text);
+      background: var(--theme-admin-3);
+    }
+
+    .ant-menu-item:hover:not(.ant-menu-item-selected) {
+      color: var(--hover) !important;
+      background: transparent !important;
+
+      .anticon {
+        color: var(--hover) !important;
+      }
+    }
+
+    // item khi được chọn
+    .ant-menu-item-selected {
+      position: relative;
+      background: var(--primary) !important;
+      color: var(--text) !important;
+      overflow: hidden;
+      z-index: 1;
+
+      .anticon {
+        color: var(--text) !important;
+      }
+
+      &::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: rgba(55, 55, 55, 0.156);
+        pointer-events: none;
+        z-index: 2;
+      }
+    }
+  }
+
+  .admin-main {
+    background: var(--theme-admin);
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+
+    // .admin-header {
+    //   background: var(--bg);
+    //   padding: 0 24px;
+    //   display: flex;
+    //   align-items: center;
+    //   justify-content: space-between;
+    //   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+
+    //   .title {
+    //     margin: 0;
+    //     font-size: 20px;
+    //     font-weight: 600;
+    //     color: #333;
+    //   }
+    // }
+
+    .admin-content {
+      padding: 24px;
+      color: var(--text);
+
+      h2 {
+        font-size: 22px;
+        font-weight: 600;
+        margin-bottom: 20px;
+      }
+
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+
+        .card {
+          background: var(--theme-admin-2);
+          padding: 20px;
+          border-radius: 12px;
+          font-size: 16px;
+          font-weight: 500;
+          box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+          transition: all 0.2s ease;
+
+          &:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 6px 12px rgba(62, 62, 62, 0.12);
+          }
+        }
+      }
+    }
+  }
+}

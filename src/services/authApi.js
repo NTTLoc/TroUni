@@ -1,4 +1,4 @@
-import axios from "../axios.customize";
+import axios from "../utils/axios.customize";
 
 // Đăng ký user
 const createUserApi = (username, email, password) => {

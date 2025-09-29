@@ -1,16 +1,16 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "./AuthForm.scss";
-import { Badge, notification } from "antd";
+import { notification } from "antd";
 import { useAuth } from "../../hooks/useAuth";
 import { useGoogleLogin } from "@react-oauth/google";
 import { path } from "../../utils/constants";
-import { getUserDetailsApi } from "../../utils/api/userApi";
+import { getUserDetailsApi } from "../../services/userApi.js";
 import {
   loginGoogleApi,
   createUserApi,
   loginApi,
-} from "../../utils/api/authApi";
+} from "../../services/authApi.js";
 
 const AuthForm = ({ isRegister }) => {
   const navigate = useNavigate();
@@ -18,50 +18,42 @@ const AuthForm = ({ isRegister }) => {
 
   const handleAuthSuccess = async (res) => {
     if (res?.code === "SUCCESS" && res?.data) {
-      // Lưu token
+      const userData = {
+        id: res.data.id,
+        username: res.data.username,
+        email: res.data.email,
+        role: res.data.role,
+      };
+
+      // Lưu vào localStorage
       localStorage.setItem("access_token", res.data.token);
+      localStorage.setItem("user", JSON.stringify(userData));
 
-      // Lưu thông tin user
-      localStorage.setItem(
-        "user",
-        JSON.stringify({
-          id: res.data.id,
-          username: res.data.username,
-          email: res.data.email,
-          role: res.data.role,
-        })
-      );
+      if (res.data.role !== "ADMIN") {
+        try {
+          const profileRes = await getUserDetailsApi();
+          const profileData = {
+            id: profileRes.data.id,
+            userId: profileRes.data.userId,
+            fullName: profileRes.data.fullName,
+            gender: profileRes.data.gender,
+            phoneNumber: profileRes.data.phoneNumber,
+            avatarUrl: profileRes.data.avatarUrl,
+            badge: profileRes.data.badge,
+            createdAt: profileRes.data.createdAt,
+            updatedAt: profileRes.data.updatedAt,
+          };
+          localStorage.setItem("profile", JSON.stringify(profileData));
+        } catch (err) {
+          console.error("Lỗi lấy profile:", err);
+        }
 
-      const profileRes = await getUserDetailsApi();
+        navigate("/");
+      } else {
+        navigate(path.ADMIN);
+      }
 
-      // Lưu thông tin chi tiết của user
-      localStorage.setItem(
-        "profile",
-        JSON.stringify({
-          id: profileRes.data.id,
-          userId: profileRes.data.userId,
-          fullName: profileRes.data.fullName,
-          gender: profileRes.data.gender,
-          phoneNumber: profileRes.data.phoneNumber,
-          avatarUrl: profileRes.data.avatarUrl,
-          badge: profileRes.data.badge,
-          createdAt: profileRes.data.createdAt,
-          updatedAt: profileRes.data.updatedAt,
-        })
-      );
-
-      // Update state toàn cục
-      setAuth({
-        isAuthenticated: true,
-        user: {
-          id: res.data.id,
-          username: res.data.username,
-          email: res.data.email,
-          role: res.data.role,
-        },
-      });
-
-      navigate("/");
+      setAuth({ isAuthenticated: true, user: userData });
     }
   };
 
