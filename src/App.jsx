@@ -5,6 +5,7 @@ import { Spin } from "antd";
 import { useAuth } from "./hooks/useAuth";
 import { useEffect } from "react";
 import { getUserDetailsApi } from "./utils/api/userApi";
+import ScrollToTop from "./ScrollToTop";
 
 function App() {
   const { setAuth, appLoading, setAppLoading } = useAuth();
@@ -19,7 +20,6 @@ function App() {
 
         if (isMounted && res?.data) {
           const userData = res.data;
-
           setAuth({
             isAuthenticated: true,
             user: {
@@ -61,9 +61,8 @@ function App() {
     };
 
     fetchAccount();
-
     return () => {
-      isMounted = false; // cleanup
+      isMounted = false;
     };
   }, [setAuth, setAppLoading]);
 
@@ -76,6 +75,7 @@ function App() {
       ) : (
         <>
           <Navbar />
+          <ScrollToTop />
           <main className="main-content">
             <Outlet />
           </main>

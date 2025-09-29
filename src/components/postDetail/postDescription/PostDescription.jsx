@@ -10,7 +10,7 @@ const PostDescription = ({ description, phone }) => {
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
-  }, [description]); // hoặc [postId] nếu có
+  }, [description]);
 
   return (
     <div className="post-description">
