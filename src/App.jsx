@@ -4,8 +4,8 @@ import Footer from "./components/footer/Footer";
 import { Spin } from "antd";
 import { useAuth } from "./hooks/useAuth";
 import { useEffect } from "react";
-import { getUserDetailsApi } from "./services/userApi";
-import { getUserApi } from "./services/authApi";
+import { getUserDetailsApi } from "./utils/api/userApi";
+import ScrollToTop from "./ScrollToTop";
 
 function App() {
   const { setAuth, appLoading, setAppLoading } = useAuth();
@@ -20,7 +20,6 @@ function App() {
 
         if (isMounted && res?.data) {
           const userData = res.data;
-
           setAuth({
             isAuthenticated: true,
             user: userData,
@@ -40,7 +39,6 @@ function App() {
     };
 
     fetchAccount();
-
     return () => {
       isMounted = false;
     };
@@ -55,6 +53,7 @@ function App() {
       ) : (
         <>
           <Navbar />
+          <ScrollToTop />
           <main className="main-content">
             <Outlet />
           </main>
