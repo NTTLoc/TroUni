@@ -16,24 +16,13 @@ function App() {
     const fetchAccount = async () => {
       try {
         setAppLoading(true);
-        const res = await getUserDetailsApi();
+        const res = await getUserApi();
 
         if (isMounted && res?.data) {
           const userData = res.data;
           setAuth({
             isAuthenticated: true,
-            user: {
-              id: userData.id,
-              email: userData.email ?? "",
-              username: userData.username ?? "",
-              role: userData.role ?? "STUDENT",
-              googleAccount: userData.googleAccount ?? false,
-              phoneVerified: userData.phoneVerified ?? false,
-              idVerificationStatus: userData.idVerificationStatus ?? "",
-              status: userData.status ?? "",
-              createdAt: userData.createdAt ?? "",
-              updatedAt: userData.updatedAt ?? "",
-            },
+            user: userData,
           });
         }
       } catch (error) {
@@ -41,18 +30,7 @@ function App() {
         if (isMounted) {
           setAuth({
             isAuthenticated: false,
-            user: {
-              id: "",
-              email: "",
-              username: "",
-              role: "",
-              googleAccount: false,
-              phoneVerified: false,
-              idVerificationStatus: "",
-              status: "",
-              createdAt: "",
-              updatedAt: "",
-            },
+            user: null,
           });
         }
       } finally {

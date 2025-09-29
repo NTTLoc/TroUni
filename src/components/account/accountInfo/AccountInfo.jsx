@@ -9,7 +9,7 @@ const AccountInfo = () => {
   const [form] = Form.useForm();
   const [isEditing, setIsEditing] = useState(false);
 
-  const savedUser = JSON.parse(localStorage.getItem("user")); // ví dụ
+  const savedUser = JSON.parse(localStorage.getItem("user"));
   const email = savedUser?.email || "Không có email";
 
   // Khởi tạo form với dữ liệu hiện tại
@@ -23,7 +23,6 @@ const AccountInfo = () => {
   const handleSave = async () => {
     try {
       const values = await form.validateFields();
-      console.log(values);
       await updateProfile(values);
       message.success("Cập nhật profile thành công!");
       setIsEditing(false);
@@ -39,7 +38,7 @@ const AccountInfo = () => {
 
       <div className="profile-avatar">
         <Avatar size={100} src={profile?.avatarUrl} icon={<UserOutlined />} />
-        <span>{savedUser?.username || "Không có username"}</span>
+        <p>{savedUser?.username || "Không có username"}</p>
       </div>
 
       <Form

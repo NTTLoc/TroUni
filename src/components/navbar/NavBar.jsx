@@ -24,36 +24,25 @@ const Navbar = () => {
   const [profile, setProfile] = useState(null);
 
   useEffect(() => {
-    // Lấy data từ localStorage
-    const savedUser = localStorage.getItem("user");
-    const savedProfile = localStorage.getItem("profile");
+    // Đồng bộ user và profile khi auth.user thay đổi
+    if (auth.user) {
+      setUser(auth.user);
 
-    if (savedUser) {
-      setUser(JSON.parse(savedUser));
+      const savedProfile = localStorage.getItem("profile");
+      setProfile(savedProfile ? JSON.parse(savedProfile) : null);
+    } else {
+      setUser(null);
+      setProfile(null);
     }
-
-    if (savedProfile) {
-      setProfile(JSON.parse(savedProfile));
-    }
-  }, []);
+  }, [auth.user]);
 
   const handleLogout = () => {
     localStorage.removeItem("access_token");
     localStorage.removeItem("user");
+    localStorage.removeItem("profile");
     setAuth({
       isAuthenticated: false,
-      user: {
-        id: "",
-        email: "",
-        username: "",
-        role: "",
-        googleAccount: false,
-        phoneVerified: false,
-        idVerificationStatus: "",
-        status: "",
-        createdAt: "",
-        updatedAt: "",
-      },
+      user: null,
     });
     navigate("/");
   };
@@ -64,45 +53,46 @@ const Navbar = () => {
       {/* Header user info */}
       <div className="user-info">
         <Avatar src={profile?.avatarUrl || avatar} />
-        <div className="details">
+        <div>
           <h4
             onClick={() => navigate(path.ACCOUNT)}
             style={{ cursor: "pointer" }}
           >
             {user?.username || "Nguyễn Thanh Thiên Lộc"}
           </h4>
-          <p>Người theo dõi 0 · Đang theo dõi 0</p>
-          <p className="userid">TK Định danh: VO888292117776</p>
+          {/* Role-based info */}
+          {user?.role === "STUDENT" && (
+            <p>Người theo dõi 0 · Đang theo dõi 0</p>
+          )}
+
+          {user?.role === "LANDLORD" && <p>Chủ trọ · Số phòng đăng: 5</p>}
+
+          {user?.role === "ADMIN" && <p>👑 Quản trị viên hệ thống</p>}
+
+          <p className="userid">
+            TK Định danh: <br />
+            {user?.id}
+          </p>
         </div>
       </div>
 
-      {/* Coin section */}
-      <div className="wallet">
-        <span>
-          Số dư tài khoản: <b>0</b>
-        </span>
-        <Button type="primary" size="small">
-          Nạp ngay
-        </Button>
-      </div>
-
       <Divider style={{ margin: "8px 0" }} />
 
-      {/* Tiện ích */}
-      <div className="menu-section">
-        <Link to={path.SAVED}>❤️ Tin đăng đã lưu</Link>
-        <Link to={path.SAVED_SEARCH}>🔖 Tìm kiếm đã lưu</Link>
-        <Link to={path.HISTORY}>🕑 Lịch sử xem tin</Link>
-        <Link to={path.REVIEWS}>⭐ Đánh giá từ tôi</Link>
-      </div>
-
-      <Divider style={{ margin: "8px 0" }} />
-
-      {/* Dịch vụ trả phí */}
-      <div className="menu-section">
-        <Link to={path.PREMIUM}>💰 Số dư:</Link>
-        <Link to={path.PRO}>⚡ Gói PRO</Link>
-      </div>
+      {/* Menu theo role */}
+      {auth.user?.role === "ADMIN" ? (
+        <div className="menu-section">
+          <Link to={path.ADMIN}>📊 Dashboard Admin</Link>
+          <Link to={path.MANAGE_USERS}>👥 Quản lý người dùng</Link>
+          <Link to={path.MANAGE_POSTS}>📝 Quản lý tin</Link>
+        </div>
+      ) : (
+        <div className="menu-section">
+          <Link to={path.SAVED}>❤️ Tin đăng đã lưu</Link>
+          <Link to={path.SAVED_SEARCH}>🔖 Tìm kiếm đã lưu</Link>
+          <Link to={path.HISTORY}>🕑 Lịch sử xem tin</Link>
+          <Link to={path.REVIEWS}>⭐ Đánh giá từ tôi</Link>
+        </div>
+      )}
 
       <Divider style={{ margin: "8px 0" }} />
 
@@ -115,15 +105,12 @@ const Navbar = () => {
 
   return (
     <header className="navbar">
-      {/* Logo */}
       <div className="navbar__logo">
         <Link to="/">TroUni</Link>
       </div>
 
-      {/* Search */}
       <SearchBar />
 
-      {/* Links */}
       <nav className="navbar__links">
         <Link to={path.SAVED} className="icon-btn">
           <HeartOutlined />
@@ -135,8 +122,17 @@ const Navbar = () => {
         </Link>
 
         <div className="navbar__right">
-          <button className="btn-outline">Quản lý tin</button>
-          <button className="btn-solid">Đăng tin</button>
+          {/* Nếu là ADMIN thì hiện nút quản trị, ngược lại hiện Đăng tin */}
+          {auth.user?.role === "ADMIN" ? (
+            <button className="btn-solid" onClick={() => navigate(path.ADMIN)}>
+              Quản trị
+            </button>
+          ) : (
+            <>
+              <button className="btn-outline">Quản lý tin</button>
+              <button className="btn-solid">Đăng tin</button>
+            </>
+          )}
 
           {/* Avatar dropdown */}
           {auth.isAuthenticated ? (
@@ -164,7 +160,6 @@ const Navbar = () => {
           )}
         </div>
 
-        {/* Theme toggle */}
         <div className="theme-toggle" onClick={toggleTheme}>
           {theme === "dark" ? <MoonOutlined /> : <SunOutlined />}
         </div>

@@ -1,10 +1,10 @@
 import React from "react";
-import PostList from "../../components/post/postList/PostList";
-import PostCategory from "../../components/post/postCategory/PostCategory";
-import PostTab from "../../components/post/postTab/PostTab";
-import PriceFilter from "../../components/post/priceFilter/PriceFilter";
-import LocationFilter from "../../components/post/locationFilter/LocationFilter";
-import FilterBar from "../../components/post/filterBar/FilterBar";
+import FilterBar from "../../features/post/filterBar/FilterBar";
+import PostCategory from "../../features/post/PostCategory/PostCategory";
+import PostTab from "../../features/post/PostTab/PostTab";
+import PostList from "../../features/post/PostList/PostList";
+import PriceFilter from "../../features/post/PriceFilter/PriceFilter";
+import LocationFilter from "../../features/post/LocationFilter/LocationFilter";
 import "./Post.scss";
 
 const Post = () => {

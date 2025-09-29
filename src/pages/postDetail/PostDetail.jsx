@@ -2,12 +2,12 @@ import React from "react";
 import "./PostDetail.scss";
 import { useParams } from "react-router-dom";
 import dummyPosts from "../../utils/mockData";
-import PostGallery from "../../components/postDetail/postGallery/PostGallery";
-import PostMainInfo from "../../components/postDetail/postMainInfo/PostMainInfo";
-import PostOwner from "../../components/postDetail/postOwner/PostOwner";
-import PostContact from "../../components/postDetail/postContact/PostContact";
-import RelatedPosts from "../../components/postDetail/relatedPosts/RelatedPosts";
-import PostDescription from "../../components/postDetail/postDescription/PostDescription";
+import PostGallery from "../../features/postDetail/postGallery/PostGallery";
+import PostMainInfo from "../../features/postDetail/postMainInfo/PostMainInfo";
+import PostOwner from "../../features/postDetail/postOwner/PostOwner";
+import PostContact from "../../features/postDetail/postContact/PostContact";
+import RelatedPosts from "../../features/postDetail/relatedPosts/RelatedPosts";
+import PostDescription from "../../features/postDetail/postDescription/PostDescription";
 
 const PostDetail = () => {
   const { id } = useParams(); // lấy id từ URL

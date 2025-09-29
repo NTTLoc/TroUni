@@ -8,17 +8,7 @@ const routes = createBrowserRouter([
   {
     path: "/",
     element: <App />,
-    children: [
-      ...PublicRoutes,
-      {
-        element: <CheckAuth allowedRoles={["STUDENT"]} />,
-        children: [...PrivateRoutes],
-      },
-      // {
-      //   path: "unauthorized",
-      //   element: <Unauthorized />,
-      // },
-    ],
+    children: [...PublicRoutes, ...PrivateRoutes],
   },
 ]);
 

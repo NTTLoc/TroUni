@@ -4,7 +4,7 @@ import { UserOutlined, LockOutlined, SettingOutlined } from "@ant-design/icons";
 import AccountInfo from "../../components/account/accountInfo/AccountInfo";
 import AccountSecurity from "../../components/account/accountSecurity/AccountSecurity";
 import AccountSettings from "../../components/account/accountSettings/AccountSettings";
-import "./account.scss";
+import "./Account.scss";
 
 const Account = () => {
   const [activeTab, setActiveTab] = useState("info");

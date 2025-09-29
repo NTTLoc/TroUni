@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import "./VerifyEmail.scss";
-import { verifyEmailApi } from "../../utils/api/authApi.js";
+import { verifyEmailApi } from "../../services/authApi.js";
 import { path } from "../../utils/constants.js";
 
 const VerifyEmail = () => {

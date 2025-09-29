@@ -1,5 +1,5 @@
 import { createContext, useState, useEffect } from "react";
-import { getUserDetailsApi, updateProfileApi } from "../../utils/api/userApi";
+import { getUserDetailsApi, updateProfileApi } from "../../services/userApi";
 
 export const ProfileContext = createContext({
   profile: null,
