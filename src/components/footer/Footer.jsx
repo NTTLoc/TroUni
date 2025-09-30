@@ -7,6 +7,10 @@ import {
 } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import "./Footer.scss";
+import { FaBed } from "react-icons/fa";
+import { FaInfoCircle } from "react-icons/fa";
+import { MdContactMail } from "react-icons/md";
+import { AiFillHome } from "react-icons/ai";
 
 const Footer = () => {
   const navigate = useNavigate();
@@ -24,10 +28,22 @@ const Footer = () => {
       <div className="footer-col">
         <h4>Liên Kết Nhanh</h4>
         <ul>
-          <li onClick={() => navigate("/")}>Trang Chủ</li>
-          <li onClick={() => navigate("/posts")}>Phòng Trọ</li>
-          <li onClick={() => navigate("/about")}>Giới Thiệu</li>
-          <li onClick={() => navigate("/contact")}>Liên Hệ</li>
+          <li onClick={() => navigate("/")}>
+            <AiFillHome style={{ marginRight: 8 }} />
+            Trang Chủ
+          </li>
+          <li onClick={() => navigate("/posts")}>
+            <FaBed style={{ marginRight: 8 }} />
+            Phòng Trọ
+          </li>
+          <li onClick={() => navigate("/about")}>
+            <FaInfoCircle style={{ marginRight: 8 }} />
+            Giới Thiệu
+          </li>
+          <li onClick={() => navigate("/contact")}>
+            <MdContactMail style={{ marginRight: 8 }} />
+            Liên Hệ
+          </li>
         </ul>
       </div>
       {/* Cột liên hệ */}{" "}
