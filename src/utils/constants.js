@@ -11,6 +11,7 @@ export const path = {
   // PRIVATE
   ACCOUNT: "/account",
   ADMIN: "/admin",
+  MANAGE: "/manage",
 
   // NOT FOUND
   NOTFOUND: "/notfound",

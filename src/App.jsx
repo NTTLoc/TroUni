@@ -4,7 +4,7 @@ import Footer from "./components/footer/Footer";
 import { Spin } from "antd";
 import { useAuth } from "./hooks/useAuth";
 import { useEffect } from "react";
-import { getUserDetailsApi } from "./utils/api/userApi";
+import { getUserApi } from "./services/authApi";
 import ScrollToTop from "./ScrollToTop";
 
 function App() {

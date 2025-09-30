@@ -3,6 +3,7 @@ import { path } from "../../utils/constants";
 import Account from "../../pages/account/Account";
 import Dashboard from "../../pages/admin/Dashboard";
 import CheckAuth from "../checkAuth/checkAuth";
+import ManagePost from "../../pages/managePost/ManagePost";
 
 const PrivateRoutes = [
   {
@@ -15,13 +16,30 @@ const PrivateRoutes = [
       },
     ],
   },
+  // {
+  //   element: <CheckAuth allowedRoles={["STUDENT"]} />,
+  //   children: [
+  //     { path: path.ACCOUNT, element: <Account /> },
+  //     { path: path.MANAGE, element: <ManagePost /> },
+  //   ],
+  // },
   {
     path: path.ACCOUNT,
     element: <CheckAuth allowedRoles={["STUDENT"]} />,
     children: [
       {
-        index: path.ACCOUNT,
+        path: "",
         element: <Account />,
+      },
+    ],
+  },
+  {
+    path: path.MANAGE,
+    element: <CheckAuth allowedRoles={["STUDENT"]} />,
+    children: [
+      {
+        path: "",
+        element: <ManagePost />,
       },
     ],
   },

@@ -122,14 +122,13 @@ const Navbar = () => {
         </Link>
 
         <div className="navbar__right">
-          {/* Nếu là ADMIN thì hiện nút quản trị, ngược lại hiện Đăng tin */}
           {auth.user?.role === "ADMIN" ? (
-            <button className="btn-solid" onClick={() => navigate(path.ADMIN)}>
-              Quản trị
-            </button>
+            <></>
           ) : (
             <>
-              <button className="btn-outline">Quản lý tin</button>
+              <Link to={path.MANAGE} className="btn-outline">
+                Quản lý tin
+              </Link>
               <button className="btn-solid">Đăng tin</button>
             </>
           )}

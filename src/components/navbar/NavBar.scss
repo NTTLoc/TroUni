@@ -114,6 +114,7 @@
   .icon-btn {
     svg {
       font-size: 20px;
+      color: var(--text);
     }
   }
 
@@ -137,8 +138,9 @@
 
     .btn-outline {
       border: 1px solid var(--text-nav);
+      border-radius: 999px;
       background: transparent;
-      padding: 0 1.2rem;
+      padding: 0.3rem 0.8rem;
       color: var(--text-nav);
 
       &:hover {
@@ -212,7 +214,7 @@
 /* Dropdown Account Panel */
 .account-dropdown {
   width: 280px;
-  background: var(--bg);
+  background: var(--bg-navbar);
   border: 1px solid var(--border);
   border-radius: 10px;
   padding: 1rem;
@@ -279,7 +281,7 @@
       transition: background 0.2s ease;
 
       &:hover {
-        background: var(--bg2);
+        background: var(--bg);
       }
     }
   }
@@ -292,7 +294,7 @@
     transition: background 0.2s ease;
 
     &:hover {
-      background: var(--bg2);
+      background: var(--bg);
     }
   }
 }
