@@ -8,6 +8,11 @@ export const path = {
   REGISTER: "/register",
   VERIFY_EMAIL: "/verify-email",
 
+  // ROOM MANAGEMENT
+  ROOMS: "/rooms",
+  ROOM_CREATE: "/rooms/create",
+  ROOM_EDIT: "/rooms/edit/:id",
+
   // PRIVATE
   ACCOUNT: "/account",
   ADMIN: "/admin",

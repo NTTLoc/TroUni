@@ -1,0 +1,286 @@
+// Room Form Styles
+.room-form-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 24px;
+
+    .room-form-card {
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+
+        .ant-card-body {
+            padding: 32px;
+        }
+    }
+
+    .form-header {
+        text-align: center;
+        margin-bottom: 32px;
+        padding-bottom: 24px;
+        border-bottom: 1px solid #f0f0f0;
+
+        h3 {
+            margin: 0 0 8px 0;
+            color: #1890ff;
+        }
+
+        .form-description {
+            margin: 0;
+            color: #666;
+            font-size: 14px;
+        }
+    }
+
+    .form-section {
+        margin-bottom: 32px;
+
+        h4 {
+            margin: 0 0 16px 0;
+            color: #333;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .section-description {
+            margin: 0 0 16px 0;
+            color: #666;
+            font-size: 13px;
+        }
+    }
+
+    .amenities-placeholder {
+        padding: 40px;
+        text-align: center;
+        background: #fafafa;
+        border-radius: 8px;
+        border: 2px dashed #d9d9d9;
+
+        p {
+            margin: 0;
+            color: #999;
+            font-style: italic;
+        }
+    }
+
+    .form-actions {
+        margin-top: 32px;
+        padding-top: 24px;
+        border-top: 1px solid #f0f0f0;
+        text-align: center;
+
+        .ant-btn {
+            min-width: 120px;
+            height: 40px;
+        }
+    }
+}
+
+// Upload component customization
+.ant-upload-list-picture-card {
+    .ant-upload-list-item {
+        border-radius: 8px;
+        overflow: hidden;
+    }
+}
+
+.ant-upload-select-picture-card {
+    border-radius: 8px;
+    border: 2px dashed #d9d9d9;
+    transition: all 0.3s ease;
+
+    &:hover {
+        border-color: #1890ff;
+    }
+}
+
+// Form item customization
+.ant-form-item-label>label {
+    font-weight: 500;
+    color: #333;
+}
+
+.ant-input,
+.ant-input-number,
+.ant-select-selector {
+    border-radius: 6px;
+}
+
+.ant-input:focus,
+.ant-input-focused,
+.ant-input-number:focus,
+.ant-input-number-focused,
+.ant-select-focused .ant-select-selector {
+    border-color: #1890ff;
+    box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
+}
+
+// Responsive Design
+@media (max-width: 768px) {
+    .room-form-container {
+        padding: 16px;
+
+        .room-form-card .ant-card-body {
+            padding: 20px;
+        }
+
+        .form-header {
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+
+            h3 {
+                font-size: 20px;
+            }
+        }
+
+        .form-section {
+            margin-bottom: 24px;
+        }
+
+        .form-actions {
+            margin-top: 24px;
+            padding-top: 16px;
+
+            .ant-btn {
+                min-width: 100px;
+                height: 36px;
+            }
+        }
+    }
+}
+
+@media (max-width: 480px) {
+    .room-form-container {
+        padding: 12px;
+
+        .room-form-card .ant-card-body {
+            padding: 16px;
+        }
+
+        .form-header h3 {
+            font-size: 18px;
+        }
+
+        .form-actions {
+            .ant-space {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .ant-btn {
+                flex: 1;
+                max-width: 120px;
+            }
+        }
+    }
+}
+
+// Dark theme support
+[data-theme="dark"] {
+    .room-form-container {
+        .room-form-card {
+            background: #1f1f1f;
+            border-color: #303030;
+        }
+
+        .form-header {
+            border-bottom-color: #303030;
+
+            h3 {
+                color: #69c0ff;
+            }
+
+            .form-description {
+                color: #999;
+            }
+        }
+
+        .form-section {
+            h4 {
+                color: #fff;
+            }
+
+            .section-description {
+                color: #999;
+            }
+        }
+
+        .amenities-placeholder {
+            background: #2a2a2a;
+            border-color: #404040;
+
+            p {
+                color: #666;
+            }
+        }
+
+        .form-actions {
+            border-top-color: #303030;
+        }
+    }
+
+    .ant-form-item-label>label {
+        color: #fff;
+    }
+
+    .ant-upload-select-picture-card {
+        border-color: #404040;
+        background: #2a2a2a;
+
+        &:hover {
+            border-color: #69c0ff;
+        }
+    }
+}
+
+// Animation for form sections
+.form-section {
+    animation: fadeInUp 0.3s ease-out;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+// Loading state
+.ant-form-item-control-input-content {
+    .ant-btn-loading {
+        pointer-events: none;
+    }
+}
+
+// Error state styling
+.ant-form-item-has-error {
+
+    .ant-input,
+    .ant-input-number,
+    .ant-select-selector {
+        border-color: #ff4d4f;
+    }
+
+    .ant-input:focus,
+    .ant-input-focused,
+    .ant-input-number:focus,
+    .ant-input-number-focused,
+    .ant-select-focused .ant-select-selector {
+        border-color: #ff4d4f;
+        box-shadow: 0 0 0 2px rgba(255, 77, 79, 0.2);
+    }
+}
+
+// Success state styling
+.ant-form-item-has-success {
+
+    .ant-input,
+    .ant-input-number,
+    .ant-select-selector {
+        border-color: #52c41a;
+    }
+}
