@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import FilterBar from "../../features/post/filterBar/FilterBar";
 import PostCategory from "../../features/post/PostCategory/PostCategory";
 import PostTab from "../../features/post/PostTab/PostTab";
@@ -8,6 +8,12 @@ import LocationFilter from "../../features/post/LocationFilter/LocationFilter";
 import "./Post.scss";
 
 const Post = () => {
+  const [activeTab, setActiveTab] = useState("all");
+
+  const handleTabChange = (tab) => {
+    setActiveTab(tab);
+  };
+
   return (
     <div className="post-page">
       <div className="post-left">
@@ -16,8 +22,8 @@ const Post = () => {
           <PostCategory />
         </div>
         <div className="bottom">
-          <PostTab />
-          <PostList />
+          <PostTab onTabChange={handleTabChange} />
+          <PostList activeTab={activeTab} />
         </div>
       </div>
 

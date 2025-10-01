@@ -32,20 +32,32 @@ export const useRooms = (initialParams = {}) => {
     setError(null);
     
     try {
+      console.log("🔄 useRooms: Fetching rooms with params:", { ...pagination, ...params });
       const response = await getAllRoomsApi({
         ...pagination,
         ...params
       });
       
+      console.log("📡 useRooms: API response:", response);
+      console.log("📡 useRooms: Response data:", response?.data);
+      
       if (response?.data) {
-        setRooms(response.data.content || []);
+        // API trả về response.data.content, không phải response.data.content
+        const roomsData = response.data.content || [];
+        console.log("📦 useRooms: Rooms data:", roomsData);
+        console.log("📦 useRooms: Total elements:", response.data.totalElements);
+        setRooms(roomsData);
         setTotalElements(response.data.totalElements || 0);
         setTotalPages(response.data.totalPages || 0);
         setPagination(prev => ({ ...prev, ...params }));
+        return roomsData; // Return data for direct use
       }
+      
+      return [];
     } catch (err) {
       setError(err?.message || "Có lỗi xảy ra khi tải danh sách phòng");
-      console.error("Error fetching rooms:", err);
+      console.error("❌ useRooms: Error fetching rooms:", err);
+      throw err; // Re-throw để PostList có thể catch
     } finally {
       setLoading(false);
     }
@@ -89,10 +101,10 @@ export const useRooms = (initialParams = {}) => {
     fetchRooms({ page: 0 });
   }, [fetchRooms]);
 
-  // Initial load
-  useEffect(() => {
-    fetchRooms();
-  }, []);
+  // Initial load - tắt auto-load để PostList tự quản lý
+  // useEffect(() => {
+  //   fetchRooms();
+  // }, []);
 
   return {
     rooms,
@@ -236,27 +248,37 @@ export const useMyRooms = () => {
     setError(null);
     
     try {
+      console.log("🔄 useMyRooms: Fetching my rooms...");
       const response = await getMyRoomsApi({
         ...pagination,
         ...params
       });
       
+      console.log("📡 useMyRooms: API response:", response);
+      
       if (response?.data) {
-        setMyRooms(response.data.content || []);
+        const roomsData = response.data.content || [];
+        console.log("📦 useMyRooms: My rooms data:", roomsData);
+        setMyRooms(roomsData);
         setTotalElements(response.data.totalElements || 0);
         setPagination(prev => ({ ...prev, ...params }));
+        return roomsData;
       }
+      
+      return [];
     } catch (err) {
       setError(err?.message || "Có lỗi xảy ra khi tải danh sách phòng của bạn");
-      console.error("Error fetching my rooms:", err);
+      console.error("❌ useMyRooms: Error fetching my rooms:", err);
+      throw err;
     } finally {
       setLoading(false);
     }
   }, [pagination]);
 
-  useEffect(() => {
-    fetchMyRooms();
-  }, []);
+  // Tắt auto-load để component tự quản lý
+  // useEffect(() => {
+  //   fetchMyRooms();
+  // }, []);
 
   return {
     myRooms,

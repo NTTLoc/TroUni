@@ -2,6 +2,7 @@ import React from "react";
 import { path } from "../../utils/constants";
 import Account from "../../pages/account/Account";
 import Dashboard from "../../pages/admin/Dashboard";
+import LandlordDashboard from "../../pages/landlord/LandlordDashboard";
 import CheckAuth from "../checkAuth/checkAuth";
 import ManagePost from "../../pages/managePost/ManagePost";
 
@@ -40,6 +41,16 @@ const PrivateRoutes = [
       {
         path: "",
         element: <ManagePost />,
+      },
+    ],
+  },
+  {
+    path: path.LANDLORD_DASHBOARD,
+    element: <CheckAuth allowedRoles={["LANDLORD"]} />,
+    children: [
+      {
+        path: "",
+        element: <LandlordDashboard />,
       },
     ],
   },

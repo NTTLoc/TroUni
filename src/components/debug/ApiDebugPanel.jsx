@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Button, Card, Space, Typography, Alert, Divider } from "antd";
 import { BugOutlined, ApiOutlined, CheckCircleOutlined, DatabaseOutlined } from "@ant-design/icons";
 import { testApiConnection, testCreateRoomComplete, testCreateRoomMinimal, debugRequestHeaders } from "../../utils/apiDebug";
-import { createRoomApi } from "../../services/roomApi";
+import { createRoomApi, getAllRoomsApi } from "../../services/roomApi";
 
 const { Title, Text, Paragraph } = Typography;
 
@@ -70,6 +70,21 @@ const ApiDebugPanel = () => {
     }
   };
 
+  const testGetAllRooms = async () => {
+    try {
+      setLoading(true);
+      console.log("🧪 Testing getAllRooms API...");
+      const response = await getAllRoomsApi({ page: 0, size: 10 });
+      console.log("📦 getAllRooms response:", response);
+      setResults(prev => ({ ...prev, getAllRooms: { success: true, data: response } }));
+    } catch (error) {
+      console.error("❌ getAllRooms error:", error);
+      setResults(prev => ({ ...prev, getAllRooms: { success: false, error: error.message || error } }));
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div style={{ padding: "24px", maxWidth: "800px", margin: "0 auto" }}>
       <Card>
@@ -109,6 +124,15 @@ const ApiDebugPanel = () => {
             block
           >
             Test Tạo Phòng (Dữ liệu tối thiểu)
+          </Button>
+
+          <Button
+            icon={<DatabaseOutlined />}
+            loading={loading}
+            onClick={testGetAllRooms}
+            block
+          >
+            Test Lấy Danh Sách Phòng
           </Button>
         </Space>
 
@@ -172,6 +196,19 @@ const ApiDebugPanel = () => {
                     : `❌ Test thất bại: ${results.minimalTest.error}`
                 }
                 type={results.minimalTest.success ? "success" : "error"}
+                style={{ marginBottom: "16px" }}
+              />
+            )}
+
+            {results.getAllRooms && (
+              <Alert
+                message="Get All Rooms Test"
+                description={
+                  results.getAllRooms.success 
+                    ? `✅ Lấy danh sách phòng thành công! Tìm thấy ${results.getAllRooms.data?.data?.content?.length || 0} phòng trọ` 
+                    : `❌ Test thất bại: ${results.getAllRooms.error}`
+                }
+                type={results.getAllRooms.success ? "success" : "error"}
                 style={{ marginBottom: "16px" }}
               />
             )}

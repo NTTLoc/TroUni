@@ -59,6 +59,8 @@ export const deleteRoomApi = (roomId) => {
  */
 export const getAllRoomsApi = (params = {}) => {
   const URL_API = "/rooms";
+  console.log("🌐 getAllRoomsApi: Calling API:", URL_API);
+  console.log("🌐 getAllRoomsApi: With params:", params);
   return axios.get(URL_API, { params });
 };
 

@@ -17,6 +17,7 @@ export const path = {
   ACCOUNT: "/account",
   ADMIN: "/admin",
   MANAGE: "/manage",
+  LANDLORD_DASHBOARD: "/landlord",
 
   // NOT FOUND
   NOTFOUND: "/notfound",

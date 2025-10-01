@@ -123,13 +123,22 @@ const Navbar = () => {
 
         <div className="navbar__right">
           {auth.user?.role === "ADMIN" ? (
-            <></>
+            <Link to={path.ADMIN} className="btn-outline">
+              Admin Dashboard
+            </Link>
+          ) : auth.user?.role === "LANDLORD" ? (
+            <>
+              <Link to={path.LANDLORD_DASHBOARD} className="btn-outline">
+                Dashboard
+              </Link>
+              <Link to={path.ROOM_CREATE} className="btn-outline">Đăng tin</Link>
+            </>
           ) : (
             <>
               <Link to={path.MANAGE} className="btn-outline">
                 Quản lý tin
               </Link>
-              <button className="btn-solid">Đăng tin</button>
+              <Link to={path.ROOM_CREATE} className="btn-outline">Đăng tin</Link>
             </>
           )}
 
