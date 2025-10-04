@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "./AuthForm.scss";
 import { notification } from "antd";
@@ -11,13 +11,17 @@ import {
   createUserApi,
   loginApi,
 } from "../../services/authApi.js";
+import useMessage from "../../hooks/useMessage.js";
 
 const AuthForm = ({ isRegister }) => {
   const navigate = useNavigate();
   const { setAuth } = useAuth();
+  const message = useMessage();
 
   const handleAuthSuccess = async (res) => {
     if (res?.code === "SUCCESS" && res?.data) {
+      message.success("Đăng nhập thành công", 1);
+
       const userData = {
         id: res.data.id,
         username: res.data.username,
@@ -64,17 +68,20 @@ const AuthForm = ({ isRegister }) => {
     const email = formData.get("email");
     const password = formData.get("password");
     const username = formData.get("username");
+    const confirmPassword = formData.get("confirmPassword");
+    const role = formData.get("role");
 
     try {
       if (isRegister) {
         // gọi API đăng ký
-        const res = await createUserApi(username, email, password);
+        const res = await createUserApi(username, email, password, role);
 
         if (res?.code === "SUCCESS") {
           navigate(path.VERIFY_EMAIL, { state: { email } });
         }
       } else {
         // gọi API đăng nhập
+        console.log(password);
         const res = await loginApi(email, password);
         handleAuthSuccess(res);
       }
@@ -131,9 +138,24 @@ const AuthForm = ({ isRegister }) => {
               <input
                 type="password"
                 name="password"
-                placeholder="Tạo mật khẩu"
+                placeholder="Nhập mật khẩu"
                 required
               />
+
+              <label>Xác nhận mật khẩu</label>
+              <input
+                type="password"
+                name="confirmPassword"
+                placeholder="Nhập lại mật khẩu"
+                required
+              />
+
+              <label>Bạn là?</label>
+              <select name="role" required>
+                <option value="">-- Chọn vai trò --</option>
+                <option value="STUDENT">Sinh viên</option>
+                <option value="LANDLORD">Chủ trọ</option>
+              </select>
 
               <button type="submit" className="register__submit">
                 Đăng ký

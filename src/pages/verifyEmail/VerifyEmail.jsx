@@ -3,32 +3,33 @@ import { useNavigate, useLocation } from "react-router-dom";
 import "./VerifyEmail.scss";
 import { verifyEmailApi } from "../../services/authApi.js";
 import { path } from "../../utils/constants.js";
+import useMessage from "../../hooks/useMessage.js";
 
 const VerifyEmail = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const message = useMessage();
 
   const email = location.state?.email || "";
   const [code, setCode] = useState("");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
 
   const handleVerify = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setError("");
 
     try {
       const res = await verifyEmailApi(email, code);
 
       if (res?.code === "200") {
+        message.success("Đăng ký tài khoản thành công.");
         navigate(path.LOGIN);
       } else {
-        setError(res?.message || "Mã xác thực không đúng");
+        message.error("Mã xác thực không đúng!");
       }
     } catch (err) {
       console.error("Verify error:", err);
-      setError("Có lỗi xảy ra, thử lại sau.");
+      message.error("Có lỗi xảy ra, thử lại sau.");
     } finally {
       setLoading(false);
     }
@@ -52,7 +53,6 @@ const VerifyEmail = () => {
             onChange={(e) => setCode(e.target.value)}
             required
           />
-          {error && <div className="verify-error">{error}</div>}
 
           <button type="submit" disabled={loading}>
             {loading ? "Đang xác minh..." : "Xác minh"}

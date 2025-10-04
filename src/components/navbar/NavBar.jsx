@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "./NavBar.scss";
 import SearchBar from "../searchbar/SearchBar";
 import { path } from "../../utils/constants";
 import { useAuth } from "../../hooks/useAuth";
 import useTheme from "../../hooks/useTheme";
-import { Dropdown, Avatar, Space, Badge, Divider, Button } from "antd";
+import { Dropdown, Avatar, Space, Badge, Divider } from "antd";
 import {
   MoonOutlined,
   SunOutlined,
@@ -15,13 +15,14 @@ import {
   BellOutlined,
 } from "@ant-design/icons";
 import avatar from "../../assets/image/avatar.jpg";
+import { ProfileContext } from "../context/profile.context";
 
 const Navbar = () => {
   const navigate = useNavigate();
   const { auth, setAuth } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const [user, setUser] = useState(null);
-  const [profile, setProfile] = useState(null);
+  const { profile, setProfile } = useContext(ProfileContext);
 
   useEffect(() => {
     // Đồng bộ user và profile khi auth.user thay đổi
@@ -40,10 +41,14 @@ const Navbar = () => {
     localStorage.removeItem("access_token");
     localStorage.removeItem("user");
     localStorage.removeItem("profile");
+
     setAuth({
       isAuthenticated: false,
       user: null,
     });
+
+    setProfile(null);
+
     navigate("/");
   };
 
