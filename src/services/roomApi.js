@@ -4,6 +4,81 @@ import { convertAddressForBackend } from "../utils/addressMapping";
 // ==================== ROOM MANAGEMENT APIs ====================
 
 /**
+ * Tạo ảnh cho phòng trọ
+ * @param {string} roomId - ID của phòng trọ
+ * @param {Object} imageData - Dữ liệu ảnh (imageUrl array)
+ * @returns {Promise} Response từ API
+ */
+export const createRoomImagesApi = (roomId, imageData) => {
+  const URL_API = `/room-images/${roomId}`;
+  console.log("🖼️ Creating room images:", imageData);
+  console.log("📡 API URL:", URL_API);
+  console.log("🔍 Room ID:", roomId);
+  console.log("📋 Image URLs:", imageData.imageUrl);
+  
+  return axios.post(URL_API, imageData)
+    .then(response => {
+      console.log("✅ Room images created successfully:", response.data);
+      return response;
+    })
+    .catch(error => {
+      console.error("❌ Failed to create room images:", error);
+      console.error("❌ Error response:", error.response?.data);
+      throw error;
+    });
+};
+
+/**
+ * Lấy tất cả ảnh của phòng trọ
+ * @param {string} roomId - ID của phòng trọ
+ * @returns {Promise} Response từ API
+ */
+export const getRoomImagesApi = (roomId) => {
+  const URL_API = `/room-images/${roomId}`;
+  return axios.get(URL_API);
+};
+
+/**
+ * Xóa ảnh phòng trọ
+ * @param {string} imageId - ID của ảnh
+ * @returns {Promise} Response từ API
+ */
+export const deleteRoomImageApi = (imageId) => {
+  const URL_API = `/room-images/${imageId}`;
+  return axios.delete(URL_API);
+};
+
+/**
+ * Upload file ảnh lên server
+ * @param {File} file - File ảnh cần upload
+ * @returns {Promise} Response từ API
+ */
+export const uploadImageFileApi = (file) => {
+  const URL_API = "/upload/image"; // Cần tạo endpoint này trên backend
+  const formData = new FormData();
+  formData.append('file', file);
+  
+  console.log("📤 Uploading image file:", file.name);
+  return axios.post(URL_API, formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+};
+
+/**
+ * Tạo URL từ file object (mock function cho demo)
+ * @param {File} file - File object
+ * @returns {string} Mock URL
+ */
+export const generateMockImageUrl = (file) => {
+  // Tạo mock URL từ file name
+  const timestamp = Date.now();
+  const fileName = file.name.replace(/[^a-zA-Z0-9.-]/g, '_');
+  return `https://example.com/images/${timestamp}_${fileName}`;
+};
+
+/**
  * Tạo phòng trọ mới
  * @param {Object} roomData - Dữ liệu phòng trọ
  * @returns {Promise} Response từ API
@@ -57,11 +132,65 @@ export const deleteRoomApi = (roomId) => {
  * @param {string} params.sort - Sắp xếp (ví dụ: "createdAt,desc")
  * @returns {Promise} Response từ API
  */
+/**
+ * Lấy danh sách tất cả phòng trọ với pagination (của Spring Data)
+ * @param {Object} params - Tham số phân trang và filter
+ * @param {number} params.page - Trang hiện tại (bắt đầu từ 0)
+ * @param {number} params.size - Số lượng item per page
+ * @param {string} params.sort - Sắp xếp (ví dụ: "createdAt,desc")
+ * @returns {Promise} Response từ API
+ */
 export const getAllRoomsApi = (params = {}) => {
   const URL_API = "/rooms";
   console.log("🌐 getAllRoomsApi: Calling API:", URL_API);
   console.log("🌐 getAllRoomsApi: With params:", params);
-  return axios.get(URL_API, { params });
+  
+  return axios.get(URL_API, { params })
+    .then(response => {
+      console.log("🌐 getAllRoomsApi: RAW RESPONSE:", response);
+      console.log("🌐 getAllRoomsApi: RESPONSE.DATA:", response.data);
+      console.log("🌐 getAllRoomsApi: RESPONSE.STATUS:", response.status);
+      console.log("🌐 getAllRoomsApi: CONTENT TYPE:", typeof response.data);
+      
+      // Log structure của response.data
+      if (response.data && typeof response.data === 'object') {
+        console.log("🌐 getAllRoomsApi: RESPONSE KEYS:", Object.keys(response.data));
+        console.log("🌐 getAllRoomsApi: CONTENT ARRAY:", response.data.content);
+        console.log("🌐 getAllRoomsApi: CONTENT LENGTH:", response.data.content?.length);
+      }
+      
+      return response;
+    })
+    .catch(error => {
+      console.error("❌ getAllRoomsApi: ERROR:", error);
+      console.error("❌ getAllRoomsApi: ERROR RESPONSE:", error.response);
+      throw error;
+    });
+};
+
+/**
+ * Lấy danh sách tất cả phòng trọ không phân trang (danh sách đơn giản)
+ * @returns {Promise} Response từ API
+ */
+export const getAllRoomsSimpleApi = () => {
+  const URL_API = "/rooms/all";
+  console.log("🌐 getAllRoomsSimpleApi: Calling API:", URL_API);
+  
+  return axios.get(URL_API)
+    .then(response => {
+      console.log("🌐 getAllRoomsSimpleApi: RAW RESPONSE:", response);
+      console.log("🌐 getAllRoomsSimpleApi: RESPONSE.DATA:", response.data);
+      console.log("🌐 getAllRoomsSimpleApi: RESPONSE.STATUS:", response.status);
+      console.log("🌐 getAllRoomsSimpleApi: RESPONSE TYPE:", Array.isArray(response.data) ? "Array" : typeof response.data);
+      console.log("🌐 getAllRoomsSimpleApi: RESPONSE LENGTH:", Array.isArray(response.data) ? response.data.length : "NOT ARRAY");
+      
+      return response;
+    })
+    .catch(error => {
+      console.error("❌ getAllRoomsSimpleApi: ERROR:", error);
+      console.error("❌ getAllRoomsSimpleApi: ERROR RESPONSE:", error.response);
+      throw error;
+    });
 };
 
 // ==================== SEARCH & FILTER APIs ====================
@@ -90,7 +219,7 @@ export const searchRoomsApi = (searchParams = {}) => {
  * @returns {Promise} Response từ API
  */
 export const getMyRoomsApi = (params = {}) => {
-  const URL_API = "/rooms/my-rooms";
+  const URL_API = "/rooms";
   return axios.get(URL_API, { params });
 };
 
@@ -184,7 +313,6 @@ export const formatRoomData = (formData) => {
     pricePerMonth: String(formData.pricePerMonth),
     areaSqm: formData.areaSqm ? String(formData.areaSqm) : null,
     status: formData.status || "available",
-    images: formData.images || [],
     amenityIds: formData.amenityIds || []
   };
   

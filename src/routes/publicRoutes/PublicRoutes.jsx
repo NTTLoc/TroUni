@@ -9,6 +9,10 @@ import VerifyEmail from "../../pages/verifyEmail/VerifyEmail";
 import RoomList from "../../components/room/RoomList";
 import RoomForm from "../../components/room/RoomForm";
 import ApiDebugPanel from "../../components/debug/ApiDebugPanel";
+import TestRoomApi from "../../components/debug/TestRoomApi";
+import RoomApiComparison from "../../components/debug/RoomApiComparison";
+import AllRooms from "../../pages/rooms/AllRooms";
+import RoomDetail from "../../pages/rooms/RoomDetail";
 import { path } from "../../utils/constants";
 
 const PublicRoutes = [
@@ -22,10 +26,15 @@ const PublicRoutes = [
   { path: path.VERIFY_EMAIL, element: <VerifyEmail /> },
   // Room management routes
   { path: "/rooms", element: <RoomList /> },
+  { path: "/rooms/all", element: <AllRooms /> },
+  { path: "/rooms/:id", element: <RoomDetail /> },
+  { path: "/rooms/all/:id", element: <RoomDetail /> },
   { path: "/rooms/create", element: <RoomForm /> },
   { path: "/rooms/edit/:id", element: <RoomForm /> },
   // Debug routes
   { path: "/debug/api", element: <ApiDebugPanel /> },
+  { path: "/debug/test-rooms", element: <TestRoomApi /> },
+  { path: "/debug/compare-apis", element: <RoomApiComparison /> },
 ];
 
 export default PublicRoutes;

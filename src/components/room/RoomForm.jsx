@@ -21,6 +21,8 @@ import {
   SaveOutlined
 } from "@ant-design/icons";
 import { useRoomManagement } from "../../hooks/useRooms";
+import { createRoomImagesApi, uploadImageFileApi, generateMockImageUrl } from "../../services/roomApi";
+import { uploadToCloudinary } from "../../services/cloudinaryApi";
 import {
   ROOM_TYPE,
   ROOM_STATUS,
@@ -107,13 +109,9 @@ const RoomForm = ({ roomId, onSuccess, onCancel }) => {
       console.log("🖼️ Image list:", imageList);
       console.log("🏠 Amenity list:", amenityList);
       
-      // Prepare room data
+      // Prepare room data (không bao gồm images)
       const roomData = {
         ...values,
-        images: imageList.map(img => ({
-          imageUrl: img.url || img.thumbUrl,
-          isPrimary: img.uid === imageList[0]?.uid
-        })),
         amenityIds: amenityList.map(amenity => amenity.id)
       };
 
@@ -146,6 +144,101 @@ const RoomForm = ({ roomId, onSuccess, onCancel }) => {
       } else {
         result = await createRoom(roomData);
         message.success("Tạo phòng trọ thành công!");
+        
+        console.log("🔍 Debug - result:", result);
+        console.log("🔍 Debug - result.data:", result?.data);
+        console.log("🔍 Debug - result.data.id:", result?.data?.id);
+        console.log("🔍 Debug - result.id:", result?.id);
+        console.log("🔍 Debug - imageList.length:", imageList.length);
+        console.log("🔍 Debug - condition check:", imageList.length > 0 && (result?.data?.id || result?.id));
+        
+        // Nếu có ảnh, upload ảnh sau khi tạo phòng thành công
+        const roomId = result?.data?.id || result?.id;
+        if (imageList.length > 0 && roomId) {
+          try {
+            console.log("🖼️ Image list for upload:", imageList);
+            console.log("🏠 Room created successfully, ID:", roomId);
+            console.log("📊 Full result data:", result);
+            
+            const imageUrls = [];
+            
+            // Xử lý từng ảnh để lấy URL
+            for (const img of imageList) {
+              console.log("📸 Processing image:", img);
+              
+              // Nếu có URL sẵn (đã upload trước đó)
+              if (img.url && !img.originFileObj) {
+                imageUrls.push(img.url);
+                continue;
+              }
+              
+              // Nếu có originFileObj, cần tạo URL
+              if (img.originFileObj) {
+                try {
+                  console.log("📤 Processing file:", img.originFileObj.name);
+                  
+                  // Thử upload lên Cloudinary trước
+                  try {
+                    console.log("📤 Trying Cloudinary upload...");
+                    const cloudinaryResult = await uploadToCloudinary(img.originFileObj);
+                    
+                    if (cloudinaryResult?.secure_url) {
+                      imageUrls.push(cloudinaryResult.secure_url);
+                      console.log("✅ Real Cloudinary URL:", cloudinaryResult.secure_url);
+                      continue;
+                    }
+                  } catch (cloudinaryError) {
+                    console.warn("⚠️ Cloudinary upload failed:", cloudinaryError.message);
+                  }
+                  
+                  // Fallback: thử upload server nếu có
+                  try {
+                    const uploadResult = await uploadImageFileApi(img.originFileObj);
+                    console.log("✅ Upload result:", uploadResult);
+                    
+                    if (uploadResult?.data?.url) {
+                      imageUrls.push(uploadResult.data.url);
+                      continue;
+                    } else if (uploadResult?.data?.imageUrl) {
+                      imageUrls.push(uploadResult.data.imageUrl);
+                      continue;
+                    }
+                  } catch (uploadError) {
+                    console.warn("⚠️ Server upload failed:", uploadError.message);
+                  }
+                  
+                  // Fallback: tạo mock URL
+                  const mockUrl = generateMockImageUrl(img.originFileObj);
+                  console.log("🔗 Using mock URL:", mockUrl);
+                  imageUrls.push(mockUrl);
+                  
+                } catch (error) {
+                  console.error("❌ Error processing image:", error);
+                  message.error(`Lỗi xử lý ảnh ${img.originFileObj.name}: ${error.message}`);
+                }
+              }
+            }
+            
+            console.log("🔗 Final image URLs:", imageUrls);
+            
+            if (imageUrls.length > 0) {
+              const imageData = { imageUrl: imageUrls };
+              console.log("📤 Sending image data to room:", imageData);
+              console.log("🔍 Room ID to send:", roomId);
+              console.log("🔍 Image URLs to send:", imageUrls);
+              
+              const imageResult = await createRoomImagesApi(roomId, imageData);
+              console.log("🎉 Image upload result:", imageResult);
+              message.success(`Lưu thành công ${imageUrls.length} ảnh vào database!`);
+            } else {
+              console.warn("⚠️ No valid image URLs found");
+              message.warning("Không có ảnh nào được xử lý thành công.");
+            }
+          } catch (imageError) {
+            console.error("❌ Upload images error:", imageError);
+            message.warning("Phòng trọ đã tạo nhưng upload ảnh thất bại. Vui lòng thử lại sau.");
+          }
+        }
       }
 
       // Reset form

@@ -178,7 +178,8 @@ export const useRoomManagement = () => {
     try {
       const formattedData = formatRoomData(roomData);
       const response = await createRoomApi(formattedData);
-      return response?.data;
+      console.log("🔍 createRoom response:", response);
+      return response; // Return full response object
     } catch (err) {
       const errorMessage = err?.message || "Có lỗi xảy ra khi tạo phòng";
       setError(errorMessage);

@@ -2,7 +2,7 @@ import axios from "axios";
 
 // Tạo instance axios
 const instance = axios.create({
-  baseURL: import.meta.env.VITE_BACKEND_URL,
+  baseURL: import.meta.env.VITE_BACKEND_URL || "http://localhost:8080",
   headers: {
     "Content-Type": "application/json", // mặc định gửi JSON
     Accept: "application/json",
