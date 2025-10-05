@@ -32,6 +32,8 @@ const AccountInfo = () => {
     }
   };
 
+  console.log(profile?.avatarUrl);
+
   return (
     <div>
       <h2 style={{ marginBottom: 20 }}>Thông tin cá nhân</h2>

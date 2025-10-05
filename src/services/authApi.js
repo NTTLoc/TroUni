@@ -37,10 +37,44 @@ const verifyEmailApi = (email, code) => {
   });
 };
 
+// Gửi lại mã xác thực
+const resendEmailApi = (email) => {
+  const URL_API = "/email-verification/resend";
+  return axios.post(URL_API, {
+    email,
+  });
+};
+
+// Tạo lại mật khẩu khi quên
+const forgotPasswordApi = (email) => {
+  const URL_API = "/auth/forgot-password";
+  return axios.post(URL_API, {
+    email,
+  });
+};
+
+// Đặt lại mật khẩu mới bằng token (hoặc code)
+const resetPasswordApi = (token, newPassword) => {
+  const URL_API = "/auth/reset-password";
+  return axios.post(URL_API, {
+    token,
+    newPassword,
+  });
+};
+
 // Lấy thông tin user hiện tại
 const getUserApi = () => {
   const URL_API = "/auth/me";
   return axios.get(URL_API);
 };
 
-export { createUserApi, loginApi, getUserApi, loginGoogleApi, verifyEmailApi };
+export {
+  createUserApi,
+  loginApi,
+  getUserApi,
+  loginGoogleApi,
+  verifyEmailApi,
+  resendEmailApi,
+  forgotPasswordApi,
+  resetPasswordApi,
+};

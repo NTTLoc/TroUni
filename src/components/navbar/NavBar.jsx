@@ -44,6 +44,9 @@ const Navbar = () => {
       isAuthenticated: false,
       user: null,
     });
+
+    setProfile(null);
+
     navigate("/");
   };
 
@@ -131,14 +134,18 @@ const Navbar = () => {
               <Link to={path.LANDLORD_DASHBOARD} className="btn-outline">
                 Dashboard
               </Link>
-              <Link to={path.ROOM_CREATE} className="btn-outline">Đăng tin</Link>
+              <Link to={path.ROOM_CREATE} className="btn-solid">
+                Đăng tin
+              </Link>
             </>
           ) : (
             <>
               <Link to={path.MANAGE} className="btn-outline">
                 Quản lý tin
               </Link>
-              <Link to={path.ROOM_CREATE} className="btn-outline">Đăng tin</Link>
+              <Link to={path.ROOM_CREATE} className="btn-solid">
+                Đăng tin
+              </Link>
             </>
           )}
 
