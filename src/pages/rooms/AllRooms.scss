@@ -219,13 +219,13 @@
           .room-item-link {
             text-decoration: none;
             color: inherit;
-            
+
             &:hover {
               text-decoration: none;
               color: inherit;
             }
           }
-          
+
           .room-item {
             display: flex;
             background: var(--bg, white);
@@ -329,6 +329,13 @@
                   display: flex;
                   align-items: center;
                   gap: 4px;
+                }
+
+                .owner-contact {
+                  margin-top: 4px;
+                  color: #1890ff;
+                  font-weight: 500;
+                  font-size: 13px;
                 }
 
                 .room-date {
@@ -545,5 +552,100 @@
     .rooms-right .filter-card .ant-card-body {
       padding: 15px;
     }
+  }
+}
+
+// Skeleton Loading Styles
+.room-item-skeleton {
+  display: flex;
+  background: white;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  animation: skeleton-pulse 1.5s ease-in-out infinite;
+
+  .skeleton-image {
+    width: 120px;
+    height: 120px;
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    border-radius: 8px;
+    margin-right: 16px;
+    animation: skeleton-shimmer 1.5s infinite;
+  }
+
+  .skeleton-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    .skeleton-title {
+      height: 20px;
+      background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+      background-size: 200% 100%;
+      border-radius: 4px;
+      width: 70%;
+      animation: skeleton-shimmer 1.5s infinite;
+    }
+
+    .skeleton-price {
+      height: 16px;
+      background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+      background-size: 200% 100%;
+      border-radius: 4px;
+      width: 40%;
+      animation: skeleton-shimmer 1.5s infinite;
+    }
+
+    .skeleton-location {
+      height: 14px;
+      background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+      background-size: 200% 100%;
+      border-radius: 4px;
+      width: 60%;
+      animation: skeleton-shimmer 1.5s infinite;
+    }
+
+    .skeleton-owner {
+      height: 14px;
+      background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+      background-size: 200% 100%;
+      border-radius: 4px;
+      width: 50%;
+      animation: skeleton-shimmer 1.5s infinite;
+    }
+
+    .skeleton-phone {
+      height: 14px;
+      background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+      background-size: 200% 100%;
+      border-radius: 4px;
+      width: 45%;
+      animation: skeleton-shimmer 1.5s infinite;
+    }
+  }
+}
+
+@keyframes skeleton-pulse {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.8;
+  }
+}
+
+@keyframes skeleton-shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+
+  100% {
+    background-position: 200% 0;
   }
 }

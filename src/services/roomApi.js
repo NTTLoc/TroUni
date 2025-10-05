@@ -34,7 +34,7 @@ export const createRoomImagesApi = (roomId, imageData) => {
  * @returns {Promise} Response từ API
  */
 export const getRoomImagesApi = (roomId) => {
-  const URL_API = `/room-images/${roomId}`;
+  const URL_API = `/api/rooms/${roomId}/images`; // ✅ Sửa endpoint đúng
   return axios.get(URL_API);
 };
 
@@ -84,13 +84,26 @@ export const generateMockImageUrl = (file) => {
  * @returns {Promise} Response từ API
  */
 export const createRoomApi = (roomData) => {
-  const URL_API = "/rooms/room";
+  const URL_API = "/api/rooms/room"; // ✅ Sửa từ "/rooms" thành "/api/rooms"
   
   // Debug: Log dữ liệu gửi lên
   console.log("🚀 Creating room with data:", roomData);
   console.log("📡 API URL:", URL_API);
+  console.log("📊 Data type:", typeof roomData);
+  console.log("📊 Data keys:", Object.keys(roomData));
+  console.log("📊 JSON stringified:", JSON.stringify(roomData, null, 2));
   
-  return axios.post(URL_API, roomData);
+  return axios.post(URL_API, roomData)
+    .then(response => {
+      console.log("✅ Room created successfully:", response);
+      return response;
+    })
+    .catch(error => {
+      console.error("❌ Room creation failed:", error);
+      console.error("❌ Error response:", error.response?.data);
+      console.error("❌ Error status:", error.response?.status);
+      throw error;
+    });
 };
 
 /**
@@ -99,7 +112,7 @@ export const createRoomApi = (roomData) => {
  * @returns {Promise} Response từ API
  */
 export const getRoomByIdApi = (roomId) => {
-  const URL_API = `/rooms/${roomId}`;
+  const URL_API = `/api/rooms/${roomId}/details`; // ✅ Sửa lại endpoint đúng
   return axios.get(URL_API);
 };
 
@@ -110,7 +123,7 @@ export const getRoomByIdApi = (roomId) => {
  * @returns {Promise} Response từ API
  */
 export const updateRoomApi = (roomId, updateData) => {
-  const URL_API = `/rooms/${roomId}`;
+  const URL_API = `/api/rooms/${roomId}`;
   return axios.put(URL_API, updateData);
 };
 
@@ -120,7 +133,7 @@ export const updateRoomApi = (roomId, updateData) => {
  * @returns {Promise} Response từ API
  */
 export const deleteRoomApi = (roomId) => {
-  const URL_API = `/rooms/${roomId}`;
+  const URL_API = `/api/rooms/${roomId}`;
   return axios.delete(URL_API);
 };
 
@@ -141,7 +154,7 @@ export const deleteRoomApi = (roomId) => {
  * @returns {Promise} Response từ API
  */
 export const getAllRoomsApi = (params = {}) => {
-  const URL_API = "/rooms";
+  const URL_API = "/api/rooms";
   console.log("🌐 getAllRoomsApi: Calling API:", URL_API);
   console.log("🌐 getAllRoomsApi: With params:", params);
   
@@ -159,6 +172,8 @@ export const getAllRoomsApi = (params = {}) => {
         console.log("🌐 getAllRoomsApi: CONTENT LENGTH:", response.data.content?.length);
       }
       
+      // ✅ Fix: Trả về response object thay vì response.data
+      // Vì AllRooms.jsx đang expect response.content, không phải response.data.content
       return response;
     })
     .catch(error => {
@@ -173,7 +188,7 @@ export const getAllRoomsApi = (params = {}) => {
  * @returns {Promise} Response từ API
  */
 export const getAllRoomsSimpleApi = () => {
-  const URL_API = "/rooms/all";
+  const URL_API = "/api/rooms/all";
   console.log("🌐 getAllRoomsSimpleApi: Calling API:", URL_API);
   
   return axios.get(URL_API)
@@ -209,8 +224,19 @@ export const getAllRoomsSimpleApi = () => {
  * @returns {Promise} Response từ API
  */
 export const searchRoomsApi = (searchParams = {}) => {
-  const URL_API = "/rooms/search";
-  return axios.get(URL_API, { params: searchParams });
+  const URL_API = "/api/rooms/search";
+  console.log("🔍 searchRoomsApi: Calling API:", URL_API);
+  console.log("🔍 searchRoomsApi: With params:", searchParams);
+  
+  return axios.get(URL_API, { params: searchParams })
+    .then(response => {
+      console.log("🔍 searchRoomsApi: RESPONSE:", response);
+      return response;
+    })
+    .catch(error => {
+      console.error("❌ searchRoomsApi: ERROR:", error);
+      throw error;
+    });
 };
 
 /**
@@ -219,8 +245,28 @@ export const searchRoomsApi = (searchParams = {}) => {
  * @returns {Promise} Response từ API
  */
 export const getMyRoomsApi = (params = {}) => {
-  const URL_API = "/rooms";
+  const URL_API = "/api/rooms";
   return axios.get(URL_API, { params });
+};
+
+/**
+ * Increment view count for a room
+ * @param {string} roomId - ID của phòng trọ
+ * @returns {Promise} Response từ API
+ */
+export const incrementViewCountApi = (roomId) => {
+  const URL_API = `/api/rooms/${roomId}/view`;
+  console.log("👁️ Incrementing view count for room:", roomId);
+  
+  return axios.post(URL_API)
+    .then(response => {
+      console.log("✅ View count incremented:", response);
+      return response;
+    })
+    .catch(error => {
+      console.error("❌ Error incrementing view count:", error);
+      throw error;
+    });
 };
 
 // ==================== UTILITY FUNCTIONS ====================
@@ -313,7 +359,9 @@ export const formatRoomData = (formData) => {
     pricePerMonth: String(formData.pricePerMonth),
     areaSqm: formData.areaSqm ? String(formData.areaSqm) : null,
     status: formData.status || "available",
-    amenityIds: formData.amenityIds || []
+    // ✅ Sửa: Backend expect amenities với format [{name: "..."}]
+    amenities: formData.amenityIds ? formData.amenityIds.map(amenity => ({ name: amenity.name })) : [],
+    images: formData.images || []
   };
   
   // Log formatted data for debugging
