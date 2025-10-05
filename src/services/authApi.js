@@ -1,13 +1,13 @@
 import axios from "../utils/axios.customize";
 
 // Đăng ký user
-const createUserApi = (username, email, password) => {
+const createUserApi = (username, email, password, role) => {
   const URL_API = "/auth/signup";
   return axios.post(URL_API, {
     username,
     email,
     password,
-    role: "STUDENT",
+    role,
   });
 };
 

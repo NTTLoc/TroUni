@@ -10,16 +10,17 @@ import {
   createUserApi,
   loginApi,
 } from "../../services/authApi.js";
-import "./AuthForm.scss";
-
-const { Option } = Select;
+import useMessage from "../../hooks/useMessage.js";
 
 const AuthForm = ({ isRegister }) => {
   const navigate = useNavigate();
   const { setAuth } = useAuth();
+  const message = useMessage();
 
   const handleAuthSuccess = async (res) => {
     if (res?.code === "SUCCESS" && res?.data) {
+      message.success("Đăng nhập thành công", 1);
+
       const userData = {
         id: res.data.id,
         username: res.data.username,

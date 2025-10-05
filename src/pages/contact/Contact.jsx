@@ -1,10 +1,15 @@
 import React from "react";
 import "../contact/Contact.scss";
 import ctImg from "../../assets/image/Vinhomes-Grand-Park.jpg";
+import PanoramaViewer from "../../components/viewer360/Viewer360";
+import { assets } from "../../assets/assets";
 
 const Contact = () => {
   return (
     <div className="contact-page">
+      {/* <PanoramaViewer imageUrl="https://photo-sphere-viewer-data.netlify.app/assets/sphere.jpg" /> */}
+      {/* <PanoramaViewer imageUrl={assets.anh360} /> */}
+      <PanoramaViewer imageUrl={assets.anh360_3} />
       {/* Hero */}
       <section
         className="contact-hero"
