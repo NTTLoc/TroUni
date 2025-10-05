@@ -14,8 +14,8 @@ import {
   HeartOutlined,
   BellOutlined,
 } from "@ant-design/icons";
-import avatar from "../../assets/image/avatar.jpg";
 import { ProfileContext } from "../context/profile.context";
+import { assets } from "../../assets/assets";
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -57,7 +57,7 @@ const Navbar = () => {
     <div className="account-dropdown">
       {/* Header user info */}
       <div className="user-info">
-        <Avatar src={profile?.avatarUrl || avatar} />
+        <Avatar src={profile?.avatarUrl || assets.avatar} />
         <div>
           <h4
             onClick={() => navigate(path.ACCOUNT)}
@@ -149,7 +149,7 @@ const Navbar = () => {
               <a onClick={(e) => e.preventDefault()}>
                 <Space className="avatar-menu">
                   <Avatar
-                    src={profile?.avatarUrl || avatar}
+                    src={profile?.avatarUrl || assets.avatar}
                     size={30}
                     icon={<UserOutlined />}
                   />

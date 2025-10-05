@@ -3,6 +3,7 @@ import { Form, Input, Button, Select, Avatar, message } from "antd";
 import { UserOutlined } from "@ant-design/icons";
 import { ProfileContext } from "../../context/profile.context";
 import "./AccountInfo.scss";
+import { assets } from "../../../assets/assets";
 
 const AccountInfo = () => {
   const { profile, updateProfile } = useContext(ProfileContext);
@@ -37,7 +38,11 @@ const AccountInfo = () => {
       <h2 style={{ marginBottom: 20 }}>Thông tin cá nhân</h2>
 
       <div className="profile-avatar">
-        <Avatar size={100} src={profile?.avatarUrl} icon={<UserOutlined />} />
+        <Avatar
+          size={100}
+          src={profile?.avatarUrl || assets.avatar}
+          icon={<UserOutlined />}
+        />
         <p>{savedUser?.username || "Không có username"}</p>
       </div>
 
