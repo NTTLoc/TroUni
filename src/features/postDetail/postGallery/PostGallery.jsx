@@ -1,9 +1,17 @@
 import React, { useState } from "react";
 import "./PostGallery.scss";
-import { LeftOutlined, RightOutlined } from "@ant-design/icons";
+import {
+  LeftOutlined,
+  RightOutlined,
+  ExpandOutlined,
+  CloseOutlined,
+} from "@ant-design/icons";
+import PanoramaViewer from "../../../components/viewer360/Viewer360";
+import { assets } from "../../../assets/assets";
 
 const PostGallery = ({ images = [] }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [isPanoramaOpen, setIsPanoramaOpen] = useState(false);
 
   if (!images || images.length === 0) {
     return <div className="post-gallery">Không có hình ảnh</div>;
@@ -35,6 +43,14 @@ const PostGallery = ({ images = [] }) => {
           </>
         )}
 
+        {/* Nút mở ảnh 360 */}
+        <button
+          className="nav panorama"
+          onClick={() => setIsPanoramaOpen(true)}
+        >
+          <ExpandOutlined /> 360°
+        </button>
+
         {/* Hiển thị số ảnh */}
         <div className="counter">
           {currentIndex + 1}/{images.length}
@@ -53,6 +69,19 @@ const PostGallery = ({ images = [] }) => {
           />
         ))}
       </div>
+
+      {/* Toàn màn hình Panorama Viewer */}
+      {isPanoramaOpen && (
+        <div className="panorama-fullscreen">
+          <button
+            className="close-btn"
+            onClick={() => setIsPanoramaOpen(false)}
+          >
+            <CloseOutlined />
+          </button>
+          <PanoramaViewer imageUrl={assets.anh360_3} />
+        </div>
+      )}
     </div>
   );
 };

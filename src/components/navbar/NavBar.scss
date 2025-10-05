@@ -150,8 +150,9 @@
 
     .btn-solid {
       background: var(--primary);
+      border-radius: 999px;
       border: none;
-      padding: 0 1.2rem;
+      padding: 0.4rem 1.4rem;
       color: white;
 
       &:hover {
@@ -281,7 +282,7 @@
       transition: background 0.2s ease;
 
       &:hover {
-        background: var(--bg);
+        background: var(--content-side);
       }
     }
   }
@@ -294,7 +295,7 @@
     transition: background 0.2s ease;
 
     &:hover {
-      background: var(--bg);
+      background: var(--content-side);
     }
   }
 }

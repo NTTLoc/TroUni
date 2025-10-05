@@ -307,6 +307,8 @@ const RoomForm = ({ roomId, onSuccess, onCancel }) => {
   const handleSubmit = async (values) => {
     try {
       setLoading(true);
+
+      // Debug: Log form values
       console.log("📝 Form values:", values);
       console.log("🖼️ Image list:", imageList);
       console.log("🏠 Amenity list:", amenityList);

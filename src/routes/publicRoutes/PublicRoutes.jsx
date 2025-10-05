@@ -14,6 +14,8 @@ import RoomApiComparison from "../../components/debug/RoomApiComparison";
 import AllRooms from "../../pages/rooms/AllRooms";
 import RoomDetail from "../../pages/rooms/RoomDetail";
 import { path } from "../../utils/constants";
+import ResetPassword from "../../pages/resetPassword/ResetPassword";
+import ForgotPassword from "../../pages/forgotPassword/ForgotPassword";
 
 const PublicRoutes = [
   { index: true, element: <HomePage /> },
@@ -24,6 +26,8 @@ const PublicRoutes = [
   { path: path.LOGIN, element: <AuthForm /> },
   { path: path.REGISTER, element: <AuthForm isRegister /> },
   { path: path.VERIFY_EMAIL, element: <VerifyEmail /> },
+  { path: path.FORGOT_PASSWORD, element: <ForgotPassword /> },
+  { path: path.RESET_PASSWORD, element: <ResetPassword /> },
   // Room management routes
   { path: "/rooms", element: <RoomList /> },
   { path: "/rooms/all", element: <AllRooms /> },

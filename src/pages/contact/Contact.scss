@@ -1,3 +1,19 @@
+.ant-message {
+  position: fixed;
+  top: 80px !important;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999 !important;
+}
+
+.ant-message-notice-content {
+  background: #fff;
+  color: #000;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  border-radius: 6px;
+  padding: 10px 16px;
+}
+
 .contact-hero {
   position: relative;
   width: 100%;
@@ -37,31 +53,24 @@
 }
 
 .contact-content {
-  color:
-rgb(10% 10% 10%);
-display: flex;
-flex-wrap: wrap;
-gap: 32px;
-justify-content: center;
-line-height: 25.6px;
-margin: -80px 0px 0px;
-padding: 150px;
+  color: rgb(10% 10% 10%);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 32px;
+  justify-content: center;
+  line-height: 25.6px;
+  margin: -80px 0px 0px;
+  padding: 150px;
 }
 
 .contact-card {
-  background-color:
-rgb(100% 100% 100%);
-border-radius:
-14px;
-box-shadow:
-rgb(0% 0% 0% / 0.12) 0px 8px 30px 0px;
-color:
-rgb(10% 10% 10%);
-flex-basis:
-400px;
-line-height:
-25.6px;
-padding:32px;
+  background-color: rgb(100% 100% 100%);
+  border-radius: 14px;
+  box-shadow: rgb(0% 0% 0% / 0.12) 0px 8px 30px 0px;
+  color: rgb(10% 10% 10%);
+  flex-basis: 400px;
+  line-height: 25.6px;
+  padding: 32px;
 
   h2 {
     font-size: 24px;
@@ -79,13 +88,13 @@ padding:32px;
 .contact-form form {
   display: grid;
   gap: 16px;
-  flex-basis:  400px;
+  flex-basis: 400px;
   max-width: 500px;
   background: #fff;
   border-radius: 14px;
   grid-template-columns: 352px;
   grid-template-rows: 47.1875px 47.1875px 90.1875px 43.7812px;
-  padding:32px;
+  padding: 32px;
   line-height: 25.6px;
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
 
