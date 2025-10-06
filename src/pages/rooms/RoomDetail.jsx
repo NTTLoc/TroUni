@@ -205,7 +205,7 @@ const RoomDetail = () => {
       <div className="room-info-section">
         <div className="room-title-banner">
           <h1>{room.title}</h1>
-          <p>{room.description?.substring(0, 50)}...</p>
+          
           <div className="price-tag">{formatPrice(room.pricePerMonth)}</div>
         </div>
         
@@ -229,18 +229,9 @@ const RoomDetail = () => {
 
       {/* Description Section */}
       <div className="room-description-section">
-        <h3>TroUni</h3>
+        <h3>Description:</h3>
         
-        {/* Search Bar */}
-        <div className="search-bar">
-          <div className="location-filter">
-            <span>Toàn quốc ▼</span>
-          </div>
-          <div className="search-input">
-            <input type="text" placeholder="Tìm bất động sản..." />
-            <button className="search-btn">🔍</button>
-          </div>
-        </div>
+        
 
         {/* Description Text */}
         <div className={`description-content ${expanded ? 'expanded' : ''}`}>

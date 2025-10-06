@@ -1,0 +1,254 @@
+// AmenitySelector.scss
+.amenity-selector {
+    .selector-header {
+        margin-bottom: 16px;
+
+        .ant-typography {
+            margin-bottom: 4px;
+        }
+    }
+
+    .selector-filters {
+        margin-bottom: 16px;
+
+        .category-filter {
+            .ant-btn {
+                margin-bottom: 8px;
+            }
+        }
+    }
+
+    .selection-summary {
+        padding: 12px;
+        background-color: #f0f2f5;
+        border-radius: 6px;
+        margin-bottom: 16px;
+
+        .ant-space {
+            width: 100%;
+            justify-content: space-between;
+        }
+    }
+
+    .loading-container {
+        text-align: center;
+        padding: 40px 0;
+
+        .ant-spin {
+            margin-bottom: 16px;
+        }
+    }
+
+    .amenities-grid {
+        .amenity-card {
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            height: 120px;
+
+            &:hover {
+                border-color: #1890ff;
+                box-shadow: 0 4px 12px rgba(24, 144, 255, 0.15);
+                transform: translateY(-2px);
+            }
+
+            &.selected {
+                border-color: #52c41a;
+                background-color: #f6ffed;
+
+                .amenity-content {
+                    .amenity-name {
+                        color: #52c41a;
+                        font-weight: 600;
+                    }
+                }
+            }
+
+            &.disabled {
+                opacity: 0.5;
+                cursor: not-allowed;
+
+                &:hover {
+                    border-color: transparent;
+                    box-shadow: none;
+                    transform: none;
+                }
+            }
+
+            .amenity-content {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                height: 100%;
+                padding: 8px;
+
+                .amenity-icon {
+                    flex: 1;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 24px;
+                    margin-bottom: 8px;
+
+                    img {
+                        width: 32px;
+                        height: 32px;
+                        object-fit: contain;
+                    }
+
+                    .emoji-icon {
+                        font-size: 28px;
+                    }
+                }
+
+                .amenity-name {
+                    flex: 0 0 auto;
+                    text-align: center;
+                    font-size: 12px;
+                    line-height: 1.2;
+                    margin-bottom: 4px;
+
+                    .ant-typography {
+                        margin: 0;
+                        font-size: 12px;
+                    }
+                }
+
+                .amenity-actions {
+                    flex: 0 0 auto;
+
+                    .selected-icon {
+                        color: #52c41a;
+                        font-size: 16px;
+                    }
+
+                    .unselected-icon {
+                        color: #d9d9d9;
+                        font-size: 16px;
+                    }
+                }
+            }
+        }
+    }
+
+    .create-amenity-section {
+        margin-top: 24px;
+        padding: 16px;
+        background-color: #fafafa;
+        border-radius: 8px;
+
+        .ant-divider {
+            margin: 0 0 16px 0;
+        }
+    }
+}
+
+// Dark mode support
+[data-theme="dark"] {
+    .amenity-selector {
+        .selection-summary {
+            background-color: #141414;
+        }
+
+        .amenity-card {
+            &.selected {
+                background-color: #162312;
+            }
+        }
+
+        .create-amenity-section {
+            background-color: #1f1f1f;
+        }
+    }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+    .amenity-selector {
+        .amenities-grid {
+            .amenity-card {
+                height: 100px;
+
+                .amenity-content {
+                    .amenity-icon {
+                        font-size: 20px;
+
+                        img {
+                            width: 24px;
+                            height: 24px;
+                        }
+
+                        .emoji-icon {
+                            font-size: 22px;
+                        }
+                    }
+
+                    .amenity-name {
+                        font-size: 11px;
+
+                        .ant-typography {
+                            font-size: 11px;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@media (max-width: 576px) {
+    .amenity-selector {
+        .selector-filters {
+            .category-filter {
+                .ant-space {
+                    .ant-btn {
+                        font-size: 12px;
+                        padding: 4px 8px;
+                        height: auto;
+                    }
+                }
+            }
+        }
+
+        .amenities-grid {
+            .amenity-card {
+                height: 80px;
+
+                .amenity-content {
+                    padding: 4px;
+
+                    .amenity-icon {
+                        font-size: 18px;
+                        margin-bottom: 4px;
+
+                        img {
+                            width: 20px;
+                            height: 20px;
+                        }
+
+                        .emoji-icon {
+                            font-size: 20px;
+                        }
+                    }
+
+                    .amenity-name {
+                        font-size: 10px;
+                        margin-bottom: 2px;
+
+                        .ant-typography {
+                            font-size: 10px;
+                        }
+                    }
+
+                    .amenity-actions {
+
+                        .selected-icon,
+                        .unselected-icon {
+                            font-size: 14px;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

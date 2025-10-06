@@ -51,12 +51,12 @@ export const testCreateRoomComplete = async () => {
       areaSqm: "25", // String format
       status: "available",
       images: [],
-      amenityIds: []
+      amenities: []
     };
     
     console.log("📤 Sending complete test data:", completeData);
     
-    const response = await axios.post("/rooms/room", completeData);
+    const response = await axios.post("/api/rooms", completeData);
     console.log("✅ Complete test room created successfully:", response);
     
     return response;
@@ -83,12 +83,12 @@ export const testCreateRoomMinimal = async () => {
       pricePerMonth: "3000000", // String format
       status: "available",
       images: [],
-      amenityIds: []
+      amenities: []
     };
     
     console.log("📤 Sending minimal test data:", minimalData);
     
-    const response = await axios.post("/rooms/room", minimalData);
+    const response = await axios.post("/api/rooms", minimalData);
     console.log("✅ Minimal test room created successfully:", response);
     
     return response;
