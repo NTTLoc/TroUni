@@ -49,11 +49,11 @@ const AuthForm = ({ isRegister }) => {
   };
 
   const onFinish = async (values) => {
-    const { username, email, password } = values;
+    const { username, email, password, role } = values;
 
     try {
       if (isRegister) {
-        const res = await createUserApi(username, email, password);
+        const res = await createUserApi(username, email, password, role);
         if (res?.code === "SUCCESS") {
           navigate(path.VERIFY_EMAIL, { state: { email } });
         }
@@ -142,6 +142,19 @@ const AuthForm = ({ isRegister }) => {
                 ]}
               >
                 <Input.Password placeholder="Nhập lại mật khẩu" />
+              </Form.Item>
+            )}
+
+            {isRegister && (
+              <Form.Item
+                label="Bạn là"
+                name="role"
+                rules={[{ required: true, message: "Vui lòng chọn vai trò" }]}
+              >
+                <Select placeholder="Chọn vai trò">
+                  <Option value="STUDENT">Sinh viên</Option>
+                  <Option value="LANDLORD">Chủ trọ</Option>
+                </Select>
               </Form.Item>
             )}
 

@@ -142,12 +142,12 @@ const Navbar = () => {
             </>
           ) : (
             <>
-              <Link to={path.MANAGE} className="btn-outline">
+              {/* <Link to={path.MANAGE} className="btn-outline">
                 Quản lý tin
               </Link>
               <Link to={path.ROOM_CREATE} className="btn-solid">
                 Đăng tin
-              </Link>
+              </Link> */}
               <Link to={path.ROOMS_MATCHING} className="btn-solid">
                 Ghép trọ
               </Link>

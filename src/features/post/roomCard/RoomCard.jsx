@@ -27,14 +27,16 @@ const RoomCard = ({ room }) => {
       console.log("🖼️ RoomCard: Using room.image:", room.image);
       return room.image;
     }
-    
+
     if (room.images && room.images.length > 0) {
-      const primaryImage = room.images.find(img => img.isPrimary);
-      const imageUrl = primaryImage ? primaryImage.imageUrl : room.images[0].imageUrl;
+      const primaryImage = room.images.find((img) => img.isPrimary);
+      const imageUrl = primaryImage
+        ? primaryImage.imageUrl
+        : room.images[0].imageUrl;
       console.log("🖼️ RoomCard: Using room.images:", imageUrl);
       return imageUrl;
     }
-    
+
     // Fallback image
     console.log("🖼️ RoomCard: Using fallback image");
     return "https://via.placeholder.com/300x200?text=No+Image";
@@ -42,9 +44,9 @@ const RoomCard = ({ room }) => {
 
   const getRoomTypeLabel = () => {
     const typeMap = {
-      "PHONG_TRO": "Phòng trọ",
-      "APARTMENT": "Căn hộ",
-      "HOUSE": "Nhà ở"
+      PHONG_TRO: "Phòng trọ",
+      APARTMENT: "Căn hộ",
+      HOUSE: "Nhà ở",
     };
     const label = typeMap[room.roomType] || room.roomType || "Không xác định";
     console.log("🏠 RoomCard: Room type label:", label);
@@ -53,9 +55,9 @@ const RoomCard = ({ room }) => {
 
   const getStatusLabel = () => {
     const statusMap = {
-      "available": "Còn trống",
-      "rented": "Đã thuê",
-      "maintenance": "Bảo trì"
+      available: "Còn trống",
+      rented: "Đã thuê",
+      maintenance: "Bảo trì",
     };
     const label = statusMap[room.status] || room.status || "Không xác định";
     console.log("📊 RoomCard: Status label:", label);
@@ -80,12 +82,13 @@ const RoomCard = ({ room }) => {
       <div className="room-card">
         {/* Hình ảnh */}
         <div className="room-thumb">
-          <img 
-            src={getPrimaryImage()} 
-            alt={room.title || "Room image"} 
+          <img
+            src={getPrimaryImage()}
+            alt={room.title || "Room image"}
             onError={(e) => {
               console.error("❌ RoomCard: Image load error:", e.target.src);
-              e.target.src = "https://via.placeholder.com/300x200?text=Image+Error";
+              e.target.src =
+                "https://via.placeholder.com/300x200?text=Image+Error";
             }}
             onLoad={() => console.log("✅ RoomCard: Image loaded successfully")}
           />
@@ -98,10 +101,8 @@ const RoomCard = ({ room }) => {
           {room.status === "maintenance" && (
             <span className="badge maintenance">Bảo trì</span>
           )}
-          {!room.status && (
-            <span className="badge available">Còn trống</span>
-          )}
-          {(room.images && room.images.length > 0) && (
+          {!room.status && <span className="badge available">Còn trống</span>}
+          {room.images && room.images.length > 0 && (
             <span className="img-count">{room.images.length} ảnh</span>
           )}
         </div>
@@ -110,14 +111,16 @@ const RoomCard = ({ room }) => {
         <div className="room-info">
           <h3 className="title">{room.title || "Không có tiêu đề"}</h3>
           <p className="desc">{room.description || "Không có mô tả"}</p>
-          
+
           <div className="room-type">
             <span className="type">{getRoomTypeLabel()}</span>
             <span className="status">{getStatusLabel()}</span>
           </div>
 
           <div className="price-size">
-            <span className="price">{formatPrice(room.pricePerMonth || 0)}</span>
+            <span className="price">
+              {formatPrice(room.pricePerMonth || 0)}
+            </span>
             {room.areaSqm && (
               <span className="size">{formatArea(room.areaSqm)}</span>
             )}
@@ -129,7 +132,9 @@ const RoomCard = ({ room }) => {
             <div className="owner-info">
               <span className="owner-name">Chủ trọ</span>
               <span className="post-date">
-                {room.createdAt ? new Date(room.createdAt).toLocaleDateString('vi-VN') : 'Không có ngày'}
+                {room.createdAt
+                  ? new Date(room.createdAt).toLocaleDateString("vi-VN")
+                  : "Không có ngày"}
               </span>
             </div>
           </div>

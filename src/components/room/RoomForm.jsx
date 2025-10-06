@@ -45,6 +45,7 @@ import {
   isValidPrice,
   isValidArea,
 } from "../../utils/numberFormatting";
+import useMessage from "../../hooks/useMessage";
 import "./RoomForm.scss";
 
 const { TextArea } = Input;
@@ -58,6 +59,7 @@ const RoomForm = ({ roomId, onSuccess, onCancel }) => {
   const [selectedCity, setSelectedCity] = useState("");
   const [selectedDistrict, setSelectedDistrict] = useState("");
   const [amenityList, setAmenityList] = useState([]);
+  const message = useMessage();
 
   // Debug amenity list changes
   useEffect(() => {
@@ -402,10 +404,10 @@ const RoomForm = ({ roomId, onSuccess, onCancel }) => {
       let result;
       if (isEditMode) {
         result = await updateRoom(roomId, roomData);
-        message.success("Cập nhật phòng trọ thành công!");
+        message.success("Cập nhật phòng trọ thành công");
       } else {
         result = await createRoom(roomData);
-        message.success("Tạo phòng trọ thành công!");
+        message.success("Tạo phòng trọ thành công");
       }
 
       // If backend returns room id and you didn't attach images in createRoom,

@@ -4,14 +4,11 @@ import { Form, Input, Button, notification } from "antd";
 import { resetPasswordApi } from "../../services/authApi.js";
 import { path } from "../../utils/constants.js";
 import "./ResetPassword.scss";
+import useMessage from "../../hooks/useMessage.js";
 
 const ResetPassword = () => {
   const navigate = useNavigate();
-  // const location = useLocation();
-
-  // // Lấy token từ URL (?token=xxxx)
-  // const queryParams = new URLSearchParams(location.search);
-  // const token = queryParams.get("token");
+  const message = useMessage();
 
   const [loading, setLoading] = useState(false);
 
@@ -21,16 +18,10 @@ const ResetPassword = () => {
     try {
       const res = await resetPasswordApi(token, password);
       if (res?.code === "SUCCESS") {
-        notification.success({
-          message: "Thành công",
-          description: "Mật khẩu đã được đặt lại. Vui lòng đăng nhập.",
-        });
+        message.success("Mật khẩu đã được đặt lại thành công");
         navigate(path.LOGIN);
       } else {
-        notification.error({
-          message: "Thất bại",
-          description: res?.message || "Không thể đặt lại mật khẩu",
-        });
+        message.error("Lỗi khi đặt lại mật khẩu! Vui lòng thử lại");
       }
     } catch (err) {
       console.error("Reset password error:", err);

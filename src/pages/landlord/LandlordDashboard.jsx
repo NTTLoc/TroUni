@@ -1,9 +1,20 @@
 import React, { useState, useEffect } from "react";
-import { Row, Col, Card, Statistic, Table, Button, Tag, Space, Menu, Empty } from "antd";
-import { 
-  HomeOutlined, 
-  DollarOutlined, 
-  UserOutlined, 
+import {
+  Row,
+  Col,
+  Card,
+  Statistic,
+  Table,
+  Button,
+  Tag,
+  Space,
+  Menu,
+  Empty,
+} from "antd";
+import {
+  HomeOutlined,
+  DollarOutlined,
+  UserOutlined,
   CalendarOutlined,
   PlusOutlined,
   EditOutlined,
@@ -11,7 +22,7 @@ import {
   EyeOutlined,
   BarChartOutlined,
   SettingOutlined,
-  FileTextOutlined
+  FileTextOutlined,
 } from "@ant-design/icons";
 import { useMyRooms } from "../../hooks/useRooms";
 import { useNavigate } from "react-router-dom";
@@ -30,17 +41,21 @@ const LandlordDashboard = () => {
   // Thống kê tổng quan
   const getStats = () => {
     const totalRooms = myRooms.length;
-    const availableRooms = myRooms.filter(room => room.status === "available").length;
-    const rentedRooms = myRooms.filter(room => room.status === "rented").length;
+    const availableRooms = myRooms.filter(
+      (room) => room.status === "available"
+    ).length;
+    const rentedRooms = myRooms.filter(
+      (room) => room.status === "rented"
+    ).length;
     const totalRevenue = myRooms
-      .filter(room => room.status === "rented")
+      .filter((room) => room.status === "rented")
       .reduce((sum, room) => sum + (parseInt(room.pricePerMonth) || 0), 0);
 
     return {
       totalRooms,
       availableRooms,
       rentedRooms,
-      totalRevenue
+      totalRevenue,
     };
   };
 
@@ -68,7 +83,10 @@ const LandlordDashboard = () => {
           rented: { color: "blue", text: "Đã thuê" },
           maintenance: { color: "orange", text: "Bảo trì" },
         };
-        const config = statusConfig[status] || { color: "default", text: status };
+        const config = statusConfig[status] || {
+          color: "default",
+          text: status,
+        };
         return <Tag color={config.color}>{config.text}</Tag>;
       },
     },
@@ -82,7 +100,7 @@ const LandlordDashboard = () => {
       title: "Diện tích",
       dataIndex: "areaSqm",
       key: "areaSqm",
-      render: (area) => area ? `${area} m²` : "N/A",
+      render: (area) => (area ? `${area} m²` : "N/A"),
     },
     {
       title: "Địa chỉ",
@@ -99,29 +117,30 @@ const LandlordDashboard = () => {
       title: "Ngày tạo",
       dataIndex: "createdAt",
       key: "createdAt",
-      render: (date) => date ? new Date(date).toLocaleDateString('vi-VN') : "N/A",
+      render: (date) =>
+        date ? new Date(date).toLocaleDateString("vi-VN") : "N/A",
     },
     {
       title: "Thao tác",
       key: "actions",
       render: (_, record) => (
         <Space>
-          <Button 
-            type="link" 
+          <Button
+            type="link"
             icon={<EyeOutlined />}
             onClick={() => navigate(`/rooms/${record.id}`)}
           >
             Xem
           </Button>
-          <Button 
-            type="link" 
+          <Button
+            type="link"
             icon={<EditOutlined />}
             onClick={() => navigate(`/rooms/edit/${record.id}`)}
           >
             Sửa
           </Button>
-          <Button 
-            type="link" 
+          <Button
+            type="link"
             danger
             icon={<DeleteOutlined />}
             onClick={() => handleDeleteRoom(record.id)}
@@ -143,11 +162,11 @@ const LandlordDashboard = () => {
   };
 
   const menuItems = [
-    {
-      key: "overview",
-      icon: <HomeOutlined />,
-      label: "Tổng Quan",
-    },
+    // {
+    //   key: "overview",
+    //   icon: <HomeOutlined />,
+    //   label: "Tổng Quan",
+    // },
     {
       key: "rooms",
       icon: <FileTextOutlined />,
@@ -172,8 +191,8 @@ const LandlordDashboard = () => {
 
   const renderContent = () => {
     switch (activeMenu) {
-      case "overview":
-        return renderOverview();
+      // case "overview":
+      //   return renderOverview();
       case "rooms":
         return renderRooms();
       case "analytics":
@@ -206,7 +225,7 @@ const LandlordDashboard = () => {
               title="Phòng Còn Trống"
               value={stats.availableRooms}
               prefix={<HomeOutlined />}
-              valueStyle={{ color: '#3f8600' }}
+              valueStyle={{ color: "#3f8600" }}
             />
           </Card>
         </Col>
@@ -216,7 +235,7 @@ const LandlordDashboard = () => {
               title="Phòng Đã Thuê"
               value={stats.rentedRooms}
               prefix={<UserOutlined />}
-              valueStyle={{ color: '#1890ff' }}
+              valueStyle={{ color: "#1890ff" }}
             />
           </Card>
         </Col>
@@ -227,18 +246,21 @@ const LandlordDashboard = () => {
               value={stats.totalRevenue}
               prefix={<DollarOutlined />}
               suffix="VNĐ"
-              valueStyle={{ color: '#cf1322' }}
+              valueStyle={{ color: "#cf1322" }}
             />
           </Card>
         </Col>
       </Row>
 
       {/* Phòng trọ gần đây */}
-      <Card title="Phòng Trọ Gần Đây" extra={
-        <Button type="link" onClick={() => setActiveMenu("rooms")}>
-          Xem tất cả
-        </Button>
-      }>
+      {/* <Card
+        title="Phòng Trọ Gần Đây"
+        extra={
+          <Button type="link" onClick={() => setActiveMenu("rooms")}>
+            Xem tất cả
+          </Button>
+        }
+      >
         {myRooms.length > 0 ? (
           <Table
             dataSource={myRooms.slice(0, 5)}
@@ -249,22 +271,22 @@ const LandlordDashboard = () => {
         ) : (
           <Empty description="Chưa có phòng trọ nào" />
         )}
-      </Card>
+      </Card> */}
     </>
   );
 
   const renderRooms = () => (
     <Card>
       <div style={{ marginBottom: 16 }}>
-        <Button 
-          type="primary" 
+        <Button
+          type="primary"
           icon={<PlusOutlined />}
           onClick={handleCreateRoom}
         >
           Thêm Phòng Trọ Mới
         </Button>
       </div>
-      
+
       {myRooms.length > 0 ? (
         <Table
           dataSource={myRooms}
@@ -278,7 +300,7 @@ const LandlordDashboard = () => {
           }}
         />
       ) : (
-        <Empty 
+        <Empty
           description="Chưa có phòng trọ nào"
           image={Empty.PRESENTED_IMAGE_SIMPLE}
         >
@@ -291,31 +313,62 @@ const LandlordDashboard = () => {
   );
 
   const renderAnalytics = () => (
-    <Row gutter={[16, 16]}>
-      <Col xs={24} lg={12}>
-        <Card title="Tỷ Lệ Lấp Đầy">
-          <div style={{ textAlign: 'center', padding: '20px' }}>
-            <div style={{ fontSize: '48px', fontWeight: 'bold', color: '#1890ff' }}>
-              {stats.totalRooms > 0 ? Math.round((stats.rentedRooms / stats.totalRooms) * 100) : 0}%
-            </div>
-            <div style={{ color: '#666' }}>
-              {stats.rentedRooms} / {stats.totalRooms} phòng đã thuê
-            </div>
-          </div>
+    <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
+      <Col xs={24} sm={12} lg={6}>
+        <Card>
+          <Statistic
+            title="Tổng Phòng Trọ"
+            value={stats.totalRooms}
+            prefix={<HomeOutlined />}
+          />
         </Card>
       </Col>
-      <Col xs={24} lg={12}>
+      <Col xs={24} sm={12} lg={6}>
+        <Card>
+          <Statistic
+            title="Phòng Còn Trống"
+            value={stats.availableRooms}
+            prefix={<HomeOutlined />}
+            valueStyle={{ color: "#3f8600" }}
+          />
+        </Card>
+      </Col>
+      <Col xs={24} sm={12} lg={6}>
+        <Card>
+          <Statistic
+            title="Phòng Đã Thuê"
+            value={stats.rentedRooms}
+            prefix={<UserOutlined />}
+            valueStyle={{ color: "#1890ff" }}
+          />
+        </Card>
+      </Col>
+      <Col xs={24} sm={12} lg={6}>
+        <Card>
+          <Statistic
+            title="Doanh Thu Tháng"
+            value={stats.totalRevenue}
+            prefix={<DollarOutlined />}
+            suffix="VNĐ"
+            valueStyle={{ color: "#cf1322" }}
+          />
+        </Card>
+      </Col>
+
+      {/* <Col xs={24} lg={12}>
         <Card title="Doanh Thu Theo Tháng">
-          <div style={{ textAlign: 'center', padding: '20px' }}>
-            <div style={{ fontSize: '32px', fontWeight: 'bold', color: '#cf1322' }}>
+          <div style={{ textAlign: "center", padding: "20px" }}>
+            <div
+              style={{ fontSize: "32px", fontWeight: "bold", color: "#cf1322" }}
+            >
               {stats.totalRevenue.toLocaleString()} VNĐ
             </div>
-            <div style={{ color: '#666' }}>
+            <div style={{ color: "#666" }}>
               Từ {stats.rentedRooms} phòng đang cho thuê
             </div>
           </div>
         </Card>
-      </Col>
+      </Col> */}
     </Row>
   );
 
@@ -327,7 +380,7 @@ const LandlordDashboard = () => {
 
   const renderSettings = () => (
     <Card title="Cài Đặt Tài Khoản">
-      <div style={{ padding: '20px' }}>
+      <div style={{ padding: "20px" }}>
         <p>Cài đặt thông báo</p>
         <p>Bảo mật tài khoản</p>
         <p>Tùy chỉnh giao diện</p>
@@ -352,9 +405,7 @@ const LandlordDashboard = () => {
 
         {/* Content */}
         <Col span={18}>
-          <Card className="landlord-content">
-            {renderContent()}
-          </Card>
+          <Card className="landlord-content">{renderContent()}</Card>
         </Col>
       </Row>
     </div>

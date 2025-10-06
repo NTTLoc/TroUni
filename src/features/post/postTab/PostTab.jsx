@@ -23,13 +23,7 @@ const PostTab = ({ onTabChange }) => {
         className={active === "personal" ? "active" : ""}
         onClick={() => handleTabClick("personal")}
       >
-        Cá nhân
-      </button>
-      <button
-        className={active === "agent" ? "active" : ""}
-        onClick={() => handleTabClick("agent")}
-      >
-        Môi giới
+        Căn hộ
       </button>
       <button
         className={active === "rooms" ? "active" : ""}

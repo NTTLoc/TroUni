@@ -17,10 +17,10 @@ const Post = () => {
   return (
     <div className="post-page">
       <div className="post-left">
-        <div className="top">
-          <FilterBar />
-          <PostCategory />
-        </div>
+        {/* <div className="top"> */}
+        {/* <FilterBar /> */}
+        {/* <PostCategory /> */}
+        {/* </div> */}
         <div className="bottom">
           <PostTab onTabChange={handleTabChange} />
           <PostList activeTab={activeTab} />

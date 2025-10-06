@@ -7,7 +7,6 @@ import {
   CloseOutlined,
 } from "@ant-design/icons";
 import PanoramaViewer from "../../../components/viewer360/Viewer360";
-import { assets } from "../../../assets/assets";
 
 const PostGallery = ({ images = [] }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -29,7 +28,10 @@ const PostGallery = ({ images = [] }) => {
     <div className="post-gallery">
       {/* Ảnh chính */}
       <div className="post-gallery__main">
-        <img src={images[currentIndex]} alt={`main-${currentIndex}`} />
+        <img
+          src={images[currentIndex].imageUrl}
+          alt={`main-${images[currentIndex].id}`}
+        />
 
         {/* Nút chuyển ảnh */}
         {images.length > 1 && (
@@ -61,9 +63,9 @@ const PostGallery = ({ images = [] }) => {
       <div className="post-gallery__thumbs">
         {images.map((img, i) => (
           <img
-            key={i}
-            src={img}
-            alt={`thumb-${i}`}
+            key={img.id}
+            src={img.imageUrl}
+            alt={`thumb-${img.id}`}
             className={i === currentIndex ? "active" : ""}
             onClick={() => setCurrentIndex(i)}
           />
@@ -79,7 +81,7 @@ const PostGallery = ({ images = [] }) => {
           >
             <CloseOutlined />
           </button>
-          <PanoramaViewer imageUrl={assets.anh360_3} />
+          <PanoramaViewer imageUrl={images[currentIndex].imageUrl} />
         </div>
       )}
     </div>

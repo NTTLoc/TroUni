@@ -75,6 +75,23 @@
     }
   }
 
+  .ant-select-selector {
+    border-radius: 8px; // bo góc
+    transition: all 0.3s ease;
+  }
+
+  // Khi hover
+  .ant-select:hover .ant-select-selector {
+    border-color: #00bfa6 !important;
+    box-shadow: none !important;
+  }
+
+  // Khi focus (active)
+  .ant-select-focused .ant-select-selector {
+    border-color: #00bfa6 !important;
+    box-shadow: none !important;
+  }
+
   .text__bonus {
     display: flex;
     align-items: center;
