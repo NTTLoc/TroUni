@@ -11,6 +11,7 @@ import {
   loginApi,
 } from "../../services/authApi.js";
 import useMessage from "../../hooks/useMessage.js";
+import "./AuthForm.scss";
 
 const AuthForm = ({ isRegister }) => {
   const navigate = useNavigate();

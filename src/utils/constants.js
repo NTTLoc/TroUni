@@ -15,6 +15,11 @@ export const path = {
   ROOM_CREATE: "/rooms/create",
   ROOM_EDIT: "/rooms/edit/:id",
 
+  // ROOM MATCHING
+  ROOMS_MATCHING: "/rooms-matching",
+  GROUP_FINDER: "/group-finder",
+  COMMUNITY: "/community",
+
   // PRIVATE
   ACCOUNT: "/account",
   ADMIN: "/admin",

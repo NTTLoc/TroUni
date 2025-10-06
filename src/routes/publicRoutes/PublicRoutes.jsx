@@ -16,6 +16,9 @@ import RoomDetail from "../../pages/rooms/RoomDetail";
 import { path } from "../../utils/constants";
 import ResetPassword from "../../pages/resetPassword/ResetPassword";
 import ForgotPassword from "../../pages/forgotPassword/ForgotPassword";
+import RoomMatching from "../../pages/roomMatching/RoomMatching";
+import GroupFinder from "../../pages/groupFinder/GroupFinder";
+import Community from "../../pages/community/Community";
 
 const PublicRoutes = [
   { index: true, element: <HomePage /> },
@@ -28,6 +31,9 @@ const PublicRoutes = [
   { path: path.VERIFY_EMAIL, element: <VerifyEmail /> },
   { path: path.FORGOT_PASSWORD, element: <ForgotPassword /> },
   { path: path.RESET_PASSWORD, element: <ResetPassword /> },
+  { path: path.ROOMS_MATCHING, element: <RoomMatching /> },
+  { path: path.GROUP_FINDER, element: <GroupFinder /> },
+  { path: path.COMMUNITY, element: <Community /> },
   // Room management routes
   { path: "/rooms", element: <RoomList /> },
   { path: "/rooms/all", element: <AllRooms /> },

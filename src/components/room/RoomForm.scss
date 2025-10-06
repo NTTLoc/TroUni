@@ -41,7 +41,7 @@
     .ant-input,
     .ant-select-selector {
       background: white !important;
-      color: var(--text2) !important;
+      color: #1a1a1a !important;
 
       &:hover {
         border-color: #00bfa6 !important;
@@ -315,11 +315,11 @@
   }
 }
 
-// Success state styling
-.ant-form-item-has-success {
-  .ant-input,
-  .ant-input-number,
-  .ant-select-selector {
-    border-color: #52c41a;
-  }
-}
+// // Success state styling
+// .ant-form-item-has-success {
+//   .ant-input,
+//   .ant-input-number,
+//   .ant-select-selector {
+//     border-color: #52c41a;
+//   }
+// }

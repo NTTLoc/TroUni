@@ -86,16 +86,16 @@ const Navbar = () => {
       {/* Menu theo role */}
       {auth.user?.role === "ADMIN" ? (
         <div className="menu-section">
-          <Link to={path.ADMIN}>📊 Dashboard Admin</Link>
-          <Link to={path.MANAGE_USERS}>👥 Quản lý người dùng</Link>
-          <Link to={path.MANAGE_POSTS}>📝 Quản lý tin</Link>
+          <Link to={path.ADMIN}>Dashboard Admin</Link>
+          <Link to={path.MANAGE_USERS}>Quản lý người dùng</Link>
+          <Link to={path.MANAGE_POSTS}>Quản lý tin</Link>
         </div>
       ) : (
         <div className="menu-section">
-          <Link to={path.SAVED}>❤️ Tin đăng đã lưu</Link>
-          <Link to={path.SAVED_SEARCH}>🔖 Tìm kiếm đã lưu</Link>
-          <Link to={path.HISTORY}>🕑 Lịch sử xem tin</Link>
-          <Link to={path.REVIEWS}>⭐ Đánh giá từ tôi</Link>
+          <Link to={path.SAVED}>Tin đăng đã lưu</Link>
+          <Link to={path.SAVED_SEARCH}>Tìm kiếm đã lưu</Link>
+          <Link to={path.HISTORY}>Lịch sử xem tin</Link>
+          <Link to={path.REVIEWS}>Đánh giá từ tôi</Link>
         </div>
       )}
 
@@ -103,7 +103,7 @@ const Navbar = () => {
 
       {/* Logout */}
       <div className="menu-section logout" onClick={handleLogout}>
-        🚪 Đăng xuất
+        Đăng xuất
       </div>
     </div>
   );
@@ -147,6 +147,9 @@ const Navbar = () => {
               </Link>
               <Link to={path.ROOM_CREATE} className="btn-solid">
                 Đăng tin
+              </Link>
+              <Link to={path.ROOMS_MATCHING} className="btn-solid">
+                Ghép trọ
               </Link>
             </>
           )}
