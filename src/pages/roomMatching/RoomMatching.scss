@@ -1,0 +1,35 @@
+.roommate-finder {
+  padding: 20px;
+
+  .filter-card {
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  }
+
+  .finder-tabs {
+    background: #fff;
+    border-radius: 12px;
+    padding: 16px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  }
+
+  .roommate-card {
+    border-radius: 12px;
+    overflow: hidden;
+    .card-extra {
+      margin-top: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+  }
+
+  .swipe-roommates {
+    text-align: center;
+    .actions {
+      margin-top: 16px;
+      display: flex;
+      justify-content: space-around;
+    }
+  }
+}

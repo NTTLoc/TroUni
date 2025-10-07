@@ -2,6 +2,7 @@ import { useContext, useEffect, useState } from "react";
 import { Form, Input, Button, Select, Avatar, message } from "antd";
 import { UserOutlined } from "@ant-design/icons";
 import { ProfileContext } from "../../context/profile.context";
+import { assets } from "../../../assets/assets";
 import "./AccountInfo.scss";
 import { assets } from "../../../assets/assets";
 
@@ -32,6 +33,8 @@ const AccountInfo = () => {
       message.error("Cập nhật thất bại, vui lòng thử lại.");
     }
   };
+
+  console.log(profile?.avatarUrl);
 
   return (
     <div>

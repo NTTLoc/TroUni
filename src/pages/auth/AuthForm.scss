@@ -1,114 +1,132 @@
-// login
 @use "../../../src/index.scss" as *;
 
-.login {
+.auth {
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: 100vh;
   background: var(--bg);
   padding: 20px;
-  border-bottom: 1px solid var(--text);
 
   &__container {
     background: var(--card-bg);
-    padding: 30px;
+    padding: 40px 30px;
     border-radius: 12px;
     width: 100%;
-    max-width: 400px;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    max-width: 420px;
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.1);
     text-align: center;
   }
 
   &__logo {
     width: 120px;
-    margin-bottom: 20px;
+    margin: 0 auto 20px;
+    display: block;
   }
 
   h2 {
     margin-bottom: 24px;
     font-size: 1.5rem;
-    color: var(--text);
+    font-weight: 600;
+    color: #00bfa6;
   }
 
   &__form {
-    display: flex;
-    flex-direction: column;
     text-align: left;
 
-    label {
-      margin: 10px 0 4px;
-      font-size: 0.9rem;
-      color: var(--text);
-    }
-
-    input {
+    input,
+    .ant-input,
+    .ant-input-affix-wrapper {
+      background: white;
       padding: 10px;
-      border: 1px solid #ccc;
       border-radius: 6px;
-      margin-bottom: 10px;
-    }
-
-    a {
-      margin: 10px 0px;
-      text-decoration: none;
-      color: #2a7ae4;
+      border: 1px solid #d9d9d9;
+      transition: border-color 0.3s;
 
       &:hover {
-        text-decoration: underline;
+        border-color: #00bfa6;
+        box-shadow: none;
+      }
+
+      &:focus,
+      &.ant-input-affix-wrapper-focused {
+        border-color: #00bfa6;
+        box-shadow: none;
       }
     }
 
-    .login__submit {
+    // Đảm bảo input password (antd) đồng bộ
+    .ant-input-password,
+    .ant-input-affix-wrapper {
+      border-radius: 6px !important;
+      overflow: hidden;
+    }
+
+    .ant-btn-primary {
       margin-top: 10px;
-      background: var(--primary);
-      color: white;
-      border: none;
-      padding: 10px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 15px;
+      height: 40px;
       font-weight: 600;
-
-      &:hover {
-        background: var(--secondary);
-      }
-    }
-
-    .text__bonus {
-      display: flex;
-      align-items: center;
-      margin-top: 24px;
-      margin-bottom: 16px;
-
-      hr {
-        width: 100%;
-        color: #595959;
-      }
-
-      span {
-        white-space: nowrap;
-        color: #595959;
-        margin: 0 12px;
-      }
-    }
-
-    .login__google {
-      margin-top: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      background: var(--card-bg);
-      border: 1px solid #ddd;
-      padding: 10px;
+      background: var(--primary);
       border-radius: 6px;
-      cursor: pointer;
-      color: var(--text);
 
       &:hover {
-        background: var(--border);
+        background: var(--secondary) !important;
       }
+    }
+  }
+
+  .ant-select-selector {
+    border-radius: 8px; // bo góc
+    transition: all 0.3s ease;
+  }
+
+  // Khi hover
+  .ant-select:hover .ant-select-selector {
+    border-color: #00bfa6 !important;
+    box-shadow: none !important;
+  }
+
+  // Khi focus (active)
+  .ant-select-focused .ant-select-selector {
+    border-color: #00bfa6 !important;
+    box-shadow: none !important;
+  }
+
+  .text__bonus {
+    display: flex;
+    align-items: center;
+    margin: 24px 0 16px;
+
+    hr {
+      flex: 1;
+      border: none;
+      border-top: 1px solid var(--border);
+    }
+
+    span {
+      margin: 0 12px;
+      white-space: nowrap;
+      font-size: 0.9rem;
+      color: var(--text-light, #595959);
+    }
+  }
+
+  .auth__google {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: var(--card-bg);
+    border: 1px solid var(--text);
+    padding: 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    color: var(--text);
+
+    &:hover {
+      background: transparent;
+      color: #00bfa6 !important;
+      border: 1px solid #00bfa6 !important;
     }
   }
 
@@ -117,154 +135,17 @@
     font-size: 0.9rem;
 
     a {
-      color: #2a7ae4;
-      text-decoration: none;
-
-      &:hover {
-        text-decoration: underline;
-      }
-    }
-
-    .login__register-link {
+      color: #00bfa6;
       font-weight: 600;
     }
   }
 }
 
-// register
+// dùng chung cho login / register
+.login {
+  @extend .auth;
+}
+
 .register {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  background: var(--bg);
-  padding: 20px;
-  border-bottom: 1px solid var(--text);
-
-  &__container {
-    background: var(--card-bg);
-    padding: 30px;
-    border-radius: 12px;
-    width: 100%;
-    max-width: 400px;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-    text-align: center;
-  }
-
-  &__logo {
-    width: 120px;
-    margin-bottom: 20px;
-  }
-
-  h2 {
-    margin-bottom: 24px;
-    font-size: 1.5rem;
-    color: var(--text);
-  }
-
-  &__form {
-    display: flex;
-    flex-direction: column;
-    text-align: left;
-
-    label {
-      margin: 10px 0 4px;
-      font-size: 0.9rem;
-      color: var(--text);
-    }
-
-    input,
-    select {
-      padding: 10px;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      margin-bottom: 10px;
-      font-size: 0.95rem;
-      background-color: #fff;
-      color: #333;
-      transition: border 0.2s;
-
-      &:focus {
-        border-color: var(--primary-color);
-        outline: none;
-      }
-    }
-
-    select {
-      cursor: pointer;
-      background-repeat: no-repeat;
-      background-position: right 10px center;
-      background-size: 12px 8px;
-    }
-
-    .register__submit {
-      margin-top: 20px;
-      background: var(--primary);
-      color: white;
-      border: none;
-      padding: 10px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 15px;
-      font-weight: 600;
-
-      &:hover {
-        background: var(--secondary);
-      }
-    }
-
-    .text__bonus {
-      display: flex;
-      align-items: center;
-      margin-top: 24px;
-      margin-bottom: 16px;
-
-      hr {
-        width: 100%;
-        color: #595959;
-      }
-
-      span {
-        white-space: nowrap;
-        color: #595959;
-        margin: 0 12px;
-      }
-    }
-
-    .login__google {
-      margin-top: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      background: var(--card-bg);
-      border: 1px solid #ddd;
-      padding: 10px;
-      border-radius: 6px;
-      cursor: pointer;
-      color: var(--text);
-
-      &:hover {
-        background: var(--border);
-      }
-    }
-  }
-
-  &__extra {
-    margin-top: 16px;
-    font-size: 0.9rem;
-
-    a {
-      color: #2a7ae4;
-      text-decoration: none;
-
-      &:hover {
-        text-decoration: underline;
-      }
-    }
-
-    .register__login-link {
-      font-weight: 600;
-    }
-  }
+  @extend .auth;
 }

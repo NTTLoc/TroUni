@@ -1,6 +1,5 @@
 .manage-container {
-  padding: 20px;
-  background: var(--bg);
+  background: var(--box-profile);
   min-height: 100vh;
 }
 
@@ -21,6 +20,7 @@
   margin: 0;
   font-size: 18px;
   font-weight: bold;
+  color: var(--text);
 }
 
 .user-detail .ant-btn-link {
@@ -102,6 +102,36 @@
   }
 }
 
+/* Style nút ... của Tabs */
+.ant-tabs-nav-more {
+  border: none !important;
+  background: transparent !important;
+  border-radius: 6px;
+  color: var(--text) !important;
+  transition: all 0.2s;
+
+  &:focus {
+    border-color: #00bfa6 !important;
+  }
+}
+
+/* Dropdown của nó (menu khi click vào dấu ...) */
+// .ant-tabs-dropdown {
+//   .ant-tabs-dropdown-menu {
+//     border-radius: 8px;
+//     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+//   }
+
+//   .ant-tabs-dropdown-menu-item {
+//     color: var(--text);
+
+//     &:hover {
+//       background: rgba(0, 191, 166, 0.1);
+//       color: #00bfa6;
+//     }
+//   }
+// }
+
 .manage-content {
   text-align: center;
   margin-top: 40px;
@@ -120,6 +150,10 @@
   padding: 0 24px;
   font-weight: 600;
   transition: background 0.2s ease;
+
+  span {
+    color: #f5f5f5 !important;
+  }
 
   &:hover {
     background: var(--secondary) !important;

@@ -6,6 +6,7 @@ import { useAuth } from "./hooks/useAuth";
 import { useEffect } from "react";
 import { getUserApi } from "./services/authApi";
 import ScrollToTop from "./ScrollToTop";
+import TestRoomApi from "./components/debug/TestRoomApi";
 
 function App() {
   const { setAuth, appLoading, setAppLoading } = useAuth();

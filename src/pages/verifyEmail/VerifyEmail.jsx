@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import "./VerifyEmail.scss";
-import { verifyEmailApi } from "../../services/authApi.js";
+import { resendEmailApi, verifyEmailApi } from "../../services/authApi.js";
 import { path } from "../../utils/constants.js";
 import useMessage from "../../hooks/useMessage.js";
 
@@ -32,6 +32,22 @@ const VerifyEmail = () => {
       message.error("Có lỗi xảy ra, thử lại sau.");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleResend = async () => {
+    try {
+      const res = await resendEmailApi(email);
+      console.log(res.data);
+
+      if (res?.code === 200) {
+        console.log("Đã gửi lại mã. Vui lòng kiểm tra email.");
+      } else {
+        setError(res?.message || "Không thể gửi lại mã, thử lại sau.");
+      }
+    } catch (err) {
+      console.error("Resend error:", err);
+      setError("Có lỗi xảy ra khi gửi lại mã.");
     }
   };
 
@@ -67,11 +83,7 @@ const VerifyEmail = () => {
           >
             Quay lại đăng ký
           </button>
-          <button
-            className="link-btn"
-            type="button"
-            onClick={() => console.log("Resend code")}
-          >
+          <button className="link-btn" type="button" onClick={handleResend}>
             Gửi lại mã
           </button>
         </div>

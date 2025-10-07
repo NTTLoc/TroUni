@@ -30,7 +30,10 @@ const Navbar = () => {
       setUser(auth.user);
 
       const savedProfile = localStorage.getItem("profile");
-      setProfile(savedProfile ? JSON.parse(savedProfile) : null);
+
+      if (savedProfile) {
+        setProfile(JSON.parse(savedProfile));
+      }
     } else {
       setUser(null);
       setProfile(null);
@@ -59,13 +62,20 @@ const Navbar = () => {
       <div className="user-info">
         <Avatar src={profile?.avatarUrl || assets.avatar} />
         <div>
+          {/* Role-based info */}
           <h4
-            onClick={() => navigate(path.ACCOUNT)}
+            onClick={() =>
+              navigate(
+                user?.role === "STUDENT"
+                  ? path.ACCOUNT
+                  : path.LANDLORD_DASHBOARD
+              )
+            }
             style={{ cursor: "pointer" }}
           >
-            {user?.username || "Nguyễn Thanh Thiên Lộc"}
+            {user?.username || ""}
           </h4>
-          {/* Role-based info */}
+
           {user?.role === "STUDENT" && (
             <p>Người theo dõi 0 · Đang theo dõi 0</p>
           )}
@@ -86,16 +96,16 @@ const Navbar = () => {
       {/* Menu theo role */}
       {auth.user?.role === "ADMIN" ? (
         <div className="menu-section">
-          <Link to={path.ADMIN}>📊 Dashboard Admin</Link>
-          <Link to={path.MANAGE_USERS}>👥 Quản lý người dùng</Link>
-          <Link to={path.MANAGE_POSTS}>📝 Quản lý tin</Link>
+          <Link to={path.ADMIN}>Dashboard Admin</Link>
+          <Link to={path.MANAGE_USERS}>Quản lý người dùng</Link>
+          <Link to={path.MANAGE_POSTS}>Quản lý tin</Link>
         </div>
       ) : (
         <div className="menu-section">
-          <Link to={path.SAVED}>❤️ Tin đăng đã lưu</Link>
-          <Link to={path.SAVED_SEARCH}>🔖 Tìm kiếm đã lưu</Link>
-          <Link to={path.HISTORY}>🕑 Lịch sử xem tin</Link>
-          <Link to={path.REVIEWS}>⭐ Đánh giá từ tôi</Link>
+          <Link to={path.SAVED}>Tin đăng đã lưu</Link>
+          <Link to={path.SAVED_SEARCH}>Tìm kiếm đã lưu</Link>
+          <Link to={path.HISTORY}>Lịch sử xem tin</Link>
+          <Link to={path.REVIEWS}>Đánh giá từ tôi</Link>
         </div>
       )}
 
@@ -103,7 +113,7 @@ const Navbar = () => {
 
       {/* Logout */}
       <div className="menu-section logout" onClick={handleLogout}>
-        🚪 Đăng xuất
+        Đăng xuất
       </div>
     </div>
   );
@@ -128,13 +138,29 @@ const Navbar = () => {
 
         <div className="navbar__right">
           {auth.user?.role === "ADMIN" ? (
-            <></>
+            <Link to={path.ADMIN} className="btn-outline">
+              Admin Dashboard
+            </Link>
+          ) : auth.user?.role === "LANDLORD" ? (
+            <>
+              {/* <Link to={path.LANDLORD_DASHBOARD} className="btn-outline">
+                Dashboard
+              </Link> */}
+              <Link to={path.ROOM_CREATE} className="btn-solid">
+                Đăng tin
+              </Link>
+            </>
           ) : (
             <>
-              <Link to={path.MANAGE} className="btn-outline">
+              {/* <Link to={path.MANAGE} className="btn-outline">
                 Quản lý tin
               </Link>
-              <button className="btn-solid">Đăng tin</button>
+              <Link to={path.ROOM_CREATE} className="btn-solid">
+                Đăng tin
+              </Link> */}
+              <Link to={path.ROOMS_MATCHING} className="btn-solid">
+                Ghép trọ
+              </Link>
             </>
           )}
 
@@ -149,9 +175,14 @@ const Navbar = () => {
               <a onClick={(e) => e.preventDefault()}>
                 <Space className="avatar-menu">
                   <Avatar
-                    src={profile?.avatarUrl || assets.avatar}
+                    key={profile?.avatarUrl} // <== ép render lại khi có avatar
+                    src={profile?.avatarUrl || avatar}
                     size={30}
                     icon={<UserOutlined />}
+                    onError={(e) => {
+                      e.currentTarget.src = avatar;
+                      return false;
+                    }}
                   />
                   <DownOutlined />
                 </Space>
