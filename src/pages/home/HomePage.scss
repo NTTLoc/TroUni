@@ -174,36 +174,35 @@
   }
 }
 
-/* Featured Rooms Section */
 .rooms {
   padding: 3rem 2rem;
-  box-shadow: 0 8px 15px -5px var(--shadow, rgba(0, 0, 0, 0.15));
-  transition: all 0.3s ease;
   position: relative;
-  z-index: 200;
-
-  a {
-    text-decoration: none;
-  }
+  z-index: 10;
+  background: var(--bg);
+  box-shadow: 0 8px 15px -5px rgba(0, 0, 0, 0.08);
 
   .header {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 2rem;
+    justify-content: space-between; /* H2 bên trái - link bên phải */
+    align-items: center; /* căn giữa theo chiều dọc */
+    margin-bottom: 1.5rem;
 
     h2 {
-      font-size: 1.6rem;
+      font-size: 1.5rem;
       font-weight: 700;
-      color: var(--primary);
+      color: var(--text);
+      margin: 0;
     }
 
     .view-all {
       font-size: 0.95rem;
-      font-weight: 500;
-      color: var(--primary);
+      font-weight: 600;
+      color: #00bfa6;
+      text-decoration: none;
+      transition: color 0.25s ease;
 
       &:hover {
+        color: #00a791;
         text-decoration: underline;
       }
     }
@@ -215,157 +214,159 @@
     gap: 2rem;
   }
 
-  .room-card {
-    background: var(--bg2);
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    position: relative;
-
+  .ant-card.room-card {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    border-radius: 14px;
+    overflow: hidden;
+    transition: all 0.3s ease;
     height: 100%;
+    border: 1px solid var(--border);
+    background: var(--card-bg);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    color: var(--text);
 
     &:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+      transform: translateY(-5px);
+      box-shadow: 0 10px 22px rgba(0, 0, 0, 0.15);
+      border-color: var(--primary);
     }
 
+    /* ---------- HÌNH ẢNH ---------- */
     .room-image-container {
       position: relative;
 
-      .room-image {
+      img {
         width: 100%;
         height: 200px;
         object-fit: cover;
         display: block;
+        transition: transform 0.3s ease;
       }
 
-      .badges {
-        position: absolute;
-        bottom: 10px;
-        left: 10px;
-
-        .verified {
-          display: flex;
-          align-items: center;
-          gap: 4px;
-          font-size: 0.75rem;
-          font-weight: 500;
-          color: #fff;
-          background: rgba(0, 191, 166, 0.9);
-          padding: 0.25rem 0.6rem;
-          border-radius: 6px;
-          box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
-
-          &::before {
-            content: "✔";
-            font-size: 0.8rem;
-          }
-        }
+      &:hover img {
+        transform: scale(1.05);
       }
 
       .price {
         position: absolute;
-        bottom: 10px;
-        right: 10px;
-        background: #dd0000;
+        bottom: 12px;
+        right: 12px;
+        background: #d93025;
         color: #fff;
-        font-size: 0.9rem;
         font-weight: 600;
-        padding: 0.3rem 0.7rem;
+        font-size: 0.9rem;
+        padding: 0.35rem 0.75rem;
         border-radius: 6px;
-        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
       }
     }
 
-    /* Title */
-    h3.room-title {
-      font-size: 1.1rem;
+    /* ---------- TIÊU ĐỀ ---------- */
+    .room-title {
+      margin: 1rem 1rem 0.6rem;
       font-weight: 600;
-      margin: 0.8rem 1rem 0.3rem;
       color: var(--text);
+      font-size: 1rem;
+      line-height: 1.4;
 
       display: -webkit-box;
-      -webkit-line-clamp: 2; /* Giới hạn 2 dòng */
+      -webkit-line-clamp: 2;
       -webkit-box-orient: vertical;
       overflow: hidden;
       text-overflow: ellipsis;
-
-      min-height: calc(1.4em * 2); /* Chiều cao bằng 2 dòng */
-      line-height: 1.4em; /* Đảm bảo khoảng cách dòng */
+      word-break: break-word;
+      min-height: calc(1.4em * 2);
     }
 
-    /* Mô tả */
-    .room-desc {
-      font-size: 0.85rem;
-      color: var(--text1);
-      margin: 0 1rem 0.6rem;
-      line-height: 1.4;
-      min-height: 2.2rem;
-    }
-
-    /* Meta info */
+    /* ---------- DIỆN TÍCH & ĐỊA CHỈ ---------- */
     .room-meta {
       display: flex;
-      justify-content: space-between;
-      margin: 0 1rem 0.5rem;
-      font-size: 0.85rem;
-      color: var(--text1);
+      flex-direction: column;
+      gap: 0.8rem;
+      margin: 1rem 1rem 0.6rem;
 
-      .size {
-        font-weight: 500;
+      /* wrapper cho mỗi dòng meta (icon + text) */
+      .meta-row {
+        display: flex;
+        align-items: flex-start; /* icon canh đầu dòng text */
+        gap: 0.6rem;
+        font-size: 0.9rem;
+        color: var(--text1);
+        line-height: 1.4;
+        white-space: normal;
       }
-      .location {
-        color: var(--text);
+
+      /* icon */
+      .meta-icon {
+        flex: 0 0 20px; /* không nén, giữ chỗ cho icon */
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+        color: #00bfa6 !important; /* force màu nếu bị override */
+        margin-top: 2px; /* căn nhẹ cho nhìn đẹp */
+      }
+
+      /* text phần meta (địa chỉ, diện tích...) */
+      .meta-text {
+        display: -webkit-box;
+        -webkit-line-clamp: 2; /* chỉ 2 dòng */
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        word-break: break-word;
+        max-width: 100%;
+        line-height: 1.4;
       }
     }
 
-    /* Chủ trọ */
+    /* ---------- CHỦ TRỌ ---------- */
     .owner-info {
       display: flex;
       align-items: center;
-      gap: 0.6rem;
+      gap: 0.8rem;
       margin: 0 1rem 1rem;
+      padding-top: 0.5rem;
+      border-top: 1px solid var(--border);
 
-      .owner-avatar {
-        width: 36px;
-        height: 36px;
+      img {
+        width: 38px;
+        height: 38px;
         border-radius: 50%;
+        border: 2px solid #00bfa6;
         object-fit: cover;
-        border: 2px solid var(--primary);
       }
 
       .owner-name {
-        font-size: 0.9rem;
         font-weight: 600;
         color: var(--text);
+        font-size: 0.9rem;
       }
 
       .owner-posts {
-        font-size: 0.75rem;
-        color: var(--text);
+        font-size: 0.8rem;
+        color: var(--text1);
       }
     }
 
-    /* Button */
     .detail-btn {
-      margin: auto 1rem 1rem;
-      padding: 0.6rem;
-      text-align: center;
+      display: block;
+      width: 100%;
+      margin-top: auto;
+      margin-bottom: 1rem; // chỉ giữ khoảng cách dưới
+      padding: 0.7rem;
       background: var(--primary);
       color: #fff;
-      font-size: 0.9rem;
       font-weight: 600;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      transition: background 0.3s ease;
+      border-radius: 8px;
+      text-align: center;
+      transition: all 0.25s ease;
 
       &:hover {
         background: var(--secondary);
+        transform: translateY(-2px);
       }
     }
   }

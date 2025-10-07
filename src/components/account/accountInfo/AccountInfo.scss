@@ -1,5 +1,3 @@
-/* -------- AccountInfo (Thông tin cá nhân) -------- */
-
 .profile-avatar {
   display: flex;
   flex-direction: column;
@@ -27,19 +25,48 @@
     color: var(--text);
   }
 
-  .ant-input,
-  .ant-select-selector {
+  /* Input */
+  .ant-input {
     background: var(--content-side-2);
     color: var(--text);
     border-radius: 6px;
     border: 1px solid var(--border);
+    transition: all 0.3s;
 
     &:hover {
-      box-shadow: 0 0 0 2px var(--hover);
+      border-color: #00bfa6;
+      box-shadow: 0 0 0 2px rgba(0, 191, 166, 0.2);
+    }
+
+    &:focus,
+    &.ant-input-focused {
+      border-color: #00bfa6;
+      box-shadow: 0 0 0 2px rgba(0, 191, 166, 0.2);
     }
   }
 
-  /* chỉ field giới tính mới mất khung khi ở chế độ view */
+  /* Select */
+  .ant-select {
+    .ant-select-selector {
+      background: var(--content-side-2);
+      color: var(--text);
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      transition: all 0.3s;
+
+      &:hover {
+        border-color: #00bfa6 !important;
+        box-shadow: 0 0 0 2px rgba(0, 191, 166, 0.2);
+      }
+    }
+
+    &.ant-select-focused .ant-select-selector {
+      border-color: #00bfa6 !important;
+      box-shadow: 0 0 0 2px rgba(0, 191, 166, 0.2);
+    }
+  }
+
+  /* Field giới tính khi disabled */
   .gender-field .ant-input[disabled] {
     border: none;
     background: transparent;

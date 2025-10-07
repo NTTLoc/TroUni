@@ -9,7 +9,6 @@ import {
   Row,
   Col,
   Upload,
-  message,
   Space,
   Divider,
   Typography,
@@ -22,7 +21,6 @@ import {
 } from "@ant-design/icons";
 import { useRoomManagement } from "../../hooks/useRooms";
 import {
-  createRoomImagesApi,
   uploadImageFileApi,
   generateMockImageUrl,
 } from "../../services/roomApi";
@@ -600,7 +598,7 @@ const RoomForm = ({ roomId, onSuccess, onCancel }) => {
                 </Form.Item>
               </Col>
 
-              <Col xs={24} md={12}>
+              {/* <Col xs={24} md={12}>
                 <Form.Item name="latitude" label="Vĩ độ (Latitude)">
                   <Input
                     placeholder="VD: 10.762622"
@@ -616,7 +614,7 @@ const RoomForm = ({ roomId, onSuccess, onCancel }) => {
                     style={{ width: "100%" }}
                   />
                 </Form.Item>
-              </Col>
+              </Col> */}
             </Row>
           </div>
 

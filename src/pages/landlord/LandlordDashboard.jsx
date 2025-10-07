@@ -27,12 +27,13 @@ import {
 import { useMyRooms } from "../../hooks/useRooms";
 import { useNavigate } from "react-router-dom";
 import AccountInfo from "../../components/account/accountInfo/AccountInfo";
+import ManagePost from "../../pages/managePost/ManagePost";
 import "./LandlordDashboard.scss";
 
 const LandlordDashboard = () => {
   const navigate = useNavigate();
   const { myRooms, loading, fetchMyRooms } = useMyRooms();
-  const [activeMenu, setActiveMenu] = useState("overview");
+  const [activeMenu, setActiveMenu] = useState("rooms");
 
   useEffect(() => {
     fetchMyRooms();
@@ -201,120 +202,121 @@ const LandlordDashboard = () => {
         return renderProfile();
       case "settings":
         return renderSettings();
-      default:
-        return renderOverview();
+      // default:
+      //   return renderOverview();
     }
   };
 
-  const renderOverview = () => (
-    <>
-      {/* Thống kê */}
-      <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
-        <Col xs={24} sm={12} lg={6}>
-          <Card>
-            <Statistic
-              title="Tổng Phòng Trọ"
-              value={stats.totalRooms}
-              prefix={<HomeOutlined />}
-            />
-          </Card>
-        </Col>
-        <Col xs={24} sm={12} lg={6}>
-          <Card>
-            <Statistic
-              title="Phòng Còn Trống"
-              value={stats.availableRooms}
-              prefix={<HomeOutlined />}
-              valueStyle={{ color: "#3f8600" }}
-            />
-          </Card>
-        </Col>
-        <Col xs={24} sm={12} lg={6}>
-          <Card>
-            <Statistic
-              title="Phòng Đã Thuê"
-              value={stats.rentedRooms}
-              prefix={<UserOutlined />}
-              valueStyle={{ color: "#1890ff" }}
-            />
-          </Card>
-        </Col>
-        <Col xs={24} sm={12} lg={6}>
-          <Card>
-            <Statistic
-              title="Doanh Thu Tháng"
-              value={stats.totalRevenue}
-              prefix={<DollarOutlined />}
-              suffix="VNĐ"
-              valueStyle={{ color: "#cf1322" }}
-            />
-          </Card>
-        </Col>
-      </Row>
+  // const renderOverview = () => (
+  //   <>
+  //     {/* Thống kê */}
+  //     <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
+  //       <Col xs={24} sm={12} lg={6}>
+  //         <Card>
+  //           <Statistic
+  //             title="Tổng Phòng Trọ"
+  //             value={stats.totalRooms}
+  //             prefix={<HomeOutlined />}
+  //           />
+  //         </Card>
+  //       </Col>
+  //       <Col xs={24} sm={12} lg={6}>
+  //         <Card>
+  //           <Statistic
+  //             title="Phòng Còn Trống"
+  //             value={stats.availableRooms}
+  //             prefix={<HomeOutlined />}
+  //             valueStyle={{ color: "#3f8600" }}
+  //           />
+  //         </Card>
+  //       </Col>
+  //       <Col xs={24} sm={12} lg={6}>
+  //         <Card>
+  //           <Statistic
+  //             title="Phòng Đã Thuê"
+  //             value={stats.rentedRooms}
+  //             prefix={<UserOutlined />}
+  //             valueStyle={{ color: "#1890ff" }}
+  //           />
+  //         </Card>
+  //       </Col>
+  //       <Col xs={24} sm={12} lg={6}>
+  //         <Card>
+  //           <Statistic
+  //             title="Doanh Thu Tháng"
+  //             value={stats.totalRevenue}
+  //             prefix={<DollarOutlined />}
+  //             suffix="VNĐ"
+  //             valueStyle={{ color: "#cf1322" }}
+  //           />
+  //         </Card>
+  //       </Col>
+  //     </Row>
 
-      {/* Phòng trọ gần đây */}
-      {/* <Card
-        title="Phòng Trọ Gần Đây"
-        extra={
-          <Button type="link" onClick={() => setActiveMenu("rooms")}>
-            Xem tất cả
-          </Button>
-        }
-      >
-        {myRooms.length > 0 ? (
-          <Table
-            dataSource={myRooms.slice(0, 5)}
-            columns={roomColumns.slice(0, -1)} // Bỏ cột thao tác
-            pagination={false}
-            size="small"
-          />
-        ) : (
-          <Empty description="Chưa có phòng trọ nào" />
-        )}
-      </Card> */}
-    </>
-  );
+  //     {/* Phòng trọ gần đây */}
+  //     {/* <Card
+  //       title="Phòng Trọ Gần Đây"
+  //       extra={
+  //         <Button type="link" onClick={() => setActiveMenu("rooms")}>
+  //           Xem tất cả
+  //         </Button>
+  //       }
+  //     >
+  //       {myRooms.length > 0 ? (
+  //         <Table
+  //           dataSource={myRooms.slice(0, 5)}
+  //           columns={roomColumns.slice(0, -1)} // Bỏ cột thao tác
+  //           pagination={false}
+  //           size="small"
+  //         />
+  //       ) : (
+  //         <Empty description="Chưa có phòng trọ nào" />
+  //       )}
+  //     </Card> */}
+  //   </>
+  // );
 
   const renderRooms = () => (
-    <Card>
-      <div style={{ marginBottom: 16 }}>
-        <Button
-          type="primary"
-          icon={<PlusOutlined />}
-          onClick={handleCreateRoom}
-        >
-          Thêm Phòng Trọ Mới
-        </Button>
-      </div>
+    <ManagePost />
+    // {/* <Card>
+    // <div style={{ marginBottom: 16 }}>
+    //   <Button
+    //     type="primary"
+    //     icon={<PlusOutlined />}
+    //     onClick={handleCreateRoom}
+    //   >
+    //     Thêm Phòng Trọ Mới
+    //   </Button>
+    // </div>
 
-      {myRooms.length > 0 ? (
-        <Table
-          dataSource={myRooms}
-          columns={roomColumns}
-          loading={loading}
-          rowKey="id"
-          pagination={{
-            pageSize: 10,
-            showSizeChanger: true,
-            showQuickJumper: true,
-          }}
-        />
-      ) : (
-        <Empty
-          description="Chưa có phòng trọ nào"
-          image={Empty.PRESENTED_IMAGE_SIMPLE}
-        >
-          <Button type="primary" onClick={handleCreateRoom}>
-            Thêm Phòng Trọ Đầu Tiên
-          </Button>
-        </Empty>
-      )}
-    </Card>
+    // {myRooms.length > 0 ? (
+    //   <Table
+    //     dataSource={myRooms}
+    //     columns={roomColumns}
+    //     loading={loading}
+    //     rowKey="id"
+    //     pagination={{
+    //       pageSize: 10,
+    //       showSizeChanger: true,
+    //       showQuickJumper: true,
+    //     }}
+    //   />
+    // ) : (
+    //   <Empty
+    //     description="Chưa có phòng trọ nào"
+    //     image={Empty.PRESENTED_IMAGE_SIMPLE}
+    //   >
+    //     <Button type="primary" onClick={handleCreateRoom}>
+    //       Thêm Phòng Trọ Đầu Tiên
+    //     </Button>
+    //   </Empty>
+    // )}
+    // </Card> */}
   );
 
   const renderAnalytics = () => (
     <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
-      <Col xs={24} sm={12} lg={6}>
+      <Col xs={24} sm={12} lg={8}>
         <Card>
           <Statistic
             title="Tổng Phòng Trọ"
@@ -323,7 +325,7 @@ const LandlordDashboard = () => {
           />
         </Card>
       </Col>
-      <Col xs={24} sm={12} lg={6}>
+      <Col xs={24} sm={12} lg={8}>
         <Card>
           <Statistic
             title="Phòng Còn Trống"
@@ -333,7 +335,7 @@ const LandlordDashboard = () => {
           />
         </Card>
       </Col>
-      <Col xs={24} sm={12} lg={6}>
+      <Col xs={24} sm={12} lg={8}>
         <Card>
           <Statistic
             title="Phòng Đã Thuê"
@@ -343,7 +345,7 @@ const LandlordDashboard = () => {
           />
         </Card>
       </Col>
-      <Col xs={24} sm={12} lg={6}>
+      {/* <Col xs={24} sm={12} lg={6}>
         <Card>
           <Statistic
             title="Doanh Thu Tháng"
@@ -353,7 +355,7 @@ const LandlordDashboard = () => {
             valueStyle={{ color: "#cf1322" }}
           />
         </Card>
-      </Col>
+      </Col> */}
 
       {/* <Col xs={24} lg={12}>
         <Card title="Doanh Thu Theo Tháng">

@@ -38,6 +38,12 @@
   .form-section {
     margin-bottom: 32px;
 
+    .ant-typography-secondary {
+      margin: 0 0 16px 0;
+      color: #414141;
+      font-size: 13px;
+    }
+
     .ant-input,
     .ant-select-selector {
       background: white !important;
@@ -240,7 +246,8 @@
         color: #fff;
       }
 
-      .section-description {
+      .section-description,
+      .ant-typography-secondary {
         color: #999;
       }
     }
