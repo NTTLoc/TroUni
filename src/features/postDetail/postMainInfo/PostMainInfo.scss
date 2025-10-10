@@ -28,9 +28,21 @@
     font-weight: bold;
   }
 
-  &__location,
+  &__location {
+    margin-top: 0.3rem;
+    color: var(--text);
+
+    svg {
+      margin-right: 0.5rem;
+    }
+  }
+
   &__time {
     margin-top: 0.3rem;
     color: var(--text);
+
+    svg {
+      margin-right: 0.5rem;
+    }
   }
 }

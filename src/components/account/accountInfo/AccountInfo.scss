@@ -75,3 +75,25 @@
     color: rgba(0, 0, 0, 0.85);
   }
 }
+
+.profile-content {
+  .account-info {
+    .update-time {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 14px;
+      color: var(--text);
+
+      .clock-icon {
+        font-size: 16px;
+        margin-right: 4px;
+      }
+
+      p {
+        margin: 0;
+        font-weight: 600;
+      }
+    }
+  }
+}

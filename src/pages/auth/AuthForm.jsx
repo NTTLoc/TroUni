@@ -54,7 +54,9 @@ const AuthForm = ({ isRegister }) => {
     try {
       if (isRegister) {
         const res = await createUserApi(username, email, password, role);
+
         if (res?.code === "SUCCESS") {
+          message.success("Để hoàn tất đăng ký. Vui lòng xác thực email!", 2);
           navigate(path.VERIFY_EMAIL, { state: { email } });
         }
       } else {
@@ -62,7 +64,8 @@ const AuthForm = ({ isRegister }) => {
         handleAuthSuccess(res);
       }
     } catch (err) {
-      console.log(">>> API error: ", err);
+      console.error(">>> API error: ", err);
+      message.error(err?.message);
     }
   };
 
@@ -73,6 +76,7 @@ const AuthForm = ({ isRegister }) => {
         handleAuthSuccess(res);
       } catch (err) {
         console.log(">>> Google login error: ", err);
+        message.error(err?.message);
       }
     },
     onError: () => {
@@ -95,11 +99,11 @@ const AuthForm = ({ isRegister }) => {
           <Form layout="vertical" className="auth__form" onFinish={onFinish}>
             {isRegister && (
               <Form.Item
-                label="Họ tên"
+                label="Username"
                 name="username"
-                rules={[{ required: true, message: "Vui lòng nhập họ tên" }]}
+                rules={[{ required: true, message: "Vui lòng nhập username" }]}
               >
-                <Input placeholder="Nhập họ tên" />
+                <Input placeholder="Nhập username" />
               </Form.Item>
             )}
 

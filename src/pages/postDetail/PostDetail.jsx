@@ -1,14 +1,13 @@
 import React, { useEffect, useState } from "react";
 import "./PostDetail.scss";
 import { useParams } from "react-router-dom";
-import axios from "axios";
 import PostGallery from "../../features/postDetail/postGallery/PostGallery";
 import PostMainInfo from "../../features/postDetail/postMainInfo/PostMainInfo";
 import PostOwner from "../../features/postDetail/postOwner/PostOwner";
 import PostContact from "../../features/postDetail/postContact/PostContact";
 import RelatedPosts from "../../features/postDetail/relatedPosts/RelatedPosts";
 import PostDescription from "../../features/postDetail/postDescription/PostDescription";
-import { getPostById } from "../../services/postApi";
+import { getRoomByIdApi } from "../../services/postApi";
 
 const PostDetail = () => {
   const { id } = useParams(); // lấy id từ URL
@@ -18,7 +17,7 @@ const PostDetail = () => {
 
   useEffect(() => {
     setLoading(true);
-    getPostById(id)
+    getRoomByIdApi(id)
       .then((res) => {
         setPost(res.data);
         setLoading(false);

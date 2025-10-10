@@ -5,6 +5,7 @@ import Dashboard from "../../pages/admin/Dashboard";
 import LandlordDashboard from "../../pages/landlord/LandlordDashboard";
 import CheckAuth from "../checkAuth/checkAuth";
 import ManagePost from "../../pages/managePost/ManagePost";
+import Chat from "../../pages/chat/Chat";
 
 const PrivateRoutes = [
   {
@@ -51,6 +52,16 @@ const PrivateRoutes = [
       {
         path: "",
         element: <LandlordDashboard />,
+      },
+    ],
+  },
+  {
+    path: path.CHAT,
+    element: <CheckAuth allowedRoles={["STUDENT"]} />,
+    children: [
+      {
+        path: "",
+        element: <Chat />,
       },
     ],
   },

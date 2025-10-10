@@ -1,63 +1,55 @@
-import React, { useState } from "react";
-import { Layout, Input, Button, List, Avatar } from "antd";
-import "./ChatPage.scss";
+import React, { useEffect, useState } from "react";
+import { Layout } from "antd";
+import { useLocation } from "react-router-dom";
+import ChatSidebar from "../../features/chat/chatSidebar/ChatSidebar";
+import ChatWindow from "../../features/chat/chatWindow/ChatWindow";
+import { useAuth } from "../../hooks/useAuth";
+import "./Chat.scss";
 
 const { Sider, Content } = Layout;
 
-const dummyChats = [
-  { id: 1, name: "Nguyễn A", message: "Xin chào, bạn có rảnh trao đổi không?" },
-  { id: 2, name: "Trần B", message: "Phòng này còn chỗ không bạn?" },
-];
-
 const Chat = () => {
-  const [messages, setMessages] = useState([]);
-  const [input, setInput] = useState("");
+  const { auth } = useAuth();
+  const currentUser = auth.user;
 
-  const handleSend = () => {
-    if (!input) return;
-    setMessages([...messages, { sender: "Me", text: input }]);
-    setInput("");
+  const location = useLocation();
+  const chatTarget = location.state?.chatTarget; // user được gửi từ PostOwner
+
+  const [selectedChat, setSelectedChat] = useState(chatTarget || null);
+  const [conversationList, setConversationList] = useState([]);
+
+  // Khi có chatTarget từ PostOwner
+  useEffect(() => {
+    if (chatTarget) {
+      setSelectedChat(chatTarget);
+      setConversationList((prev) => {
+        const exists = prev.some((c) => c.id === chatTarget.id);
+        if (!exists) return [chatTarget, ...prev];
+        return prev;
+      });
+    }
+  }, [chatTarget]);
+
+  const handleSelectChat = (chat) => {
+    setSelectedChat(chat);
   };
 
   return (
     <Layout className="chat-page">
-      {/* Sidebar danh sách chat */}
-      <Sider width={250} className="chat-sider">
-        <List
-          itemLayout="horizontal"
-          dataSource={dummyChats}
-          renderItem={(chat) => (
-            <List.Item>
-              <List.Item.Meta
-                avatar={<Avatar>{chat.name[0]}</Avatar>}
-                title={chat.name}
-                description={chat.message}
-              />
-            </List.Item>
-          )}
+      <Sider width={300} className="chat-sidebar">
+        <ChatSidebar
+          selectedChat={selectedChat}
+          onSelectChat={handleSelectChat}
+          conversations={conversationList}
         />
       </Sider>
 
-      {/* Nội dung chat */}
       <Content className="chat-content">
-        <div className="messages">
-          {messages.map((m, i) => (
-            <div key={i} className={`msg ${m.sender === "Me" ? "me" : ""}`}>
-              {m.text}
-            </div>
-          ))}
-        </div>
-        <div className="input-box">
-          <Input
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            placeholder="Nhắn tin..."
-            onPressEnter={handleSend}
-          />
-          <Button type="primary" onClick={handleSend}>
-            Gửi
-          </Button>
-        </div>
+        {selectedChat ? (
+          <ChatWindow chat={selectedChat} currentUser={currentUser} />
+        ) : (
+          <div className="chat-empty">Chọn một cuộc trò chuyện để bắt đầu</div>
+        )}
       </Content>
     </Layout>
   );

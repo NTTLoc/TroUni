@@ -1,4 +1,6 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { timeAgoFormat } from "../../../utils/timeAgoFormat";
+import { ClockCircleOutlined, EnvironmentOutlined } from "@ant-design/icons";
 import "./PostMainInfo.scss";
 
 const PostMainInfo = ({ post }) => {
@@ -12,10 +14,16 @@ const PostMainInfo = ({ post }) => {
         </p>
         <p className="post-main__size">{post.areaSqm} m²</p>
       </span>
+
       <p className="post-main__location">
-        📍 {post.streetAddress}, Quận {post.district}, {post.ward}
+        <EnvironmentOutlined />
+        {post.streetAddress}, Quận {post.district}, {post.ward}
       </p>
-      <p className="post-main__time">Cập nhật {post.updatedAt}</p>
+
+      <p className="post-main__time">
+        <ClockCircleOutlined />
+        Cập nhật lần cuối: {timeAgoFormat(post.createdAt)}
+      </p>
     </div>
   );
 };
