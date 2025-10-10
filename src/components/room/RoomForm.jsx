@@ -23,7 +23,7 @@ import { useRoomManagement } from "../../hooks/useRooms";
 import {
   uploadImageFileApi,
   generateMockImageUrl,
-} from "../../services/roomApi";
+} from "../../services/postApi";
 import { uploadToCloudinary } from "../../services/cloudinaryApi";
 import AmenitySelector from "../amenity/AmenitySelector";
 import {

@@ -1,37 +1,27 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import "./PostList.scss";
 import PostCard from "../postCard/PostCard";
 import { Spin, Empty } from "antd";
-import { getAllPostsAPI } from "../../../services/postApi";
 
-const PostList = () => {
-  const [posts, setPosts] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchPosts = async () => {
-      try {
-        const res = await getAllPostsAPI();
-        setPosts(res.data || []);
-      } catch (error) {
-        console.error("Error fetching posts:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchPosts();
-  }, []);
-
-  if (loading)
+const PostList = ({ rooms = [], loading, activeTab }) => {
+  if (loading) {
     return (
       <Spin size="large" style={{ display: "block", margin: "20px auto" }} />
     );
+  }
+
+  // ✅ Lọc theo tab nếu cần (ví dụ: all, expired, approved, ...)
+  const filteredRooms =
+    activeTab === "all"
+      ? rooms
+      : rooms.filter((room) => room.status === activeTab);
 
   return (
     <div className="post-list">
-      {posts.length > 0 ? (
-        posts.map((post) => <PostCard key={`post-${post.id}`} post={post} />)
+      {filteredRooms.length > 0 ? (
+        filteredRooms.map((room) => (
+          <PostCard key={`room-${room.id}`} post={room} />
+        ))
       ) : (
         <Empty description="Không có bài đăng nào" />
       )}

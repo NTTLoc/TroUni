@@ -17,6 +17,7 @@
     "@mui/material": "^7.1.0",
     "@photo-sphere-viewer/core": "^5.14.0",
     "@react-oauth/google": "^0.12.2",
+    "@stomp/stompjs": "^7.2.0",
     "antd": "^5.27.4",
     "axios": "^1.10.0",
     "moment": "^2.30.1",
@@ -27,7 +28,9 @@
     "react-router-dom": "^7.6.1",
     "react-slick": "^0.31.0",
     "sass": "^1.89.1",
-    "slick-carousel": "^1.8.1"
+    "slick-carousel": "^1.8.1",
+    "sockjs-client": "^1.6.1",
+    "stompjs": "^2.3.3"
   },
   "devDependencies": {
     "@eslint/js": "^9.25.0",

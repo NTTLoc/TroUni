@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { getAllRoomsApi, getAllRoomsSimpleApi } from "../../services/roomApi";
+import { getAllRoomsApi, getAllRoomsSimpleApi } from "../../services/postApi";
 import { Spin, Card, Button, Space, Typography, Row, Col, Divider } from "antd";
 
 const { Title, Text } = Typography;
@@ -15,7 +15,7 @@ const RoomApiComparison = () => {
   const testPaginationApi = async () => {
     setLoading1(true);
     setError1(null);
-    
+
     try {
       console.log("🧪 Testing Pagination API...");
       const response = await getAllRoomsApi({ page: 0, size: 10 });
@@ -32,7 +32,7 @@ const RoomApiComparison = () => {
   const testSimpleApi = async () => {
     setLoading2(true);
     setError2(null);
-    
+
     try {
       console.log("🧪 Testing Simple API...");
       const response = await getAllRoomsSimpleApi();
@@ -53,7 +53,9 @@ const RoomApiComparison = () => {
   return (
     <div style={{ padding: "20px" }}>
       <Title level={2}>🧪 Room API Comparison</Title>
-      <Text>So sánh 2 endpoints: GET /rooms (pagination) vs GET /rooms/all (simple)</Text>
+      <Text>
+        So sánh 2 endpoints: GET /rooms (pagination) vs GET /rooms/all (simple)
+      </Text>
 
       <Row gutter={20} style={{ marginBottom: "20px" }}>
         <Col span={12}>
@@ -61,8 +63,8 @@ const RoomApiComparison = () => {
             <Title level={4}>1️⃣ Pagination API</Title>
             <Text code>GET /rooms?page=0&size=10</Text>
             <div style={{ marginTop: "10px" }}>
-              <Button 
-                onClick={testPaginationApi} 
+              <Button
+                onClick={testPaginationApi}
                 loading={loading1}
                 type="primary"
                 block
@@ -76,28 +78,54 @@ const RoomApiComparison = () => {
               </div>
             )}
             {paginationResult && (
-              <div style={{ marginTop: "10px", background: "#f0f8ff", padding: "10px" }}>
-                <Text><strong>✅ Success!</strong></Text><br/>
-                <Text><strong>Type:</strong> {typeof paginationResult}</Text><br/>
-                {typeof paginationResult === 'object' && (
+              <div
+                style={{
+                  marginTop: "10px",
+                  background: "#f0f8ff",
+                  padding: "10px",
+                }}
+              >
+                <Text>
+                  <strong>✅ Success!</strong>
+                </Text>
+                <br />
+                <Text>
+                  <strong>Type:</strong> {typeof paginationResult}
+                </Text>
+                <br />
+                {typeof paginationResult === "object" && (
                   <>
-                    <Text><strong>Keys:</strong> {Object.keys(paginationResult).join(", ")}</Text><br/>
-                    <Text><strong>Content:</strong> {Array.isArray(paginationResult.content) ? paginationResult.content.length : "N/A"} items</Text><br/>
-                    <Text><strong>Total:</strong> {paginationResult.totalElements || "N/A"}</Text>
+                    <Text>
+                      <strong>Keys:</strong>{" "}
+                      {Object.keys(paginationResult).join(", ")}
+                    </Text>
+                    <br />
+                    <Text>
+                      <strong>Content:</strong>{" "}
+                      {Array.isArray(paginationResult.content)
+                        ? paginationResult.content.length
+                        : "N/A"}{" "}
+                      items
+                    </Text>
+                    <br />
+                    <Text>
+                      <strong>Total:</strong>{" "}
+                      {paginationResult.totalElements || "N/A"}
+                    </Text>
                   </>
                 )}
               </div>
             )}
           </Card>
         </Col>
-        
+
         <Col span={12}>
           <Card>
             <Title level={4}>2️⃣ Simple API</Title>
             <Text code>GET /rooms/all</Text>
             <div style={{ marginTop: "10px" }}>
-              <Button 
-                onClick={testSimpleApi} 
+              <Button
+                onClick={testSimpleApi}
                 loading={loading2}
                 type="primary"
                 block
@@ -111,11 +139,30 @@ const RoomApiComparison = () => {
               </div>
             )}
             {simpleResult && (
-              <div style={{ marginTop: "10px", background: "#f0f8ff", padding: "10px" }}>
-                <Text><strong>✅ Success!</strong></Text><br/>
-                <Text><strong>Type:</strong> {typeof simpleResult}</Text><br/>
-                <Text><strong>Is Array:</strong> {Array.isArray(simpleResult) ? "Yes" : "No"}</Text><br/>
-                <Text><strong>Length:</strong> {Array.isArray(simpleResult) ? simpleResult.length : "N/A"}</Text>
+              <div
+                style={{
+                  marginTop: "10px",
+                  background: "#f0f8ff",
+                  padding: "10px",
+                }}
+              >
+                <Text>
+                  <strong>✅ Success!</strong>
+                </Text>
+                <br />
+                <Text>
+                  <strong>Type:</strong> {typeof simpleResult}
+                </Text>
+                <br />
+                <Text>
+                  <strong>Is Array:</strong>{" "}
+                  {Array.isArray(simpleResult) ? "Yes" : "No"}
+                </Text>
+                <br />
+                <Text>
+                  <strong>Length:</strong>{" "}
+                  {Array.isArray(simpleResult) ? simpleResult.length : "N/A"}
+                </Text>
               </div>
             )}
           </Card>
@@ -127,25 +174,58 @@ const RoomApiComparison = () => {
       {/* Display data from simple API if available */}
       {simpleResult && Array.isArray(simpleResult) && (
         <div>
-          <Title level={3}>📋 Simple API Data ({simpleResult.length} rooms)</Title>
-          <div style={{ display: "grid", gap: "15px", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))" }}>
+          <Title level={3}>
+            📋 Simple API Data ({simpleResult.length} rooms)
+          </Title>
+          <div
+            style={{
+              display: "grid",
+              gap: "15px",
+              gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
+            }}
+          >
             {simpleResult.map((room, index) => (
-              <Card 
-                key={room.id || index} 
+              <Card
+                key={room.id || index}
                 title={`🏠 ${room.title || "Untitled"}`}
                 style={{ borderColor: "#52c41a" }}
               >
                 <Space direction="vertical" style={{ width: "100%" }}>
-                  <div><strong>ID:</strong> {room.id}</div>
-                  <div><strong>Title:</strong> {room.title || "N/A"}</div>
-                  <div><strong>Description:</strong> {room.description || "N/A"}</div>
-                  <div><strong>City:</strong> {room.city || "N/A"}</div>
-                  <div><strong>District:</strong> {room.district || "N/A"}</div>
-                  <div><strong>Price:</strong> {room.pricePerMonth ? `${Number(room.pricePerMonth).toLocaleString()} VNĐ` : "N/A"}</div>
-                  <div><strong>Area:</strong> {room.areaSqm ? `${room.areaSqm} m²` : "N/A"}</div>
-                  <div><strong>Type:</strong> {room.roomType || "N/A"}</div>
-                  <div><strong>Status:</strong> {room.status || "N/A"}</div>
-                  <div><strong>Images:</strong> {room.images ? room.images.length : "0"} images</div>
+                  <div>
+                    <strong>ID:</strong> {room.id}
+                  </div>
+                  <div>
+                    <strong>Title:</strong> {room.title || "N/A"}
+                  </div>
+                  <div>
+                    <strong>Description:</strong> {room.description || "N/A"}
+                  </div>
+                  <div>
+                    <strong>City:</strong> {room.city || "N/A"}
+                  </div>
+                  <div>
+                    <strong>District:</strong> {room.district || "N/A"}
+                  </div>
+                  <div>
+                    <strong>Price:</strong>{" "}
+                    {room.pricePerMonth
+                      ? `${Number(room.pricePerMonth).toLocaleString()} VNĐ`
+                      : "N/A"}
+                  </div>
+                  <div>
+                    <strong>Area:</strong>{" "}
+                    {room.areaSqm ? `${room.areaSqm} m²` : "N/A"}
+                  </div>
+                  <div>
+                    <strong>Type:</strong> {room.roomType || "N/A"}
+                  </div>
+                  <div>
+                    <strong>Status:</strong> {room.status || "N/A"}
+                  </div>
+                  <div>
+                    <strong>Images:</strong>{" "}
+                    {room.images ? room.images.length : "0"} images
+                  </div>
                 </Space>
               </Card>
             ))}
@@ -156,25 +236,58 @@ const RoomApiComparison = () => {
       {/* Display data from pagination API if available */}
       {paginationResult && paginationResult.content && (
         <div>
-          <Title level={3}>📋 Pagination API Data ({paginationResult.content.length} rooms)</Title>
-          <div style={{ display: "grid", gap: "15px", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))" }}>
+          <Title level={3}>
+            📋 Pagination API Data ({paginationResult.content.length} rooms)
+          </Title>
+          <div
+            style={{
+              display: "grid",
+              gap: "15px",
+              gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
+            }}
+          >
             {paginationResult.content.map((room, index) => (
-              <Card 
-                key={room.id || index} 
+              <Card
+                key={room.id || index}
                 title={`🏠 ${room.title || "Untitled"}`}
                 style={{ borderColor: "#1890ff" }}
               >
                 <Space direction="vertical" style={{ width: "100%" }}>
-                  <div><strong>ID:</strong> {room.id}</div>
-                  <div><strong>Title:</strong> {room.title || "N/A"}</div>
-                  <div><strong>Description:</strong> {room.description || "N/A"}</div>
-                  <div><strong>City:</strong> {room.city || "N/A"}</div>
-                  <div><strong>District:</strong> {room.district || "N/A"}</div>
-                  <div><strong>Price:</strong> {room.pricePerMonth ? `${Number(room.pricePerMonth).toLocaleString()} VNĐ` : "N/A"}</div>
-                  <div><strong>Area:</strong> {room.areaSqm ? `${room.areaSqm} m²` : "N/A"}</div>
-                  <div><strong>Type:</strong> {room.roomType || "N/A"}</div>
-                  <div><strong>Status:</strong> {room.status || "N/A"}</div>
-                  <div><strong>Images:</strong> {room.images ? room.images.length : "0"} images</div>
+                  <div>
+                    <strong>ID:</strong> {room.id}
+                  </div>
+                  <div>
+                    <strong>Title:</strong> {room.title || "N/A"}
+                  </div>
+                  <div>
+                    <strong>Description:</strong> {room.description || "N/A"}
+                  </div>
+                  <div>
+                    <strong>City:</strong> {room.city || "N/A"}
+                  </div>
+                  <div>
+                    <strong>District:</strong> {room.district || "N/A"}
+                  </div>
+                  <div>
+                    <strong>Price:</strong>{" "}
+                    {room.pricePerMonth
+                      ? `${Number(room.pricePerMonth).toLocaleString()} VNĐ`
+                      : "N/A"}
+                  </div>
+                  <div>
+                    <strong>Area:</strong>{" "}
+                    {room.areaSqm ? `${room.areaSqm} m²` : "N/A"}
+                  </div>
+                  <div>
+                    <strong>Type:</strong> {room.roomType || "N/A"}
+                  </div>
+                  <div>
+                    <strong>Status:</strong> {room.status || "N/A"}
+                  </div>
+                  <div>
+                    <strong>Images:</strong>{" "}
+                    {room.images ? room.images.length : "0"} images
+                  </div>
                 </Space>
               </Card>
             ))}

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import "./RelatedPosts.scss";
 import { Link } from "react-router-dom";
 import { path } from "../../../utils/constants";
-import { getAllPostsAPI } from "../../../services/postApi"; // import API đúng
+import { getAllRoomsApi } from "../../../services/postApi"; // import API đúng
 
 const RelatedPosts = () => {
   const [posts, setPosts] = useState([]);
@@ -11,7 +11,7 @@ const RelatedPosts = () => {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const res = await getAllPostsAPI();
+        const res = await getAllRoomsApi();
         setPosts(res.data || []);
       } catch (error) {
         console.error("Error fetching posts:", error);

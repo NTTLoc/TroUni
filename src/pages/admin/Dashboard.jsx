@@ -1,86 +1,84 @@
 import React, { useState } from "react";
-import { Layout } from "antd";
-import AdminHeader from "../../features/admin/adminHeader/AdminHeader";
-import AdminSidebar from "../../features/admin/adminSidebar/AdminSidebar";
-import AmenityManagement from "../../components/admin/AmenityManagement";
+import {
+  Layout,
+  Menu,
+  Card,
+  Statistic,
+  Row,
+  Col,
+  Table,
+  Tag,
+  Button,
+  Input,
+  Space,
+} from "antd";
+import {
+  HomeOutlined,
+  UserOutlined,
+  FileTextOutlined,
+  SettingOutlined,
+  ApartmentOutlined,
+  SearchOutlined,
+  PlusOutlined,
+  DollarOutlined,
+} from "@ant-design/icons";
+import Overview from "../../features/admin/overview/Overview";
+import UserManagement from "../../features/admin/userManagement/UserManagement";
+import PostManagement from "../../features/admin/postManagement/PostManagement";
+import AmenityManagement from "../../features/admin/amenityManagement/AmenityManagement";
+import Settings from "../../features/admin/settings/Settings";
 import "./Dashboard.scss";
 
-const { Content } = Layout;
+const { Sider, Content } = Layout;
 
 const Dashboard = () => {
-  const [selectedMenu, setSelectedMenu] = useState("dashboard");
+  const [selectedMenu, setSelectedMenu] = useState("overview");
 
-  // Handle menu click
-  const handleMenuClick = (key) => {
-    setSelectedMenu(key);
-  };
+  const menuItems = [
+    { key: "overview", icon: <HomeOutlined />, label: "Tổng quan" },
+    { key: "users", icon: <UserOutlined />, label: "Người dùng" },
+    { key: "posts", icon: <FileTextOutlined />, label: "Bài đăng" },
+    { key: "amenities", icon: <ApartmentOutlined />, label: "Tiện ích" },
+    { key: "settings", icon: <SettingOutlined />, label: "Cài đặt" },
+  ];
 
-  // Render content based on selected menu
   const renderContent = () => {
     switch (selectedMenu) {
-      case "dashboard":
-        return (
-          <div>
-            <h2>Dashboard</h2>
-            <div className="stats-grid">
-              <div className="card">👤 Người dùng: 120</div>
-              <div className="card">📦 Bài đăng: 56</div>
-              <div className="card">💰 Doanh thu: 12.5M</div>
-              <div className="card">🏠 Tiện ích: 25</div>
-            </div>
-          </div>
-        );
+      case "overview":
+        return <Overview />;
+      case "users":
+        return <UserManagement />;
+      case "posts":
+        return <PostManagement />;
       case "amenities":
         return <AmenityManagement />;
-      case "users":
-        return (
-          <div>
-            <h2>Quản lý người dùng</h2>
-            <p>Chức năng quản lý người dùng sẽ được thêm sau</p>
-          </div>
-        );
-      case "posts":
-        return (
-          <div>
-            <h2>Quản lý bài đăng</h2>
-            <p>Chức năng quản lý bài đăng sẽ được thêm sau</p>
-          </div>
-        );
       case "settings":
-        return (
-          <div>
-            <h2>Cài đặt hệ thống</h2>
-            <p>Chức năng cài đặt sẽ được thêm sau</p>
-          </div>
-        );
+        return <Settings />;
       default:
         return (
-          <div>
-            <h2>Dashboard</h2>
-            <div className="stats-grid">
-              <div className="card">👤 Người dùng: 120</div>
-              <div className="card">📦 Bài đăng: 56</div>
-              <div className="card">💰 Doanh thu: 12.5M</div>
-              <div className="card">🏠 Tiện ích: 25</div>
-            </div>
-          </div>
+          <Card>
+            <h2>{menuItems.find((m) => m.key === selectedMenu)?.label}</h2>
+            <p>Tính năng này sẽ được thêm sớm.</p>
+          </Card>
         );
     }
   };
 
   return (
-    <Layout className="admin-layout">
-      {/* Sidebar */}
-      <AdminSidebar selectedKey={selectedMenu} onMenuClick={handleMenuClick} />
+    <Layout className="admin-dashboard">
+      <Sider className="sidebar" width={230} breakpoint="lg" collapsedWidth="0">
+        <div className="sidebar-logo">Admin</div>
+        <Menu
+          theme="light"
+          mode="inline"
+          selectedKeys={[selectedMenu]}
+          onClick={(e) => setSelectedMenu(e.key)}
+          items={menuItems}
+        />
+      </Sider>
 
-      <Layout className="admin-main">
-        {/* Header */}
-        {/* <AdminHeader /> */}
-
-        {/* Nội dung dashboard */}
-        <Content className="admin-content">
-          {renderContent()}
-        </Content>
+      <Layout className="main">
+        <Content className="content">{renderContent()}</Content>
       </Layout>
     </Layout>
   );

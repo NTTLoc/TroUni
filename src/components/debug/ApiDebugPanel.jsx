@@ -1,8 +1,18 @@
 import React, { useState } from "react";
 import { Button, Card, Space, Typography, Alert, Divider } from "antd";
-import { BugOutlined, ApiOutlined, CheckCircleOutlined, DatabaseOutlined } from "@ant-design/icons";
-import { testApiConnection, testCreateRoomComplete, testCreateRoomMinimal, debugRequestHeaders } from "../../utils/apiDebug";
-import { createRoomApi, getAllRoomsApi } from "../../services/roomApi";
+import {
+  BugOutlined,
+  ApiOutlined,
+  CheckCircleOutlined,
+  DatabaseOutlined,
+} from "@ant-design/icons";
+import {
+  testApiConnection,
+  testCreateRoomComplete,
+  testCreateRoomMinimal,
+  debugRequestHeaders,
+} from "../../utils/apiDebug";
+import { createRoomApi, getAllRoomsApi } from "../../services/postApi";
 
 const { Title, Text, Paragraph } = Typography;
 
@@ -36,15 +46,15 @@ const ApiDebugPanel = () => {
     setLoading(true);
     try {
       const result = await testCreateRoomComplete();
-      setResults(prev => ({
+      setResults((prev) => ({
         ...prev,
-        completeTest: { success: true, data: result }
+        completeTest: { success: true, data: result },
       }));
     } catch (error) {
       console.error("❌ Complete test failed:", error);
-      setResults(prev => ({
+      setResults((prev) => ({
         ...prev,
-        completeTest: { success: false, error: error.message || error }
+        completeTest: { success: false, error: error.message || error },
       }));
     } finally {
       setLoading(false);
@@ -55,15 +65,15 @@ const ApiDebugPanel = () => {
     setLoading(true);
     try {
       const result = await testCreateRoomMinimal();
-      setResults(prev => ({
+      setResults((prev) => ({
         ...prev,
-        minimalTest: { success: true, data: result }
+        minimalTest: { success: true, data: result },
       }));
     } catch (error) {
       console.error("❌ Minimal test failed:", error);
-      setResults(prev => ({
+      setResults((prev) => ({
         ...prev,
-        minimalTest: { success: false, error: error.message || error }
+        minimalTest: { success: false, error: error.message || error },
       }));
     } finally {
       setLoading(false);
@@ -76,10 +86,16 @@ const ApiDebugPanel = () => {
       console.log("🧪 Testing getAllRooms API...");
       const response = await getAllRoomsApi({ page: 0, size: 10 });
       console.log("📦 getAllRooms response:", response);
-      setResults(prev => ({ ...prev, getAllRooms: { success: true, data: response } }));
+      setResults((prev) => ({
+        ...prev,
+        getAllRooms: { success: true, data: response },
+      }));
     } catch (error) {
       console.error("❌ getAllRooms error:", error);
-      setResults(prev => ({ ...prev, getAllRooms: { success: false, error: error.message || error } }));
+      setResults((prev) => ({
+        ...prev,
+        getAllRooms: { success: false, error: error.message || error },
+      }));
     } finally {
       setLoading(false);
     }
@@ -140,15 +156,19 @@ const ApiDebugPanel = () => {
           <>
             <Divider />
             <Title level={4}>Kết quả Test:</Title>
-            
+
             {results.headers && (
               <Alert
                 message="Request Headers"
                 description={
                   <div>
-                    <Text strong>Base URL:</Text> {results.headers.baseURL}<br />
-                    <Text strong>Has Token:</Text> {results.headers.hasToken ? "✅" : "❌"}<br />
-                    <Text strong>Token Preview:</Text> {results.headers.tokenPreview || "None"}
+                    <Text strong>Base URL:</Text> {results.headers.baseURL}
+                    <br />
+                    <Text strong>Has Token:</Text>{" "}
+                    {results.headers.hasToken ? "✅" : "❌"}
+                    <br />
+                    <Text strong>Token Preview:</Text>{" "}
+                    {results.headers.tokenPreview || "None"}
                   </div>
                 }
                 type="info"
@@ -159,7 +179,11 @@ const ApiDebugPanel = () => {
             {results.connection !== undefined && (
               <Alert
                 message="API Connection"
-                description={results.connection ? "✅ Kết nối thành công" : "❌ Kết nối thất bại"}
+                description={
+                  results.connection
+                    ? "✅ Kết nối thành công"
+                    : "❌ Kết nối thất bại"
+                }
                 type={results.connection ? "success" : "error"}
                 style={{ marginBottom: "16px" }}
               />
@@ -178,8 +202,8 @@ const ApiDebugPanel = () => {
               <Alert
                 message="Complete Room Test"
                 description={
-                  results.completeTest.success 
-                    ? "✅ Test tạo phòng với dữ liệu đầy đủ thành công" 
+                  results.completeTest.success
+                    ? "✅ Test tạo phòng với dữ liệu đầy đủ thành công"
                     : `❌ Test thất bại: ${results.completeTest.error}`
                 }
                 type={results.completeTest.success ? "success" : "error"}
@@ -191,8 +215,8 @@ const ApiDebugPanel = () => {
               <Alert
                 message="Minimal Room Test"
                 description={
-                  results.minimalTest.success 
-                    ? "✅ Test tạo phòng với dữ liệu tối thiểu thành công" 
+                  results.minimalTest.success
+                    ? "✅ Test tạo phòng với dữ liệu tối thiểu thành công"
                     : `❌ Test thất bại: ${results.minimalTest.error}`
                 }
                 type={results.minimalTest.success ? "success" : "error"}
@@ -204,8 +228,10 @@ const ApiDebugPanel = () => {
               <Alert
                 message="Get All Rooms Test"
                 description={
-                  results.getAllRooms.success 
-                    ? `✅ Lấy danh sách phòng thành công! Tìm thấy ${results.getAllRooms.data?.data?.content?.length || 0} phòng trọ` 
+                  results.getAllRooms.success
+                    ? `✅ Lấy danh sách phòng thành công! Tìm thấy ${
+                        results.getAllRooms.data?.data?.content?.length || 0
+                      } phòng trọ`
                     : `❌ Test thất bại: ${results.getAllRooms.error}`
                 }
                 type={results.getAllRooms.success ? "success" : "error"}
@@ -225,15 +251,21 @@ const ApiDebugPanel = () => {
         )}
 
         <Divider />
-        
+
         <div>
           <Title level={4}>Hướng dẫn Debug:</Title>
           <ol>
-            <li>Mở <Text code>Developer Tools</Text> (F12)</li>
-            <li>Vào tab <Text code>Console</Text></li>
+            <li>
+              Mở <Text code>Developer Tools</Text> (F12)
+            </li>
+            <li>
+              Vào tab <Text code>Console</Text>
+            </li>
             <li>Chạy các test ở trên</li>
             <li>Kiểm tra logs trong console</li>
-            <li>Kiểm tra tab <Text code>Network</Text> để xem request/response</li>
+            <li>
+              Kiểm tra tab <Text code>Network</Text> để xem request/response
+            </li>
           </ol>
         </div>
       </Card>

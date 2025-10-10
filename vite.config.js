@@ -6,4 +6,7 @@ export default defineConfig({
   server: {
     historyApiFallback: true, // 👈 quan trọng
   },
+  define: {
+    global: "window", // ✅ Fix lỗi "global is not defined"
+  },
 });

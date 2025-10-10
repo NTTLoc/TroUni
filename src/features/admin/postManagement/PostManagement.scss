@@ -1,0 +1,53 @@
+.post-management {
+  padding: 20px;
+  background: var(--card-bg);
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  color: var(--text);
+
+  .post-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+
+    .search-input {
+      width: 300px;
+      background: var(--search);
+      color: var(--text);
+    }
+
+    .refresh-btn {
+      background: transparent;
+      color: #00bfa6;
+      font-weight: 500;
+      border-radius: 8px;
+      border: 1px solid #00bfa6;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+
+      &:hover {
+        background: transparent;
+        border-color: #00bfa6;
+        color: #00bfa6;
+        transform: translateY(-1px);
+      }
+
+      &[disabled],
+      &.ant-btn-loading {
+        opacity: 0.7;
+        cursor: not-allowed;
+      }
+    }
+  }
+
+  .loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 200px;
+  }
+}

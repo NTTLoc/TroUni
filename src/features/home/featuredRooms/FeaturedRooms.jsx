@@ -7,7 +7,7 @@ import {
   StarFilled,
 } from "@ant-design/icons";
 import { path } from "../../../utils/constants";
-import { getAllPostsAPI } from "../../../services/postApi";
+import { getAllRoomsApi } from "../../../services/postApi";
 import { assets } from "../../../assets/assets";
 import "./FeaturedRooms.scss";
 
@@ -18,7 +18,7 @@ const FeaturedRooms = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    getAllPostsAPI()
+    getAllRoomsApi()
       .then((res) => setPosts(res?.data?.slice(0, 4) || []))
       .catch((err) => console.error("Error fetching posts:", err))
       .finally(() => setLoading(false));

@@ -1,15 +1,18 @@
 import { useContext, useEffect, useState } from "react";
-import { Form, Input, Button, Select, Avatar, message } from "antd";
-import { UserOutlined } from "@ant-design/icons";
+import { Form, Input, Button, Select, Avatar } from "antd";
+import { ClockCircleOutlined, UserOutlined } from "@ant-design/icons";
 import { ProfileContext } from "../../context/profile.context";
 import { assets } from "../../../assets/assets";
+import useMessage from "../../../hooks/useMessage.js";
+
 import "./AccountInfo.scss";
-import { assets } from "../../../assets/assets";
+import { timeAgoFormat } from "../../../utils/timeAgoFormat.js";
 
 const AccountInfo = () => {
   const { profile, updateProfile } = useContext(ProfileContext);
   const [form] = Form.useForm();
   const [isEditing, setIsEditing] = useState(false);
+  const message = useMessage();
 
   const savedUser = JSON.parse(localStorage.getItem("user"));
   const email = savedUser?.email || "Không có email";
@@ -26,15 +29,13 @@ const AccountInfo = () => {
     try {
       const values = await form.validateFields();
       await updateProfile(values);
-      message.success("Cập nhật profile thành công!");
+      message.success("Cập nhật profile thành công.");
       setIsEditing(false);
     } catch (err) {
       console.error("Lỗi lưu profile:", err);
       message.error("Cập nhật thất bại, vui lòng thử lại.");
     }
   };
-
-  console.log(profile?.avatarUrl);
 
   return (
     <div>
@@ -83,6 +84,14 @@ const AccountInfo = () => {
           <Input />
         </Form.Item>
       </Form>
+
+      {/* ✅ Hiển thị cập nhật lần cuối */}
+      <div className="account-info">
+        <span className="update-time">
+          <ClockCircleOutlined className="clock-icon" />
+          Cập nhật lần cuối: <p>{timeAgoFormat(profile?.updatedAt)}</p>
+        </span>
+      </div>
 
       <div style={{ textAlign: "right" }}>
         {isEditing ? (
