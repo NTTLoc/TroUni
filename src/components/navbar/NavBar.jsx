@@ -24,6 +24,13 @@ const Navbar = () => {
   const [user, setUser] = useState(null);
   const { profile, setProfile } = useContext(ProfileContext);
 
+  const roleRoutes = {
+    STUDENT: path.ACCOUNT,
+    LANDLORD: path.LANDLORD_DASHBOARD,
+    ADMIN: path.ADMIN,
+    MANAGER: path.MANAGER_DASHBOARD,
+  };
+
   useEffect(() => {
     // Đồng bộ user và profile khi auth.user thay đổi
     if (auth.user) {
@@ -64,13 +71,11 @@ const Navbar = () => {
         <div>
           {/* Role-based info */}
           <h4
-            onClick={() =>
-              navigate(
-                user?.role === "STUDENT"
-                  ? path.ACCOUNT
-                  : path.LANDLORD_DASHBOARD
-              )
-            }
+            onClick={() => {
+              if (user?.role && roleRoutes[user.role]) {
+                navigate(roleRoutes[user.role]);
+              }
+            }}
             style={{ cursor: "pointer" }}
           >
             {user?.username || ""}
@@ -137,31 +142,16 @@ const Navbar = () => {
         </Link>
 
         <div className="navbar__right">
-          {auth.user?.role === "ADMIN" ? (
-            <Link to={path.ADMIN} className="btn-outline">
-              Admin Dashboard
+          {auth.user?.role === "LANDLORD" && (
+            <Link to={path.ROOM_CREATE} className="btn-solid">
+              Đăng tin
             </Link>
-          ) : auth.user?.role === "LANDLORD" ? (
-            <>
-              {/* <Link to={path.LANDLORD_DASHBOARD} className="btn-outline">
-                Dashboard
-              </Link> */}
-              <Link to={path.ROOM_CREATE} className="btn-solid">
-                Đăng tin
-              </Link>
-            </>
-          ) : (
-            <>
-              {/* <Link to={path.MANAGE} className="btn-outline">
-                Quản lý tin
-              </Link>
-              <Link to={path.ROOM_CREATE} className="btn-solid">
-                Đăng tin
-              </Link> */}
-              <Link to={path.ROOMS_MATCHING} className="btn-solid">
-                Ghép trọ
-              </Link>
-            </>
+          )}
+
+          {auth.user?.role === "STUDENT" && (
+            <Link to={path.ROOMS_MATCHING} className="btn-solid">
+              Ghép trọ
+            </Link>
           )}
 
           {/* Avatar dropdown */}

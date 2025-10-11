@@ -26,6 +26,7 @@ export const path = {
   MANAGE: "/manage",
   LANDLORD_DASHBOARD: "/landlord",
   CHAT: "/chat",
+  CALL: "/call",
 
   // NOT FOUND
   NOTFOUND: "/notfound",
