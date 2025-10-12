@@ -1,31 +1,63 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
-  Card,
   Table,
+  Tag,
+  Space,
   Button,
+  Input,
+  Spin,
+  message,
+  Popconfirm,
   Modal,
   Form,
-  Input,
-  Space,
-  Popconfirm,
-  message,
-  Typography,
-  Row,
-  Col,
-  Tag,
-  Image,
-  Tooltip
+  Select,
 } from "antd";
 import {
-  PlusOutlined,
+  SearchOutlined,
+  ReloadOutlined,
   EditOutlined,
   DeleteOutlined,
-  SearchOutlined,
-  ReloadOutlined
+  PlusOutlined,
+  ApartmentOutlined,
+  HomeOutlined,
+  WifiOutlined,
+  CarOutlined,
+  FireOutlined,
+  CoffeeOutlined,
+  ShoppingOutlined,
+  ThunderboltOutlined,
+  KeyOutlined,
+  HeartOutlined,
+  CrownOutlined,
+  GiftOutlined,
 } from "@ant-design/icons";
 import { useAmenities } from "../../../hooks/useAmenities";
-import { AMENITY_CATEGORIES, AMENITY_CATEGORY_LABELS } from "../../../utils/amenityConstants";
+import useMessage from "../../../hooks/useMessage";
+import * as Icons from "@ant-design/icons";
 import "./AmenityManagement.scss";
+
+const ICON_OPTIONS = [
+  { value: "HomeOutlined", icon: <HomeOutlined /> },
+  { value: "WifiOutlined", icon: <WifiOutlined /> },
+  { value: "CarOutlined", icon: <CarOutlined /> },
+  { value: "FireOutlined", icon: <FireOutlined /> },
+  { value: "CoffeeOutlined", icon: <CoffeeOutlined /> },
+  { value: "ShoppingOutlined", icon: <ShoppingOutlined /> },
+  { value: "ThunderboltOutlined", icon: <ThunderboltOutlined /> },
+  { value: "KeyOutlined", icon: <KeyOutlined /> },
+  { value: "HeartOutlined", icon: <HeartOutlined /> },
+  { value: "CrownOutlined", icon: <CrownOutlined /> },
+  { value: "GiftOutlined", icon: <GiftOutlined /> },
+];
+
+const renderIcon = (iconName) => {
+  const IconComponent = Icons[iconName];
+  return IconComponent ? (
+    <IconComponent />
+  ) : (
+    <ApartmentOutlined style={{ color: "#888" }} />
+  );
+};
 
 const { Title, Text } = Typography;
 const { Search } = Input;
@@ -35,10 +67,90 @@ const { Search } = Input;
  * Component để quản lý amenities trong Admin Dashboard
  */
 const AmenityManagement = () => {
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const [editingAmenity, setEditingAmenity] = useState(null);
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchValue, setSearchValue] = useState("");
+  const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [form] = Form.useForm();
+  const message = useMessage();
+
+  const {
+    amenities,
+    loading,
+    fetchAllAmenities,
+    createAmenity,
+    deleteAmenity,
+  } = useAmenities({ autoFetch: true });
+
+  const fetchAmenities = async () => {
+    try {
+      await fetchAllAmenities();
+    } catch (err) {
+      console.error("Lỗi tải danh sách tiện ích:", err);
+      message.error("Không thể tải danh sách tiện ích!");
+    }
+  };
+
+  useEffect(() => {
+    fetchAmenities();
+  }, []);
+
+  const filteredAmenities = amenities.filter(
+    (item) =>
+      item.name?.toLowerCase().includes(searchValue.toLowerCase()) ||
+      item.icon?.toLowerCase().includes(searchValue.toLowerCase())
+  );
+
+  const handleDelete = async (id) => {
+    try {
+      await deleteAmenity(id);
+      message.success("Đã xóa tiện ích thành công!");
+      fetchAmenities();
+    } catch (err) {
+      console.error("Lỗi xóa tiện ích:", err);
+      message.error("Không thể xóa tiện ích!");
+    }
+  };
+
+  const handleDeleteSelected = async () => {
+    if (selectedRowKeys.length === 0) {
+      message.warning("Vui lòng chọn ít nhất một tiện ích để xóa.");
+      return;
+    }
+    try {
+      await Promise.all(selectedRowKeys.map((id) => deleteAmenity(id)));
+      message.success(`Đã xóa ${selectedRowKeys.length} tiện ích.`);
+      setSelectedRowKeys([]);
+      fetchAmenities();
+    } catch (err) {
+      console.error("Lỗi xóa hàng loạt:", err);
+      message.error("Không thể xóa các tiện ích đã chọn!");
+    }
+  };
+
+  const openAddModal = () => {
+    form.resetFields();
+    setIsModalOpen(true);
+  };
+
+  const handleAddAmenity = async () => {
+    try {
+      const values = await form.validateFields();
+      await createAmenity(values);
+      message.success("Đã thêm tiện ích mới!");
+      setIsModalOpen(false);
+      fetchAmenities();
+    } catch (err) {
+      if (err.errorFields) return;
+      console.error("Lỗi thêm tiện ích:", err);
+      message.error("Không thể thêm tiện ích!");
+    }
+  };
+
+  const renderStatusTag = (active) => (
+    <Tag color={active ? "green" : "red"}>
+      {active ? "Hoạt động" : "Tạm dừng"}
+    </Tag>
+  );
 
   const {
     amenities,
@@ -47,11 +159,11 @@ const AmenityManagement = () => {
     fetchAllAmenities,
     createAmenity,
     deleteAmenity,
-    reset
+    reset,
   } = useAmenities({ autoFetch: true });
 
   // Filter amenities based on search
-  const filteredAmenities = amenities.filter(amenity =>
+  const filteredAmenities = amenities.filter((amenity) =>
     amenity.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
@@ -65,7 +177,7 @@ const AmenityManagement = () => {
         await createAmenity(values);
         message.success("Tạo tiện ích thành công!");
       }
-      
+
       setIsModalVisible(false);
       setEditingAmenity(null);
       form.resetFields();
@@ -91,7 +203,7 @@ const AmenityManagement = () => {
     setEditingAmenity(amenity);
     form.setFieldsValue({
       name: amenity.name,
-      icon: amenity.iconUrl
+      icon: amenity.iconUrl,
     });
     setIsModalVisible(true);
   };
@@ -106,81 +218,50 @@ const AmenityManagement = () => {
   // Table columns
   const columns = [
     {
-      title: "Icon",
-      dataIndex: "iconUrl",
-      key: "icon",
-      width: 80,
-      render: (iconUrl, record) => (
-        <div style={{ textAlign: "center" }}>
-          {iconUrl ? (
-            <Image
-              src={iconUrl}
-              alt={record.name}
-              width={32}
-              height={32}
-              style={{ objectFit: "contain" }}
-              fallback="🏠"
-            />
-          ) : (
-            <span style={{ fontSize: "24px" }}>🏠</span>
-          )}
-        </div>
-      ),
-    },
-    {
       title: "Tên tiện ích",
       dataIndex: "name",
       key: "name",
-      sorter: (a, b) => a.name.localeCompare(b.name),
-      render: (text) => <Text strong>{text}</Text>,
+      render: (text, record) => (
+        <Space>
+          <span className="amenity-icon">{renderIcon(record.icon)}</span>
+          <span>{text || "—"}</span>
+        </Space>
+      ),
     },
     {
       title: "Trạng thái",
       dataIndex: "active",
       key: "active",
-      width: 100,
-      render: (active) => (
-        <Tag color={active ? "green" : "red"}>
-          {active ? "Hoạt động" : "Tạm dừng"}
-        </Tag>
-      ),
+      render: (active) => renderStatusTag(active),
     },
     {
       title: "Ngày tạo",
       dataIndex: "createdAt",
       key: "createdAt",
-      width: 150,
-      render: (date) => new Date(date).toLocaleDateString("vi-VN"),
+      render: (date) =>
+        date ? new Date(date).toLocaleDateString("vi-VN") : "—",
     },
     {
-      title: "Hành động",
+      title: "Thao tác",
       key: "actions",
-      width: 120,
       render: (_, record) => (
         <Space>
-          <Tooltip title="Chỉnh sửa">
-            <Button
-              type="primary"
-              size="small"
-              icon={<EditOutlined />}
-              onClick={() => handleEdit(record)}
-            />
-          </Tooltip>
+          <Button
+            type="link"
+            icon={<EditOutlined />}
+            onClick={() => message.info(`Sửa tiện ích: ${record.name}`)}
+          >
+            Chỉnh sửa
+          </Button>
           <Popconfirm
-            title="Xóa tiện ích"
-            description="Bạn có chắc chắn muốn xóa tiện ích này?"
+            title="Xác nhận xóa tiện ích này?"
             onConfirm={() => handleDelete(record.id)}
             okText="Xóa"
             cancelText="Hủy"
           >
-            <Tooltip title="Xóa">
-              <Button
-                type="primary"
-                danger
-                size="small"
-                icon={<DeleteOutlined />}
-              />
-            </Tooltip>
+            <Button type="link" danger icon={<DeleteOutlined />}>
+              Xóa
+            </Button>
           </Popconfirm>
         </Space>
       ),
@@ -189,130 +270,110 @@ const AmenityManagement = () => {
 
   return (
     <div className="amenity-management">
-      {/* Header */}
-      <div className="management-header">
-        <Row justify="space-between" align="middle">
-          <Col>
-            <Title level={3}>Quản lý tiện ích</Title>
-            <Text type="secondary">
-              Quản lý danh sách các tiện ích có sẵn cho phòng trọ
-            </Text>
-          </Col>
-          <Col>
-            <Space>
-              <Button
-                icon={<ReloadOutlined />}
-                onClick={fetchAllAmenities}
-                loading={loading}
-              >
-                Làm mới
-              </Button>
-              <Button
-                type="primary"
-                icon={<PlusOutlined />}
-                onClick={handleCreate}
-              >
-                Thêm tiện ích
-              </Button>
-            </Space>
-          </Col>
-        </Row>
+      <div className="amenity-header">
+        <Input
+          placeholder="Tìm kiếm tiện ích..."
+          prefix={<SearchOutlined />}
+          value={searchValue}
+          onChange={(e) => setSearchValue(e.target.value)}
+          className="search-input"
+        />
+
+        <div className="actions">
+          <Button
+            icon={<ReloadOutlined />}
+            onClick={fetchAmenities}
+            loading={loading}
+            className="refresh-btn"
+          >
+            Làm mới
+          </Button>
+
+          <Button
+            type="primary"
+            icon={<PlusOutlined />}
+            onClick={openAddModal}
+            className="add-btn"
+          >
+            Thêm tiện ích
+          </Button>
+
+          <Popconfirm
+            title="Xác nhận xóa các tiện ích đã chọn?"
+            onConfirm={handleDeleteSelected}
+            okText="Xóa"
+            cancelText="Hủy"
+          >
+            <Button
+              danger
+              icon={<DeleteOutlined />}
+              disabled={selectedRowKeys.length === 0}
+              className="delete-btn"
+            >
+              Xóa đã chọn
+            </Button>
+          </Popconfirm>
+        </div>
       </div>
 
-      {/* Search and Stats */}
-      <Card style={{ marginBottom: 16 }}>
-        <Row gutter={[16, 16]} align="middle">
-          <Col xs={24} md={12}>
-            <Search
-              placeholder="Tìm kiếm tiện ích..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              prefix={<SearchOutlined />}
-              allowClear
-            />
-          </Col>
-          <Col xs={24} md={12}>
-            <Space>
-              <Text>Tổng cộng: <Text strong>{filteredAmenities.length}</Text> tiện ích</Text>
-              <Text>Đang hoạt động: <Text strong>{amenities.filter(a => a.active).length}</Text></Text>
-            </Space>
-          </Col>
-        </Row>
-      </Card>
-
-      {/* Amenities Table */}
-      <Card>
+      {loading ? (
+        <div className="loading">
+          <Spin tip="Đang tải tiện ích..." />
+        </div>
+      ) : (
         <Table
+          rowSelection={{
+            selectedRowKeys,
+            onChange: (keys) => setSelectedRowKeys(keys),
+          }}
           columns={columns}
           dataSource={filteredAmenities}
           rowKey="id"
-          loading={loading}
-          pagination={{
-            pageSize: 10,
-            showSizeChanger: true,
-            showQuickJumper: true,
-            showTotal: (total, range) =>
-              `${range[0]}-${range[1]} của ${total} tiện ích`,
-          }}
-          scroll={{ x: 800 }}
+          pagination={{ pageSize: 10 }}
         />
-      </Card>
+      )}
 
-      {/* Create/Edit Modal */}
+      {/* Modal thêm tiện ích */}
       <Modal
-        title={editingAmenity ? "Chỉnh sửa tiện ích" : "Thêm tiện ích mới"}
-        open={isModalVisible}
-        onCancel={() => {
-          setIsModalVisible(false);
-          setEditingAmenity(null);
-          form.resetFields();
-        }}
-        footer={null}
-        width={600}
+        title="Thêm tiện ích mới"
+        open={isModalOpen}
+        onCancel={() => setIsModalOpen(false)}
+        onOk={handleAddAmenity}
+        okText="Thêm"
+        cancelText="Hủy"
+        getContainer={false}
       >
-        <Form
-          form={form}
-          layout="vertical"
-          onFinish={handleSubmit}
-        >
+        <Form form={form} layout="vertical">
           <Form.Item
-            name="name"
             label="Tên tiện ích"
-            rules={[
-              { required: true, message: "Vui lòng nhập tên tiện ích" },
-              { min: 2, message: "Tên tiện ích phải có ít nhất 2 ký tự" },
-              { max: 100, message: "Tên tiện ích không được quá 100 ký tự" }
-            ]}
+            name="name"
+            rules={[{ required: true, message: "Vui lòng nhập tên tiện ích!" }]}
           >
-            <Input placeholder="VD: WiFi miễn phí" />
+            <Input placeholder="Nhập tên tiện ích..." />
           </Form.Item>
 
           <Form.Item
+            label="Biểu tượng (Icon)"
             name="icon"
-            label="Icon"
-            rules={[
-              { max: 500, message: "URL icon không được quá 500 ký tự" }
-            ]}
+            rules={[{ required: true, message: "Vui lòng chọn biểu tượng!" }]}
           >
-            <Input 
-              placeholder="Emoji (🏠) hoặc URL hình ảnh" 
-              addonBefore="Icon:"
-            />
-          </Form.Item>
-
-          <Form.Item>
-            <Space>
-              <Button type="primary" htmlType="submit" loading={loading}>
-                {editingAmenity ? "Cập nhật" : "Tạo mới"}
-              </Button>
-              <Button onClick={() => {
-                setIsModalVisible(false);
-                setEditingAmenity(null);
-                form.resetFields();
-              }}>
-                Hủy
-              </Button>
-            </Space>
+            <Select
+              placeholder="Chọn biểu tượng..."
+              className="icon-select"
+              dropdownClassName="icon-dropdown"
+              optionLabelProp="label"
+              getPopupContainer={(triggerNode) => triggerNode.parentNode}
+            >
+              {ICON_OPTIONS.map((item) => (
+                <Select.Option
+                  key={item.value}
+                  value={item.value}
+                  label={item.icon}
+                >
+                  <div className="icon-only-option">{item.icon}</div>
+                </Select.Option>
+              ))}
+            </Select>
           </Form.Item>
         </Form>
       </Modal>
