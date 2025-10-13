@@ -35,6 +35,21 @@
     svg {
       margin-right: 0.5rem;
     }
+
+    // Style cho địa chỉ có thể click
+    &.clickable-address {
+      cursor: pointer;
+      transition: all 0.3s ease;
+
+      &:hover {
+        color: #1890ff;
+        text-decoration: underline;
+
+        svg {
+          color: #1890ff;
+        }
+      }
+    }
   }
 
   &__time {
