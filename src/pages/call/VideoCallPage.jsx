@@ -1,229 +1,345 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Layout, Button, Input, message, Space } from "antd";
-import { VideoCameraOutlined, AudioOutlined } from "@ant-design/icons";
+import { Button, Input, Card, Typography, message } from "antd";
+import {
+  VideoCameraOutlined,
+  PhoneOutlined,
+  AudioMutedOutlined,
+  AudioOutlined,
+  VideoCameraAddOutlined,
+  VideoCameraFilled,
+} from "@ant-design/icons";
+import VideoGrid from "../../features/call/videoGrid/VideoGrid";
+import "./VideoCallPage.scss";
 
-const { Header, Content } = Layout;
+const { Title } = Typography;
+
 const SIGNALING_SERVER =
   "wss://video3-dot-trouni-473709.de.r.appspot.com/socket";
 
 const VideoCallPage = () => {
-  const [name, setName] = useState(() => sessionStorage.getItem("name") || "");
-  const [roomId, setRoomId] = useState(
-    () => sessionStorage.getItem("roomId") || ""
-  );
-  const [joined, setJoined] = useState(
-    () => sessionStorage.getItem("joined") === "true"
-  );
-  const [micOff, setMicOff] = useState(false);
-  const [camOff, setCamOff] = useState(false);
+  const [name, setName] = useState(sessionStorage.getItem("name") || "");
+  const [roomId, setRoomId] = useState(sessionStorage.getItem("roomId") || "");
+  const [joined, setJoined] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [muted, setMuted] = useState(false);
+  const [cameraOff, setCameraOff] = useState(false);
+  const [remotePeers, setRemotePeers] = useState([]); // {id, name, stream, cameraOff}
 
   const localVideoRef = useRef(null);
-  const remoteVideoRef = useRef(null);
-  const pc = useRef(null);
-  const ws = useRef(null);
-  const myId = useRef(Math.random().toString(36).substring(2, 10));
+  const localStreamRef = useRef(null);
+  const socketRef = useRef(null);
+  const peerConnections = useRef({});
+  const iceCandidateQueue = useRef({});
+  const [config, setConfig] = useState({ iceServers: [] });
 
-  const joinRoom = () => {
-    if (!name || !roomId) {
-      message.error("Vui lòng nhập tên và Room ID");
-      return;
+  /** -------------------- TURN/STUN config -------------------- **/
+  useEffect(() => {
+    if (location.hostname === "localhost") {
+      setConfig({ iceServers: [{ urls: "stun:stun.l.cloudflare.com:3478" }] });
+    } else {
+      fetch("/turn.json")
+        .then((r) => r.json())
+        .then(setConfig)
+        .catch(() =>
+          message.warning("Không tải được TURN config, dùng STUN mặc định.")
+        );
     }
-    setJoined(true);
-    sessionStorage.setItem("joined", "true");
-    sessionStorage.setItem("name", name);
-    sessionStorage.setItem("roomId", roomId);
+  }, []);
+
+  /** -------------------- INIT CAMERA -------------------- **/
+  const initCamera = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: true,
+        audio: true,
+      });
+      localStreamRef.current = stream;
+      if (localVideoRef.current) {
+        localVideoRef.current.srcObject = stream;
+        localVideoRef.current.muted = true;
+        await localVideoRef.current.play().catch(() => {});
+      }
+    } catch (err) {
+      console.error("Camera error:", err);
+      message.error("Không thể truy cập camera hoặc micro!");
+      throw err;
+    }
   };
 
-  useEffect(() => {
-    if (!joined) return;
+  /** -------------------- JOIN ROOM -------------------- **/
+  const handleJoin = async () => {
+    if (!name || !roomId) return message.warning("Nhập tên và mã phòng trước!");
+    setLoading(true);
 
-    // 1. Tạo peer connection
-    pc.current = new RTCPeerConnection();
+    try {
+      await initCamera();
 
-    // 2. Lấy local media
-    navigator.mediaDevices
-      .getUserMedia({ video: true, audio: true })
-      .then((stream) => {
-        localVideoRef.current.srcObject = stream;
-        stream.getTracks().forEach((t) => pc.current.addTrack(t, stream));
-      })
-      .catch((err) => console.error(err));
+      const wsProtocol = window.location.protocol === "https:" ? "wss" : "ws";
+      const wsHost = window.location.host;
+      const ws = new WebSocket(
+        `${wsProtocol}://${wsHost}${SIGNALING_SERVER}?room=${roomId}`
+      );
+      socketRef.current = ws;
 
-    // 3. Nhận remote track
-    pc.current.ontrack = (event) => {
-      remoteVideoRef.current.srcObject = event.streams[0];
+      ws.onopen = () => {
+        ws.send(JSON.stringify({ type: "join", name }));
+        sessionStorage.setItem("name", name);
+        sessionStorage.setItem("roomId", roomId);
+        setJoined(true);
+        setLoading(false);
+      };
+
+      ws.onmessage = (event) => {
+        const msg = JSON.parse(event.data);
+        const fromId = msg.from;
+        const fromName = msg.name || msg.fromName;
+
+        switch (msg.type) {
+          case "room-state":
+            for (const peerId in msg.peers) {
+              createPeerConnection(peerId, msg.peers[peerId].name, true);
+            }
+            break;
+          case "peer-join":
+            createPeerConnection(fromId, fromName, false);
+            break;
+          case "offer":
+            handleOffer(fromId, fromName, msg.sdp);
+            break;
+          case "answer":
+            handleAnswer(fromId, msg.sdp);
+            break;
+          case "candidate":
+            handleCandidate(fromId, msg.candidate);
+            break;
+          case "peer-leave":
+            removePeer(fromId);
+            break;
+          default:
+            console.log("Unknown message:", msg);
+        }
+      };
+
+      ws.onclose = () => console.log("WebSocket closed");
+      ws.onerror = (err) => console.error("WebSocket error:", err);
+    } catch (err) {
+      console.error(err);
+      setLoading(false);
+    }
+  };
+
+  /** -------------------- PEER CONNECTION -------------------- **/
+  const createPeerConnection = (peerId, peerName, isInitiator) => {
+    if (peerConnections.current[peerId]) return;
+
+    const pc = new RTCPeerConnection(config);
+    peerConnections.current[peerId] = pc;
+    iceCandidateQueue.current[peerId] = [];
+
+    localStreamRef.current
+      ?.getTracks()
+      .forEach((track) => pc.addTrack(track, localStreamRef.current));
+
+    pc.ontrack = (event) => {
+      setRemotePeers((prev) => {
+        if (prev.find((p) => p.id === peerId)) return prev;
+        return [
+          ...prev,
+          {
+            id: peerId,
+            name: peerName,
+            stream: event.streams[0],
+            cameraOff: false,
+          },
+        ];
+      });
     };
 
-    // 4. ICE candidates
-    pc.current.onicecandidate = (event) => {
-      if (event.candidate && ws.current?.readyState === WebSocket.OPEN) {
-        ws.current.send(
+    pc.onicecandidate = (event) => {
+      if (event.candidate) {
+        socketRef.current?.send(
           JSON.stringify({
-            type: "ice-candidate",
+            type: "candidate",
+            to: peerId,
             candidate: event.candidate,
-            room: roomId,
-            from: myId.current,
           })
         );
       }
     };
 
-    // 5. Kết nối WebSocket thuần
-    ws.current = new WebSocket(SIGNALING_SERVER);
-
-    ws.current.onopen = () => {
-      ws.current.send(
-        JSON.stringify({ type: "join", room: roomId, from: myId.current })
-      );
-      console.log("Connected to signaling server");
+    pc.onconnectionstatechange = () => {
+      if (["disconnected", "closed", "failed"].includes(pc.connectionState))
+        removePeer(peerId);
     };
 
-    ws.current.onmessage = async (msg) => {
-      const data = JSON.parse(msg.data);
-      if (data.from === myId.current) return;
-
-      console.log("Received message:", data);
-
-      switch (data.type) {
-        case "room-state": {
-          const peers = Object.keys(data.peers).filter(
-            (id) => id !== myId.current
-          );
-          if (peers.length > 0 && pc.current.signalingState === "stable") {
-            const offer = await pc.current.createOffer();
-            await pc.current.setLocalDescription(offer);
-            ws.current.send(
-              JSON.stringify({
-                type: "offer",
-                offer,
-                room: roomId,
-                from: myId.current,
-              })
-            );
-          }
-          break;
-        }
-        case "offer":
-          await pc.current.setRemoteDescription(data.offer);
-          const answer = await pc.current.createAnswer();
-          await pc.current.setLocalDescription(answer);
-          ws.current.send(
-            JSON.stringify({
-              type: "answer",
-              answer,
-              room: roomId,
-              from: myId.current,
-            })
-          );
-          break;
-        case "answer":
-          await pc.current.setRemoteDescription(data.answer);
-          break;
-        case "ice-candidate":
-          if (data.candidate) {
-            try {
-              await pc.current.addIceCandidate(data.candidate);
-            } catch (e) {
-              console.error(e);
-            }
-          }
-          break;
-        default:
-          console.log("Unknown message type:", data.type);
-      }
-    };
-
-    ws.current.onerror = console.error;
-    ws.current.onclose = () => console.log("WebSocket closed");
-
-    return () => {
-      pc.current.close();
-      ws.current.close();
-    };
-  }, [joined, roomId]);
-
-  const toggleMic = () => {
-    const stream = localVideoRef.current?.srcObject;
-    if (!stream) return;
-    stream.getAudioTracks().forEach((track) => (track.enabled = micOff));
-    setMicOff(!micOff);
+    if (isInitiator) {
+      pc.createOffer()
+        .then((offer) => pc.setLocalDescription(offer))
+        .then(() =>
+          socketRef.current?.send({
+            type: "offer",
+            to: peerId,
+            sdp: pc.localDescription,
+          })
+        )
+        .catch(console.error);
+    }
+    return pc;
   };
 
-  const toggleCam = () => {
-    const stream = localVideoRef.current?.srcObject;
-    if (!stream) return;
-    stream.getVideoTracks().forEach((track) => (track.enabled = camOff));
-    setCamOff(!camOff);
+  const handleOffer = (fromId, fromName, sdp) => {
+    const pc =
+      peerConnections.current[fromId] ||
+      createPeerConnection(fromId, fromName, false);
+    pc.setRemoteDescription(new RTCSessionDescription(sdp))
+      .then(() => pc.createAnswer())
+      .then((answer) => pc.setLocalDescription(answer))
+      .then(() =>
+        socketRef.current?.send({
+          type: "answer",
+          to: fromId,
+          sdp: pc.localDescription,
+        })
+      )
+      .then(() => processIceCandidateQueue(fromId))
+      .catch(console.error);
   };
 
+  const handleAnswer = (fromId, sdp) => {
+    const pc = peerConnections.current[fromId];
+    if (pc)
+      pc.setRemoteDescription(new RTCSessionDescription(sdp))
+        .then(() => processIceCandidateQueue(fromId))
+        .catch(console.error);
+  };
+
+  const handleCandidate = (fromId, candidate) => {
+    const pc = peerConnections.current[fromId];
+    if (!pc || !candidate) return;
+
+    if (pc.remoteDescription && pc.remoteDescription.type) {
+      pc.addIceCandidate(new RTCIceCandidate(candidate)).catch(console.error);
+    } else {
+      iceCandidateQueue.current[fromId].push(candidate);
+    }
+  };
+
+  const processIceCandidateQueue = (peerId) => {
+    const pc = peerConnections.current[peerId];
+    if (!pc || !iceCandidateQueue.current[peerId]) return;
+
+    while (iceCandidateQueue.current[peerId].length) {
+      const candidate = iceCandidateQueue.current[peerId].shift();
+      pc.addIceCandidate(new RTCIceCandidate(candidate)).catch(console.error);
+    }
+  };
+
+  const removePeer = (peerId) => {
+    if (peerConnections.current[peerId]) {
+      peerConnections.current[peerId].close();
+      delete peerConnections.current[peerId];
+    }
+    setRemotePeers((prev) => prev.filter((p) => p.id !== peerId));
+  };
+
+  /** -------------------- HANGUP -------------------- **/
+  const handleHangup = () => {
+    localStreamRef.current?.getTracks().forEach((t) => t.stop());
+    Object.keys(peerConnections.current).forEach(removePeer);
+    socketRef.current?.close();
+    setJoined(false);
+    setRemotePeers([]);
+    sessionStorage.clear();
+  };
+
+  /** -------------------- MUTE / CAMERA -------------------- **/
+  const toggleMute = () => {
+    const audioTrack = localStreamRef.current?.getAudioTracks()[0];
+    if (audioTrack) {
+      audioTrack.enabled = !audioTrack.enabled;
+      setMuted(!audioTrack.enabled);
+    }
+  };
+  const toggleCamera = () => {
+    const videoTrack = localStreamRef.current?.getVideoTracks()[0];
+    if (videoTrack) {
+      videoTrack.enabled = !videoTrack.enabled;
+      setCameraOff(!videoTrack.enabled);
+    }
+  };
+
+  /** -------------------- RENDER -------------------- **/
   return (
-    <Layout style={{ height: "100vh" }}>
-      <Header style={{ background: "#fff" }}>
-        <h2 style={{ color: "#1890ff", textAlign: "center" }}>
-          Video Call App
-        </h2>
-      </Header>
-      <Content style={{ padding: 50 }}>
-        {!joined ? (
-          <Space direction="vertical" size="large" style={{ width: "100%" }}>
-            <Input
-              placeholder="Tên bạn"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
+    <div className="video-call-container">
+      {!joined ? (
+        <Card className="join-room-card">
+          <Title level={3}>
+            <VideoCameraOutlined /> Tham gia phòng họp
+          </Title>
+          <Input
+            placeholder="Tên của bạn"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            style={{ marginBottom: 12 }}
+          />
+          <Input
+            placeholder="Mã phòng"
+            value={roomId}
+            onChange={(e) => setRoomId(e.target.value)}
+            style={{ marginBottom: 16 }}
+          />
+          <Button
+            type="primary"
+            block
+            icon={<VideoCameraOutlined />}
+            loading={loading}
+            onClick={handleJoin}
+          >
+            Tham gia
+          </Button>
+        </Card>
+      ) : (
+        <div className="meeting-room">
+          <div className="videos-grid">
+            {/* Local video */}
+            <VideoGrid
+              peer={{
+                name: `${name} (Bạn)`,
+                stream: localStreamRef.current,
+                cameraOff,
+              }}
             />
-            <Input
-              placeholder="Room ID"
-              value={roomId}
-              onChange={(e) => setRoomId(e.target.value)}
+            {/* Remote peers */}
+            {remotePeers.map((peer) => (
+              <VideoGrid key={peer.id} peer={peer} />
+            ))}
+          </div>
+
+          <div className="toolbar">
+            <Button
+              shape="circle"
+              icon={muted ? <AudioMutedOutlined /> : <AudioOutlined />}
+              onClick={toggleMute}
             />
             <Button
+              shape="circle"
+              icon={
+                cameraOff ? <VideoCameraAddOutlined /> : <VideoCameraFilled />
+              }
+              onClick={toggleCamera}
+            />
+            <Button
+              danger
               type="primary"
-              icon={<VideoCameraOutlined />}
-              onClick={joinRoom}
+              shape="circle"
               size="large"
-            >
-              Tham gia phòng
-            </Button>
-          </Space>
-        ) : (
-          <div style={{ display: "flex", justifyContent: "center", gap: 50 }}>
-            <div>
-              <h3>Video của bạn</h3>
-              <video
-                ref={localVideoRef}
-                autoPlay
-                muted
-                style={{ width: 300, borderRadius: 8 }}
-              />
-              <Space style={{ marginTop: 10 }}>
-                <Button
-                  type={micOff ? "default" : "primary"}
-                  icon={<AudioOutlined />}
-                  onClick={toggleMic}
-                >
-                  {micOff ? "Bật Micro" : "Tắt Micro"}
-                </Button>
-                <Button
-                  type={camOff ? "default" : "primary"}
-                  icon={<VideoCameraOutlined />}
-                  onClick={toggleCam}
-                >
-                  {camOff ? "Bật Camera" : "Tắt Camera"}
-                </Button>
-              </Space>
-            </div>
-            <div>
-              <h3>Video người khác</h3>
-              <video
-                ref={remoteVideoRef}
-                autoPlay
-                style={{ width: 300, borderRadius: 8 }}
-              />
-            </div>
+              icon={<PhoneOutlined />}
+              onClick={handleHangup}
+            />
           </div>
-        )}
-      </Content>
-    </Layout>
+        </div>
+      )}
+    </div>
   );
 };
 
