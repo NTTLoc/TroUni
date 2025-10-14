@@ -1,0 +1,64 @@
+.chat-bubble {
+  display: flex;
+  flex-direction: column;
+  max-width: 70%; // Bubble không quá rộng
+  padding: 10px 14px;
+  margin-bottom: 8px;
+  word-break: break-word; // Ngắt dòng khi dài
+  position: relative;
+  font-size: 14px;
+  line-height: 1.4;
+  transition: all 0.2s ease;
+
+  .sender-name {
+    font-weight: 600;
+    font-size: 12px;
+    margin-bottom: 4px;
+    color: #555;
+  }
+
+  .bubble-text {
+    white-space: pre-wrap; // giữ xuống dòng trong text
+  }
+
+  &.mine {
+    align-self: flex-end; // đặt sang phải
+    background-color: #0b93f6;
+    color: #fff;
+    border-radius: 18px 18px 4px 18px;
+
+    &::after {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      right: -6px;
+      width: 0;
+      height: 0;
+      border-top: 6px solid #0b93f6; // mũi tên
+      border-left: 6px solid transparent;
+    }
+  }
+
+  &.theirs {
+    align-self: flex-start; // đặt sang trái
+    background-color: #fff;
+    color: #000;
+    border-radius: 18px 18px 18px 4px;
+    border: 1px solid #e6e6e6;
+
+    &::after {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      left: -6px;
+      width: 0;
+      height: 0;
+      border-top: 6px solid #fff; // mũi tên
+      border-right: 6px solid transparent;
+    }
+  }
+
+  button {
+    margin-top: 6px; // nút tham gia call
+  }
+}

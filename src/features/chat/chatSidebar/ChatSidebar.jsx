@@ -1,47 +1,56 @@
-import React, { useEffect, useState } from "react";
+import React, { useMemo } from "react";
 import { List, Avatar, Typography } from "antd";
+import { assets } from "../../../assets/assets";
 
 const { Text } = Typography;
 
 const ChatSidebar = ({ selectedChat, onSelectChat, conversations = [] }) => {
-  const [data, setData] = useState(conversations);
+  // 🧠 Memo hóa danh sách, đảm bảo selectedChat luôn hiển thị
+  const displayedConversations = useMemo(() => {
+    if (!selectedChat) return conversations;
 
-  useEffect(() => setData(conversations), [conversations]);
-
-  useEffect(() => {
-    if (selectedChat) {
-      setData((prev) => {
-        const exists = prev.some((c) => c.id === selectedChat.id);
-        if (!exists) return [selectedChat, ...prev];
-        return prev.map((c) =>
-          c.id === selectedChat.id ? { ...c, ...selectedChat } : c
-        );
-      });
+    const exists = conversations.some((c) => c.id === selectedChat.id);
+    if (exists) {
+      return conversations.map((c) =>
+        c.id === selectedChat.id
+          ? { ...c, lastMessage: selectedChat.lastMessage || c.lastMessage }
+          : c
+      );
+    } else {
+      return [
+        {
+          ...selectedChat,
+          lastMessage: selectedChat.lastMessage || "",
+          avatar: selectedChat.avatar || "/default-avatar.png",
+        },
+        ...conversations,
+      ];
     }
-  }, [selectedChat]);
+  }, [conversations, selectedChat]);
 
   return (
     <div className="chat-sidebar-container">
       <div className="sidebar-header">Tin nhắn</div>
+
       <List
         itemLayout="horizontal"
-        dataSource={data}
+        dataSource={displayedConversations}
         locale={{ emptyText: "Chưa có cuộc trò chuyện nào" }}
         renderItem={(item) => (
-          <List.Item
-            className={`chat-item ${
-              selectedChat?.id === item.id ? "active" : ""
-            }`}
-            onClick={() => onSelectChat(item)}
-          >
-            <List.Item.Meta
-              avatar={<Avatar src={item.avatar || "/default-avatar.png"} />}
-              title={<Text strong>{item.name}</Text>}
-              description={
-                <Text type="secondary">{item.lastMessage || "..."}</Text>
-              }
-            />
-          </List.Item>
+          console.log(item),
+          (
+            <List.Item
+              className={`chat-item ${
+                selectedChat?.id === item.id ? "active" : ""
+              }`}
+              onClick={() => onSelectChat(item)}
+            >
+              <List.Item.Meta
+                avatar={<Avatar src={item.avatar || assets.avatar} />}
+                title={<Text strong>{item.name}</Text>}
+              />
+            </List.Item>
+          )
         )}
       />
     </div>

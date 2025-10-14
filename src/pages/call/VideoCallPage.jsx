@@ -1,163 +1,143 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Button, Input, Card, Typography, message } from "antd";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { Button } from "antd";
 import {
-  VideoCameraOutlined,
-  PhoneOutlined,
-  AudioMutedOutlined,
   AudioOutlined,
+  AudioMutedOutlined,
+  VideoCameraOutlined,
   VideoCameraAddOutlined,
-  VideoCameraFilled,
+  PhoneOutlined,
 } from "@ant-design/icons";
-import VideoGrid from "../../features/call/videoGrid/VideoGrid";
+import { path } from "../../utils/constants";
 import "./VideoCallPage.scss";
 
-const { Title } = Typography;
-
-const SIGNALING_SERVER =
-  "wss://video3-dot-trouni-473709.de.r.appspot.com/socket";
-
 const VideoCallPage = () => {
-  const [name, setName] = useState(sessionStorage.getItem("name") || "");
-  const [roomId, setRoomId] = useState(sessionStorage.getItem("roomId") || "");
+  const [searchParams] = useSearchParams();
+  const username = searchParams.get("name") || "";
+  const roomId = searchParams.get("roomId") || "";
+  const navigate = useNavigate();
+
+  const [micOn, setMicOn] = useState(true);
+  const [camOn, setCamOn] = useState(true);
   const [joined, setJoined] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [muted, setMuted] = useState(false);
-  const [cameraOff, setCameraOff] = useState(false);
-  const [remotePeers, setRemotePeers] = useState([]); // {id, name, stream, cameraOff}
+  const [isEndingCall, setIsEndingCall] = useState(false);
+  const [endCountdown, setEndCountdown] = useState(3);
+  const [remoteStreams, setRemoteStreams] = useState({});
 
   const localVideoRef = useRef(null);
-  const localStreamRef = useRef(null);
   const socketRef = useRef(null);
-  const peerConnections = useRef({});
-  const iceCandidateQueue = useRef({});
-  const [config, setConfig] = useState({ iceServers: [] });
+  const peerConnectionsRef = useRef({});
+  const iceCandidateQueueRef = useRef({});
+  const localStreamRef = useRef(null);
+  const configuration = useRef({});
+  const countdownIntervalRef = useRef(null);
 
-  /** -------------------- TURN/STUN config -------------------- **/
+  // ===== ICE SERVER CONFIG =====
   useEffect(() => {
-    if (location.hostname === "localhost") {
-      setConfig({ iceServers: [{ urls: "stun:stun.l.cloudflare.com:3478" }] });
-    } else {
-      fetch("/turn.json")
-        .then((r) => r.json())
-        .then(setConfig)
-        .catch(() =>
-          message.warning("Không tải được TURN config, dùng STUN mặc định.")
+    const setupConfig = async () => {
+      if (location.hostname === "localhost") {
+        configuration.current = {
+          iceServers: [{ urls: "stun:stun.l.google.com:19302" }],
+        };
+      } else {
+        configuration.current = await fetch("./turn.json").then((r) =>
+          r.json()
         );
-    }
+      }
+    };
+    setupConfig();
   }, []);
 
-  /** -------------------- INIT CAMERA -------------------- **/
-  const initCamera = async () => {
+  // ===== JOIN CALL =====
+  useEffect(() => {
+    if (username && roomId && !joined) joinCall();
+    return () => hangupCall();
+  }, [username, roomId]);
+
+  const joinCall = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
         video: true,
         audio: true,
       });
       localStreamRef.current = stream;
-      if (localVideoRef.current) {
-        localVideoRef.current.srcObject = stream;
-        localVideoRef.current.muted = true;
-        await localVideoRef.current.play().catch(() => {});
-      }
-    } catch (err) {
-      console.error("Camera error:", err);
-      message.error("Không thể truy cập camera hoặc micro!");
-      throw err;
-    }
-  };
+      if (localVideoRef.current) localVideoRef.current.srcObject = stream;
 
-  /** -------------------- JOIN ROOM -------------------- **/
-  const handleJoin = async () => {
-    if (!name || !roomId) return message.warning("Nhập tên và mã phòng trước!");
-    setLoading(true);
-
-    try {
-      await initCamera();
-
-      const wsProtocol = window.location.protocol === "https:" ? "wss" : "ws";
-      const wsHost = window.location.host;
-      const ws = new WebSocket(
-        `${wsProtocol}://${wsHost}${SIGNALING_SERVER}?room=${roomId}`
+      const socket = new WebSocket(
+        `wss://video3-dot-trouni-473709.de.r.appspot.com/socket?room=${roomId}`
       );
-      socketRef.current = ws;
+      socketRef.current = socket;
+      setupSocketListeners(socket);
 
-      ws.onopen = () => {
-        ws.send(JSON.stringify({ type: "join", name }));
-        sessionStorage.setItem("name", name);
-        sessionStorage.setItem("roomId", roomId);
+      socket.onopen = () => {
+        socket.send(JSON.stringify({ type: "join", name: username }));
         setJoined(true);
-        setLoading(false);
       };
-
-      ws.onmessage = (event) => {
-        const msg = JSON.parse(event.data);
-        const fromId = msg.from;
-        const fromName = msg.name || msg.fromName;
-
-        switch (msg.type) {
-          case "room-state":
-            for (const peerId in msg.peers) {
-              createPeerConnection(peerId, msg.peers[peerId].name, true);
-            }
-            break;
-          case "peer-join":
-            createPeerConnection(fromId, fromName, false);
-            break;
-          case "offer":
-            handleOffer(fromId, fromName, msg.sdp);
-            break;
-          case "answer":
-            handleAnswer(fromId, msg.sdp);
-            break;
-          case "candidate":
-            handleCandidate(fromId, msg.candidate);
-            break;
-          case "peer-leave":
-            removePeer(fromId);
-            break;
-          default:
-            console.log("Unknown message:", msg);
-        }
-      };
-
-      ws.onclose = () => console.log("WebSocket closed");
-      ws.onerror = (err) => console.error("WebSocket error:", err);
     } catch (err) {
-      console.error(err);
-      setLoading(false);
+      console.error("Cannot access camera/microphone", err);
+      alert("Không thể truy cập camera/micro. Kiểm tra quyền.");
     }
   };
 
-  /** -------------------- PEER CONNECTION -------------------- **/
+  // ===== SOCKET =====
+  const setupSocketListeners = (socket) => {
+    socket.onmessage = async (event) => {
+      const msg = JSON.parse(event.data);
+      const fromId = msg.from;
+      const fromName = msg.name || msg.fromName;
+
+      switch (msg.type) {
+        case "room-state":
+          for (const peerId in msg.peers) {
+            if (peerId !== msg.youId)
+              createPeerConnection(peerId, msg.peers[peerId].name, true);
+          }
+          break;
+        case "peer-join":
+          createPeerConnection(fromId, fromName, false);
+          break;
+        case "offer":
+          handleOffer(fromId, fromName, msg.sdp);
+          break;
+        case "answer":
+          handleAnswer(fromId, msg.sdp);
+          break;
+        case "candidate":
+          handleCandidate(fromId, msg.candidate);
+          break;
+        case "peer-leave":
+          removePeer(fromId);
+          break;
+      }
+    };
+    socket.onclose = () => console.log("WebSocket closed.");
+    socket.onerror = (err) => console.error("WebSocket error:", err);
+  };
+
+  // ===== CREATE PEER CONNECTION =====
   const createPeerConnection = (peerId, peerName, isInitiator) => {
-    if (peerConnections.current[peerId]) return;
+    if (peerConnectionsRef.current[peerId])
+      return peerConnectionsRef.current[peerId];
 
-    const pc = new RTCPeerConnection(config);
-    peerConnections.current[peerId] = pc;
-    iceCandidateQueue.current[peerId] = [];
+    const pc = new RTCPeerConnection(configuration.current);
+    peerConnectionsRef.current[peerId] = pc;
+    iceCandidateQueueRef.current[peerId] = [];
 
-    localStreamRef.current
-      ?.getTracks()
-      .forEach((track) => pc.addTrack(track, localStreamRef.current));
-
-    pc.ontrack = (event) => {
-      setRemotePeers((prev) => {
-        if (prev.find((p) => p.id === peerId)) return prev;
-        return [
-          ...prev,
-          {
-            id: peerId,
-            name: peerName,
-            stream: event.streams[0],
-            cameraOff: false,
-          },
-        ];
+    // Attach local tracks safely
+    const attachLocalTracks = () => {
+      if (!localStreamRef.current) return;
+      const senders = pc.getSenders();
+      localStreamRef.current.getTracks().forEach((track) => {
+        if (!senders.find((s) => s.track === track)) {
+          pc.addTrack(track, localStreamRef.current);
+        }
       });
     };
+    attachLocalTracks();
 
     pc.onicecandidate = (event) => {
-      if (event.candidate) {
-        socketRef.current?.send(
+      if (event.candidate && socketRef.current) {
+        socketRef.current.send(
           JSON.stringify({
             type: "candidate",
             to: peerId,
@@ -167,175 +147,189 @@ const VideoCallPage = () => {
       }
     };
 
+    pc.ontrack = (event) => {
+      setRemoteStreams((prev) => ({
+        ...prev,
+        [peerId]: { name: peerName, stream: event.streams[0] },
+      }));
+    };
+
     pc.onconnectionstatechange = () => {
       if (["disconnected", "closed", "failed"].includes(pc.connectionState))
         removePeer(peerId);
     };
 
     if (isInitiator) {
-      pc.createOffer()
-        .then((offer) => pc.setLocalDescription(offer))
-        .then(() =>
-          socketRef.current?.send({
-            type: "offer",
-            to: peerId,
-            sdp: pc.localDescription,
-          })
+      pc.onnegotiationneeded = async () => {
+        if (
+          !localStreamRef.current ||
+          !socketRef.current ||
+          socketRef.current.readyState !== WebSocket.OPEN
         )
-        .catch(console.error);
+          return;
+        try {
+          const offer = await pc.createOffer();
+          await pc.setLocalDescription(offer);
+          socketRef.current.send(
+            JSON.stringify({
+              type: "offer",
+              to: peerId,
+              sdp: pc.localDescription,
+            })
+          );
+        } catch (err) {
+          console.error(err);
+        }
+      };
     }
+
     return pc;
   };
 
-  const handleOffer = (fromId, fromName, sdp) => {
+  // ===== HANDLE OFFER / ANSWER / CANDIDATE =====
+  const handleOffer = async (fromId, fromName, sdp) => {
     const pc =
-      peerConnections.current[fromId] ||
+      peerConnectionsRef.current[fromId] ||
       createPeerConnection(fromId, fromName, false);
-    pc.setRemoteDescription(new RTCSessionDescription(sdp))
-      .then(() => pc.createAnswer())
-      .then((answer) => pc.setLocalDescription(answer))
-      .then(() =>
-        socketRef.current?.send({
-          type: "answer",
-          to: fromId,
-          sdp: pc.localDescription,
-        })
-      )
-      .then(() => processIceCandidateQueue(fromId))
-      .catch(console.error);
+    await pc.setRemoteDescription(new RTCSessionDescription(sdp));
+    processIceCandidateQueue(fromId);
+    const answer = await pc.createAnswer();
+    await pc.setLocalDescription(answer);
+    socketRef.current?.send(
+      JSON.stringify({ type: "answer", to: fromId, sdp: pc.localDescription })
+    );
   };
 
-  const handleAnswer = (fromId, sdp) => {
-    const pc = peerConnections.current[fromId];
-    if (pc)
-      pc.setRemoteDescription(new RTCSessionDescription(sdp))
-        .then(() => processIceCandidateQueue(fromId))
-        .catch(console.error);
+  const handleAnswer = async (fromId, sdp) => {
+    const pc = peerConnectionsRef.current[fromId];
+    if (!pc) return;
+    await pc.setRemoteDescription(new RTCSessionDescription(sdp));
+    processIceCandidateQueue(fromId);
   };
 
   const handleCandidate = (fromId, candidate) => {
-    const pc = peerConnections.current[fromId];
+    const pc = peerConnectionsRef.current[fromId];
     if (!pc || !candidate) return;
-
     if (pc.remoteDescription && pc.remoteDescription.type) {
       pc.addIceCandidate(new RTCIceCandidate(candidate)).catch(console.error);
     } else {
-      iceCandidateQueue.current[fromId].push(candidate);
+      iceCandidateQueueRef.current[fromId].push(candidate);
     }
   };
 
   const processIceCandidateQueue = (peerId) => {
-    const pc = peerConnections.current[peerId];
-    if (!pc || !iceCandidateQueue.current[peerId]) return;
-
-    while (iceCandidateQueue.current[peerId].length) {
-      const candidate = iceCandidateQueue.current[peerId].shift();
-      pc.addIceCandidate(new RTCIceCandidate(candidate)).catch(console.error);
-    }
+    const pc = peerConnectionsRef.current[peerId];
+    const queue = iceCandidateQueueRef.current[peerId];
+    if (pc && queue)
+      while (queue.length)
+        pc.addIceCandidate(new RTCIceCandidate(queue.shift())).catch(
+          console.error
+        );
   };
 
+  // ===== REMOVE PEER =====
   const removePeer = (peerId) => {
-    if (peerConnections.current[peerId]) {
-      peerConnections.current[peerId].close();
-      delete peerConnections.current[peerId];
-    }
-    setRemotePeers((prev) => prev.filter((p) => p.id !== peerId));
+    peerConnectionsRef.current[peerId]?.close();
+    delete peerConnectionsRef.current[peerId];
+    delete iceCandidateQueueRef.current[peerId];
+    setRemoteStreams((prev) => {
+      const copy = { ...prev };
+      delete copy[peerId];
+      return copy;
+    });
   };
 
-  /** -------------------- HANGUP -------------------- **/
-  const handleHangup = () => {
-    localStreamRef.current?.getTracks().forEach((t) => t.stop());
-    Object.keys(peerConnections.current).forEach(removePeer);
+  // ===== HANGUP =====
+  const hangupCall = () => {
+    if (isEndingCall) return;
+    setIsEndingCall(true);
+    setEndCountdown(3);
+    socketRef.current?.send(JSON.stringify({ type: "leave" }));
     socketRef.current?.close();
-    setJoined(false);
-    setRemotePeers([]);
-    sessionStorage.clear();
+
+    countdownIntervalRef.current = setInterval(() => {
+      setEndCountdown((prev) => {
+        if (prev <= 1) {
+          clearInterval(countdownIntervalRef.current);
+          localStreamRef.current?.getTracks().forEach((t) => t.stop());
+          Object.keys(peerConnectionsRef.current).forEach(removePeer);
+          peerConnectionsRef.current = {};
+          iceCandidateQueueRef.current = {};
+          localStreamRef.current = null;
+          setJoined(false);
+          setIsEndingCall(false);
+          navigate(path.CHAT, { state: { fromCall: true } });
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
   };
 
-  /** -------------------- MUTE / CAMERA -------------------- **/
-  const toggleMute = () => {
-    const audioTrack = localStreamRef.current?.getAudioTracks()[0];
-    if (audioTrack) {
-      audioTrack.enabled = !audioTrack.enabled;
-      setMuted(!audioTrack.enabled);
-    }
-  };
-  const toggleCamera = () => {
-    const videoTrack = localStreamRef.current?.getVideoTracks()[0];
-    if (videoTrack) {
-      videoTrack.enabled = !videoTrack.enabled;
-      setCameraOff(!videoTrack.enabled);
-    }
+  // ===== TOGGLE AUDIO / VIDEO =====
+  const toggleAudio = () => {
+    localStreamRef.current
+      ?.getAudioTracks()
+      .forEach((t) => (t.enabled = !t.enabled));
+    setMicOn((prev) => !prev);
   };
 
-  /** -------------------- RENDER -------------------- **/
+  const toggleVideo = () => {
+    localStreamRef.current
+      ?.getVideoTracks()
+      .forEach((t) => (t.enabled = !t.enabled));
+    setCamOn((prev) => !prev);
+  };
+
   return (
-    <div className="video-call-container">
-      {!joined ? (
-        <Card className="join-room-card">
-          <Title level={3}>
-            <VideoCameraOutlined /> Tham gia phòng họp
-          </Title>
-          <Input
-            placeholder="Tên của bạn"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            style={{ marginBottom: 12 }}
-          />
-          <Input
-            placeholder="Mã phòng"
-            value={roomId}
-            onChange={(e) => setRoomId(e.target.value)}
-            style={{ marginBottom: 16 }}
+    <div className="video-call-page">
+      <div className="video-container">
+        <div id="local-video-wrapper" className="video-wrapper">
+          <p>{`Bạn (${username})`}</p>
+          <video ref={localVideoRef} autoPlay playsInline muted />
+        </div>
+
+        {Object.entries(remoteStreams).map(([peerId, { name, stream }]) => (
+          <div key={peerId} className="video-wrapper">
+            <p>{name}</p>
+            <video
+              ref={(v) => v && (v.srcObject = stream)}
+              autoPlay
+              playsInline
+            />
+          </div>
+        ))}
+      </div>
+
+      {joined && (
+        <div className="controls-container">
+          <Button
+            shape="circle"
+            size="large"
+            onClick={toggleAudio}
+            icon={micOn ? <AudioOutlined /> : <AudioMutedOutlined />}
           />
           <Button
-            type="primary"
-            block
-            icon={<VideoCameraOutlined />}
-            loading={loading}
-            onClick={handleJoin}
-          >
-            Tham gia
-          </Button>
-        </Card>
-      ) : (
-        <div className="meeting-room">
-          <div className="videos-grid">
-            {/* Local video */}
-            <VideoGrid
-              peer={{
-                name: `${name} (Bạn)`,
-                stream: localStreamRef.current,
-                cameraOff,
-              }}
-            />
-            {/* Remote peers */}
-            {remotePeers.map((peer) => (
-              <VideoGrid key={peer.id} peer={peer} />
-            ))}
-          </div>
+            shape="circle"
+            size="large"
+            onClick={toggleVideo}
+            icon={camOn ? <VideoCameraOutlined /> : <VideoCameraAddOutlined />}
+          />
+          <Button
+            shape="circle"
+            size="large"
+            onClick={hangupCall}
+            danger
+            icon={<PhoneOutlined />}
+          />
+        </div>
+      )}
 
-          <div className="toolbar">
-            <Button
-              shape="circle"
-              icon={muted ? <AudioMutedOutlined /> : <AudioOutlined />}
-              onClick={toggleMute}
-            />
-            <Button
-              shape="circle"
-              icon={
-                cameraOff ? <VideoCameraAddOutlined /> : <VideoCameraFilled />
-              }
-              onClick={toggleCamera}
-            />
-            <Button
-              danger
-              type="primary"
-              shape="circle"
-              size="large"
-              icon={<PhoneOutlined />}
-              onClick={handleHangup}
-            />
+      {isEndingCall && (
+        <div className="call-overlay">
+          <div className="spinner" />
+          <div>
+            Đang kết thúc cuộc gọi... Quay lại chat trong {endCountdown}s
           </div>
         </div>
       )}

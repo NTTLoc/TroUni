@@ -59,13 +59,6 @@ const renderIcon = (iconName) => {
   );
 };
 
-const { Title, Text } = Typography;
-const { Search } = Input;
-
-/**
- * AmenityManagement Component
- * Component để quản lý amenities trong Admin Dashboard
- */
 const AmenityManagement = () => {
   const [searchValue, setSearchValue] = useState("");
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
@@ -152,70 +145,6 @@ const AmenityManagement = () => {
     </Tag>
   );
 
-  const {
-    amenities,
-    loading,
-    error,
-    fetchAllAmenities,
-    createAmenity,
-    deleteAmenity,
-    reset,
-  } = useAmenities({ autoFetch: true });
-
-  // Filter amenities based on search
-  const filteredAmenities = amenities.filter((amenity) =>
-    amenity.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
-  // Handle create/edit amenity
-  const handleSubmit = async (values) => {
-    try {
-      if (editingAmenity) {
-        // TODO: Implement update amenity when backend supports it
-        message.success("Cập nhật tiện ích thành công!");
-      } else {
-        await createAmenity(values);
-        message.success("Tạo tiện ích thành công!");
-      }
-
-      setIsModalVisible(false);
-      setEditingAmenity(null);
-      form.resetFields();
-    } catch (error) {
-      console.error("Error saving amenity:", error);
-      message.error("Có lỗi xảy ra khi lưu tiện ích!");
-    }
-  };
-
-  // Handle delete amenity
-  const handleDelete = async (amenityId) => {
-    try {
-      await deleteAmenity(amenityId);
-      message.success("Xóa tiện ích thành công!");
-    } catch (error) {
-      console.error("Error deleting amenity:", error);
-      message.error("Có lỗi xảy ra khi xóa tiện ích!");
-    }
-  };
-
-  // Handle edit amenity
-  const handleEdit = (amenity) => {
-    setEditingAmenity(amenity);
-    form.setFieldsValue({
-      name: amenity.name,
-      icon: amenity.iconUrl,
-    });
-    setIsModalVisible(true);
-  };
-
-  // Handle create new amenity
-  const handleCreate = () => {
-    setEditingAmenity(null);
-    form.resetFields();
-    setIsModalVisible(true);
-  };
-
-  // Table columns
   const columns = [
     {
       title: "Tên tiện ích",

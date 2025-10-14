@@ -105,12 +105,16 @@ const Navbar = () => {
           <Link to={path.MANAGE_USERS}>Quản lý người dùng</Link>
           <Link to={path.MANAGE_POSTS}>Quản lý tin</Link>
         </div>
+      ) : auth.user?.role === "LANDLORD" ? (
+        <div className="menu-section">
+          <Link to={path.MANAGE_POSTS}>Quản lý tin</Link>
+          <Link to={path.CHAT}>Chat</Link>
+        </div>
       ) : (
         <div className="menu-section">
           <Link to={path.SAVED}>Tin đăng đã lưu</Link>
-          <Link to={path.SAVED_SEARCH}>Tìm kiếm đã lưu</Link>
-          <Link to={path.HISTORY}>Lịch sử xem tin</Link>
           <Link to={path.REVIEWS}>Đánh giá từ tôi</Link>
+          <Link to={path.CHAT}>Chat</Link>
         </div>
       )}
 
@@ -169,10 +173,6 @@ const Navbar = () => {
                     src={profile?.avatarUrl || avatar}
                     size={30}
                     icon={<UserOutlined />}
-                    onError={(e) => {
-                      e.currentTarget.src = avatar;
-                      return false;
-                    }}
                   />
                   <DownOutlined />
                 </Space>

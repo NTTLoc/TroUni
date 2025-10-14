@@ -1,114 +1,109 @@
-import React, { useState, useEffect, useRef } from "react";
-import { Input, Button, List, Avatar, Typography, Spin } from "antd";
-import { SendOutlined } from "@ant-design/icons";
-import axios from "axios";
-import {
-  connectWebSocket,
-  disconnectWebSocket,
-  sendMessage,
-} from "../../../services/chatApi";
-
-const { Text } = Typography;
+import React, { useEffect, useState, useRef, useCallback } from "react";
+import { Input, Button, Spin } from "antd";
+import { SendOutlined, VideoCameraOutlined } from "@ant-design/icons";
+import { useNavigate, useLocation } from "react-router-dom";
+import MessageBubble from "../messageBubble/MessageBubble";
+import { getChatHistoryApi } from "../../../services/chatApi";
+import { useChatRoom } from "../../../hooks/useChatRoom";
 
 const ChatWindow = ({ chat, currentUser }) => {
-  const [messages, setMessages] = useState([]);
   const [messageInput, setMessageInput] = useState("");
   const [loading, setLoading] = useState(true);
   const messagesEndRef = useRef(null);
+  const navigate = useNavigate();
+  const location = useLocation();
 
-  // 1️⃣ Load lịch sử tin nhắn từ DB khi mở chat
-  useEffect(() => {
+  const [reconnectKey, setReconnectKey] = useState(0);
+
+  const { messages, sendChatMessage, addHistoryMessage, resetMessages } =
+    useChatRoom(chat?.id, currentUser?.id, reconnectKey);
+
+  // Load chat history khi chat thay đổi hoặc khi remount
+  const loadHistory = useCallback(async () => {
     if (!chat?.id) return;
+
+    resetMessages();
     setLoading(true);
 
-    axios
-      .get(`/chat/${chat.id}/history`)
-      .then((res) => {
-        const history = res.data.data.map((msg) => ({
-          ...msg,
-          self: msg.senderId === currentUser.id,
-        }));
-        setMessages(history);
-      })
-      .catch(console.error)
-      .finally(() => setLoading(false));
-  }, [chat, currentUser]);
+    try {
+      const res = await getChatHistoryApi(chat.id);
+      const history = Array.isArray(res.data?.data)
+        ? res.data.data
+        : res.data || [];
 
-  // 2️⃣ Kết nối WebSocket
+      history.forEach((msg) => addHistoryMessage(msg));
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  }, [chat?.id, addHistoryMessage, resetMessages]);
+
+  // Khi quay lại từ VideoCall, force reconnect WebSocket
   useEffect(() => {
-    if (!currentUser?.id) return;
+    if (location.state?.fromCall) {
+      setReconnectKey(Date.now());
+      loadHistory();
+    }
+  }, [location.state?.fromCall, loadHistory]);
 
-    connectWebSocket(currentUser.id, (msg) => {
-      setMessages((prev) => [
-        ...prev,
-        { ...msg, self: msg.senderId === currentUser.id },
-      ]);
-    });
-
-    return () => disconnectWebSocket();
-  }, [currentUser]);
-
-  // 3️⃣ Scroll xuống cuối khi có tin nhắn mới
+  // Auto scroll khi messages thay đổi
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  // 4️⃣ Gửi tin nhắn
+  // Gửi tin nhắn
   const handleSend = () => {
     if (!messageInput.trim()) return;
-
-    sendMessage(chat.id, messageInput); // Gửi qua WebSocket
-
-    // Thêm tạm vào state để hiển thị ngay
-    setMessages((prev) => [
-      ...prev,
-      { senderId: currentUser.id, content: messageInput, self: true },
-    ]);
+    sendChatMessage(messageInput.trim());
     setMessageInput("");
+  };
+
+  // Gọi video
+  const handleVideoCall = () => {
+    if (!chat?.id) return;
+    const callerName = currentUser?.username || "Người dùng";
+
+    // Gửi thông báo video call
+    sendChatMessage(`${callerName} đang yêu cầu video call.`);
+
+    // Điều hướng sang video call và đánh dấu fromChat để có thể remount khi quay lại
+    navigate(`/call?roomId=${chat.id}&name=${encodeURIComponent(callerName)}`, {
+      state: { fromChat: true },
+    });
   };
 
   return (
     <div className="chat-window">
       <div className="chat-header">
-        <Avatar
-          src={currentUser?.profile?.avatarUrl}
-          size="small"
-          style={{ marginRight: 8 }}
+        {chat?.name}
+        <Button
+          type="default"
+          icon={<VideoCameraOutlined />}
+          onClick={handleVideoCall}
+          style={{ float: "right" }}
         />
-        {currentUser?.username}
       </div>
 
-      <div className="chat-messages" style={{ flex: 1, overflowY: "auto" }}>
+      <div className="chat-messages">
         {loading ? (
-          <Spin tip="Loading chat..." style={{ marginTop: 20 }} />
+          <Spin tip="Đang tải tin nhắn..." style={{ marginTop: 20 }} />
+        ) : messages.length === 0 ? (
+          <div className="chat-empty">Chưa có tin nhắn nào</div>
         ) : (
-          <List
-            dataSource={messages}
-            renderItem={(msg, index) => (
-              <List.Item
-                key={index}
-                className={`message-item ${
-                  msg.self ? "message-self" : "message-other"
-                }`}
-              >
-                {!msg.self && <Avatar src={chat.avatar} />}
-                <div
-                  className={`message-bubble ${msg.self ? "self" : "other"}`}
-                >
-                  {!msg.self && <Text strong>{chat.name}</Text>}
-                  <div>{msg.content}</div>
-                </div>
-              </List.Item>
-            )}
-          />
+          messages.map((msg) => (
+            <MessageBubble
+              key={msg.messageId}
+              message={msg}
+              currentUser={currentUser}
+              chat={chat}
+            />
+          ))
         )}
         <div ref={messagesEndRef} />
       </div>
 
-      <div
-        className="chat-input"
-        style={{ display: "flex", gap: 8, padding: 8 }}
-      >
+      <div className="chat-input">
         <Input
           value={messageInput}
           onChange={(e) => setMessageInput(e.target.value)}
