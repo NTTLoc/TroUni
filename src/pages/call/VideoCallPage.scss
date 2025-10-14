@@ -1,0 +1,191 @@
+/* =========================
+   Video Call Page
+========================= */
+.video-call-page {
+  width: 100%;
+  height: 100vh;
+  background-color: #1a1a1a;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+}
+
+/* =========================
+   Video Container
+========================= */
+.video-container {
+  flex: 1;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  padding: 10px;
+  gap: 10px;
+  overflow: auto;
+}
+
+/* =========================
+   Dynamic Video Wrapper
+========================= */
+.video-container .video-wrapper {
+  position: relative;
+  background-color: #000;
+  overflow: hidden;
+  border-radius: 8px;
+  aspect-ratio: 16/9;
+  min-width: 180px;
+  max-width: 500px;
+  flex: 1 1 auto;
+}
+
+/* Nếu có >=2 remote, dùng grid 2 cột */
+.video-container.multiple .video-wrapper {
+  flex: 1 1 calc(50% - 10px);
+}
+
+/* Nếu chỉ 1 remote, to hơn */
+.video-container:not(.multiple) .video-wrapper {
+  flex: 1 1 calc(100% - 10px);
+  max-width: 1200px;
+}
+
+.video-container .video-wrapper video {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background-color: #000;
+}
+
+/* =========================
+   Video Name Overlay
+========================= */
+.video-container .video-wrapper p {
+  position: absolute;
+  bottom: 6px;
+  left: 6px;
+  margin: 0;
+  padding: 2px 6px;
+  background-color: rgba(0, 0, 0, 0.6);
+  color: #fff;
+  font-size: 0.75rem;
+  border-radius: 4px;
+  text-shadow: 0 0 3px rgba(0, 0, 0, 0.7);
+  z-index: 10;
+}
+
+/* =========================
+   Local Video Overlay
+========================= */
+#local-video-wrapper {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 180px;
+  height: 180px;
+  min-width: 120px;
+  min-height: 120px;
+  border: 2px solid #3b82f6;
+  border-radius: 12px;
+  overflow: hidden;
+  z-index: 20;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+  background-color: #000;
+}
+
+#local-video-wrapper video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center center;
+}
+
+#local-video-wrapper p {
+  position: absolute;
+  bottom: 6px;
+  left: 6px;
+  margin: 0;
+  padding: 2px 6px;
+  background-color: rgba(0, 0, 0, 0.6);
+  color: #fff;
+  font-size: 0.75rem;
+  border-radius: 4px;
+  text-shadow: 0 0 3px rgba(0, 0, 0, 0.7);
+}
+
+/* =========================
+   Controls
+========================= */
+.controls-container {
+  height: 80px;
+  padding: 10px;
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  background-color: rgba(26, 26, 26, 0.9);
+  z-index: 25;
+  flex-shrink: 0;
+}
+
+.controls-container .ant-btn {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+.controls-container .ant-btn[title="Hangup"] {
+  background-color: #ef4444;
+  color: #fff;
+}
+
+.controls-container .ant-btn[title="Hangup"]:hover {
+  background-color: #dc2626;
+}
+
+.controls-container .ant-btn-muted {
+  background-color: #9ca3af !important;
+  color: #fff !important;
+}
+
+/* =========================
+   Spinner overlay
+========================= */
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid rgba(255, 255, 255, 0.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* =========================
+   Responsive <768px
+========================= */
+@media (max-width: 768px) {
+  #local-video-wrapper {
+    width: 120px;
+    height: 120px;
+    top: 10px;
+    right: 10px;
+  }
+
+  .video-container .video-wrapper {
+    flex: 1 1 100%;
+    min-height: 150px;
+    aspect-ratio: auto;
+  }
+}

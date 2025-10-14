@@ -1,24 +1,34 @@
 import React from "react";
 import "./PostOwner.scss";
-import { Link, useNavigate } from "react-router-dom"; // ✅ sửa import đúng package
+import { useNavigate } from "react-router-dom";
 import { path } from "../../../utils/constants";
 import { assets } from "../../../assets/assets.js";
+import { createChatRoomApi } from "../../../services/chatApi";
+import { message } from "antd";
 
 const PostOwner = ({ owner }) => {
   const navigate = useNavigate();
 
-  const handleChat = () => {
+  const handleChat = async () => {
     if (!owner?.id) return;
-    // ✅ Chuyển sang trang chat, truyền id và name qua state
-    navigate(path.CHAT, {
-      state: {
-        chatTarget: {
-          id: owner.id,
-          name: owner.username,
-          avatar: owner?.profile?.avatarUrl || assets.avatar,
-        },
-      },
-    });
+
+    try {
+      const res = await createChatRoomApi(owner.id);
+      const chatRoom = res?.data?.id;
+      console.log(chatRoom);
+
+      const chatTarget = {
+        id: chatRoom,
+        name: owner.username,
+        avatar: owner?.profile?.avatarUrl || assets.avatar,
+        userId: owner.id,
+      };
+
+      navigate(path.CHAT, { state: { chatTarget } });
+    } catch (err) {
+      console.error("Không thể tạo hoặc lấy chat room:", err);
+      message.error("Không thể tạo cuộc trò chuyện. Vui lòng thử lại!");
+    }
   };
 
   return (
@@ -31,6 +41,8 @@ const PostOwner = ({ owner }) => {
         />
         <div className="info__details">
           <h4>{owner?.username}</h4>
+          {/* Hiển thị role */}
+          <p className="role">Chủ trọ</p>
         </div>
       </div>
 
@@ -38,7 +50,6 @@ const PostOwner = ({ owner }) => {
         <button className="btn__chat" onClick={handleChat}>
           Chat
         </button>
-        <button className="btn__call">Gọi ngay</button>
       </div>
     </div>
   );
