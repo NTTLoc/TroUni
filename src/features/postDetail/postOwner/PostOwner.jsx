@@ -13,20 +13,17 @@ const PostOwner = ({ owner }) => {
     if (!owner?.id) return;
 
     try {
-      // Gọi API tạo hoặc lấy chat room
       const res = await createChatRoomApi(owner.id);
       const chatRoom = res?.data?.id;
       console.log(chatRoom);
 
-      // Chuẩn hóa dữ liệu chatTarget cho FE
       const chatTarget = {
         id: chatRoom,
         name: owner.username,
         avatar: owner?.profile?.avatarUrl || assets.avatar,
-        userId: owner.id, // giữ để ChatWindow có thể gọi video call
+        userId: owner.id,
       };
 
-      // Chuyển sang trang Chat, **không dùng spread**
       navigate(path.CHAT, { state: { chatTarget } });
     } catch (err) {
       console.error("Không thể tạo hoặc lấy chat room:", err);
@@ -44,6 +41,8 @@ const PostOwner = ({ owner }) => {
         />
         <div className="info__details">
           <h4>{owner?.username}</h4>
+          {/* Hiển thị role */}
+          <p className="role">Chủ trọ</p>
         </div>
       </div>
 

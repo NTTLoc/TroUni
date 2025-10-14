@@ -52,13 +52,15 @@
     &__chat {
       flex: 1;
       padding: 10px;
-      background: transparent;
-      border-radius: 10px;
-      color: var(--text);
-      border: 1px solid var(--border);
+      background: var(--primary);
+      border-radius: 999px;
+      color: #f5f5f5;
+      font-weight: 600;
+      border: 1px solid var(--primary);
+      cursor: pointer;
 
       &:hover {
-        background: var(--bg2);
+        background: var(--secondary);
       }
     }
 

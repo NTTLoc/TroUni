@@ -50,7 +50,7 @@ const PostDetail = () => {
 
         <PostDescription
           description={post.description}
-          phone={post.owner?.phone}
+          phone={post.owner?.profile?.phoneNumber || "Không có SĐT"}
         />
 
         <RelatedPosts />

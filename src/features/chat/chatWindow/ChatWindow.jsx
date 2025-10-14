@@ -39,6 +39,10 @@ const ChatWindow = ({ chat, currentUser }) => {
     }
   }, [chat?.id, addHistoryMessage, resetMessages]);
 
+  useEffect(() => {
+    loadHistory();
+  }, [chat?.id, loadHistory]);
+
   // Khi quay lại từ VideoCall, force reconnect WebSocket
   useEffect(() => {
     if (location.state?.fromCall) {
