@@ -23,15 +23,19 @@ const PostMainInfo = ({ post }) => {
 
       <span className="post-main__middle">
         <p className="post-main__price">
-          {Math.floor(post.pricePerMonth / 1000000)} Triệu/tháng
+          {Math.floor(post.pricePerMonth).toLocaleString("vi-VN")}/Tháng
         </p>
         <p className="post-main__size">{post.areaSqm} m²</p>
       </span>
 
-      <p 
-        className={`post-main__location ${post.latitude && post.longitude ? 'clickable-address' : ''}`}
+      <p
+        className={`post-main__location ${
+          post.latitude && post.longitude ? "clickable-address" : ""
+        }`}
         onClick={handleAddressClick}
-        title={post.latitude && post.longitude ? "Click để xem trên bản đồ" : ""}
+        title={
+          post.latitude && post.longitude ? "Click để xem trên bản đồ" : ""
+        }
       >
         <EnvironmentOutlined />
         {fullAddress}
