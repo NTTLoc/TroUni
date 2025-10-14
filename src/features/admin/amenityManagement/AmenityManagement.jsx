@@ -11,6 +11,7 @@ import {
   Modal,
   Form,
   Select,
+  Typography,
 } from "antd";
 import {
   SearchOutlined,
@@ -69,6 +70,7 @@ const AmenityManagement = () => {
   const {
     amenities,
     loading,
+    error,
     fetchAllAmenities,
     createAmenity,
     deleteAmenity,
@@ -145,6 +147,7 @@ const AmenityManagement = () => {
     </Tag>
   );
 
+  // Table columns
   const columns = [
     {
       title: "Tên tiện ích",

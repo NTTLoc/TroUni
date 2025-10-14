@@ -138,3 +138,4 @@ export const forwardGeocode = async (query) => {
     throw err;
   }
 };
+
