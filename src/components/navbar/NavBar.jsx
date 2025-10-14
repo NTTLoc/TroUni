@@ -170,7 +170,7 @@ const Navbar = () => {
                 <Space className="avatar-menu">
                   <Avatar
                     key={profile?.avatarUrl} // <== ép render lại khi có avatar
-                    src={profile?.avatarUrl || avatar}
+                    src={profile?.avatarUrl || assets.avatar}
                     size={30}
                     icon={<UserOutlined />}
                   />
