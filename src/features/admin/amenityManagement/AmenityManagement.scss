@@ -1,0 +1,238 @@
+.amenity-management {
+  padding: 20px;
+  background: var(--card-bg);
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  color: var(--text);
+  transition: all 0.3s ease;
+
+  /* Header */
+  .amenity-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+    gap: 12px;
+
+    .search-input {
+      width: 300px;
+      background: var(--search);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      transition: all 0.3s ease;
+
+      &:hover {
+        border-color: #00bfa6;
+      }
+
+      input {
+        background: transparent !important;
+        color: var(--text);
+      }
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+
+      .add-btn {
+        background: #00bfa6;
+        border: none;
+        color: #fff;
+        font-weight: 500;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+
+        &:hover {
+          background: #00a891;
+          transform: translateY(-1px);
+        }
+      }
+    }
+  }
+
+  /* Table content */
+  .amenity-icon {
+    font-size: 18px;
+    color: #00bfa6;
+  }
+
+  .loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 200px;
+  }
+
+  /* ------------ Modal (Add/Edit Form) ------------ */
+  .ant-modal {
+    .ant-modal-content {
+      border-radius: 12px;
+      background: var(--bg);
+      color: var(--text);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+    }
+
+    .ant-modal-header {
+      background: transparent;
+      border-radius: 12px 12px 0 0;
+      padding: 5px 5px;
+
+      .ant-modal-title {
+        color: var(--text);
+        font-weight: 600;
+        font-size: 16px;
+      }
+    }
+
+    .ant-modal-close {
+      color: #fff;
+      transition: 0.3s ease;
+
+      &:hover {
+        color: #e6f7ff;
+        transform: rotate(90deg);
+      }
+    }
+
+    .ant-modal-footer {
+      border-top: none;
+      display: flex;
+      justify-content: flex-end;
+
+      .ant-btn {
+        border-radius: 8px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+      }
+
+      .ant-btn-default {
+        background: transparent;
+        border: 1px solid #00bfa6;
+        color: #00bfa6;
+
+        &:hover {
+          border-color: #00bfa6;
+          color: #00bfa6;
+        }
+      }
+
+      .ant-btn-primary {
+        background: #00bfa6;
+        border: none;
+        color: #fff;
+
+        &:hover {
+          background: #00a890;
+          transform: translateY(-1px);
+        }
+      }
+    }
+
+    /* Form inside modal */
+    .ant-form {
+      padding: 8px 4px;
+
+      .ant-form-item {
+        margin-bottom: 16px;
+
+        label {
+          font-weight: 600;
+          color: var(--text);
+        }
+
+        .ant-input {
+          border-radius: 8px;
+          border: 1px solid var(--border);
+          background: var(--bg);
+          color: var(--text);
+          transition: all 0.3s ease;
+
+          &::placeholder {
+            color: #999;
+          }
+
+          &:hover {
+            border-color: #00bfa6;
+          }
+
+          &:focus {
+            border-color: #00bfa6;
+            box-shadow: 0 0 0 2px rgba(0, 191, 166, 0.15);
+          }
+        }
+
+        /* Dropdown Select */
+        .ant-select {
+          width: 100%;
+
+          .ant-select-selector {
+            background: var(--input-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text); // màu chữ chính trong select
+
+            .ant-select-selection-item {
+              color: var(--text); // chữ hiển thị sau khi chọn
+            }
+
+            .ant-select-selection-placeholder {
+              color: #999; // placeholder “Chọn biểu tượng...”
+            }
+          }
+
+          .ant-select-arrow {
+            color: var(--text);
+          }
+        }
+
+        /* Icon select option */
+        .icon-option {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 8px;
+
+          svg {
+            font-size: 18px;
+            color: #00bfa6;
+          }
+
+          span {
+            font-size: 14px;
+          }
+        }
+      }
+    }
+  }
+
+  /* Select dropdown (since it's rendered inside modal container) */
+  .ant-select-dropdown {
+    background: var(--card-bg);
+    border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+
+    .ant-select-item {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 8px;
+      transition: 0.2s;
+
+      svg {
+        font-size: 24px;
+        color: #00bfa6;
+      }
+
+      &:hover,
+      &.ant-select-item-option-active {
+        background: rgba(0, 191, 166, 0.08);
+        border-radius: 8px;
+      }
+    }
+  }
+}

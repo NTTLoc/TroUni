@@ -1,24 +1,37 @@
 import React from "react";
 import "./PostOwner.scss";
-import { Link, useNavigate } from "react-router-dom"; // ✅ sửa import đúng package
+import { useNavigate } from "react-router-dom";
 import { path } from "../../../utils/constants";
 import { assets } from "../../../assets/assets.js";
+import { createChatRoomApi } from "../../../services/chatApi";
+import { message } from "antd";
 
 const PostOwner = ({ owner }) => {
   const navigate = useNavigate();
 
-  const handleChat = () => {
+  const handleChat = async () => {
     if (!owner?.id) return;
-    // ✅ Chuyển sang trang chat, truyền id và name qua state
-    navigate(path.CHAT, {
-      state: {
-        chatTarget: {
-          id: owner.id,
-          name: owner.username,
-          avatar: owner?.profile?.avatarUrl || assets.avatar,
-        },
-      },
-    });
+
+    try {
+      // Gọi API tạo hoặc lấy chat room
+      const res = await createChatRoomApi(owner.id);
+      const chatRoom = res?.data?.id;
+      console.log(chatRoom);
+
+      // Chuẩn hóa dữ liệu chatTarget cho FE
+      const chatTarget = {
+        id: chatRoom,
+        name: owner.username,
+        avatar: owner?.profile?.avatarUrl || assets.avatar,
+        userId: owner.id, // giữ để ChatWindow có thể gọi video call
+      };
+
+      // Chuyển sang trang Chat, **không dùng spread**
+      navigate(path.CHAT, { state: { chatTarget } });
+    } catch (err) {
+      console.error("Không thể tạo hoặc lấy chat room:", err);
+      message.error("Không thể tạo cuộc trò chuyện. Vui lòng thử lại!");
+    }
   };
 
   return (
@@ -38,7 +51,6 @@ const PostOwner = ({ owner }) => {
         <button className="btn__chat" onClick={handleChat}>
           Chat
         </button>
-        <button className="btn__call">Gọi ngay</button>
       </div>
     </div>
   );

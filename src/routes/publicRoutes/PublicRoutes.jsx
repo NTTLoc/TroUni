@@ -19,6 +19,7 @@ import ForgotPassword from "../../pages/forgotPassword/ForgotPassword";
 import RoomMatching from "../../pages/roomMatching/RoomMatching";
 import GroupFinder from "../../pages/groupFinder/GroupFinder";
 import Community from "../../pages/community/Community";
+import VideoCallPage from "../../pages/call/VideoCallPage";
 
 const PublicRoutes = [
   { index: true, element: <HomePage /> },
@@ -34,6 +35,7 @@ const PublicRoutes = [
   { path: path.ROOMS_MATCHING, element: <RoomMatching /> },
   { path: path.GROUP_FINDER, element: <GroupFinder /> },
   { path: path.COMMUNITY, element: <Community /> },
+  { path: path.CALL, element: <VideoCallPage /> },
   // Room management routes
   // { path: "/rooms", element: <RoomList /> },
   // { path: "/rooms/all", element: <AllRooms /> },

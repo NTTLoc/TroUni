@@ -1,4 +1,4 @@
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 import Navbar from "./components/navbar/NavBar";
 import Footer from "./components/footer/Footer";
 import { Spin } from "antd";
@@ -6,10 +6,12 @@ import { useAuth } from "./hooks/useAuth";
 import { useEffect } from "react";
 import { getUserApi } from "./services/authApi";
 import ScrollToTop from "./ScrollToTop";
-import TestRoomApi from "./components/debug/TestRoomApi";
 
 function App() {
   const { setAuth, appLoading, setAppLoading } = useAuth();
+  const location = useLocation(); // <-- Lấy path hiện tại
+
+  const hideNavFooter = location.pathname.startsWith("/call"); // <-- ẩn navbar/footer trên /call
 
   useEffect(() => {
     let isMounted = true;
@@ -53,12 +55,12 @@ function App() {
         </div>
       ) : (
         <>
-          <Navbar />
+          {!hideNavFooter && <Navbar />}
           <ScrollToTop />
           <main className="main-content">
             <Outlet />
           </main>
-          <Footer />
+          {!hideNavFooter && <Footer />}
         </>
       )}
     </div>

@@ -18,6 +18,7 @@ import {
   UploadOutlined,
   DeleteOutlined,
   SaveOutlined,
+  EnvironmentOutlined,
 } from "@ant-design/icons";
 import { useRoomManagement } from "../../hooks/useRooms";
 import {
@@ -26,6 +27,8 @@ import {
 } from "../../services/postApi";
 import { uploadToCloudinary } from "../../services/cloudinaryApi";
 import AmenitySelector from "../amenity/AmenitySelector";
+import MapSelector from "../map/MapSelector";
+import { parseAddress } from "../../utils/addressParser";
 import {
   ROOM_TYPE,
   ROOM_STATUS,
@@ -57,6 +60,8 @@ const RoomForm = ({ roomId, onSuccess, onCancel }) => {
   const [selectedCity, setSelectedCity] = useState("");
   const [selectedDistrict, setSelectedDistrict] = useState("");
   const [amenityList, setAmenityList] = useState([]);
+  const [selectedLocation, setSelectedLocation] = useState(null);
+  const [showMap, setShowMap] = useState(false);
   const message = useMessage();
 
   // Debug amenity list changes
@@ -93,6 +98,48 @@ const RoomForm = ({ roomId, onSuccess, onCancel }) => {
     if (selectedCity === "Hồ Chí Minh") return HCM_DISTRICTS;
     if (selectedCity === "Hà Nội") return HN_DISTRICTS;
     return [];
+  };
+
+  // Parse address for form fields
+  const parseAddressForForm = (locationData) => {
+    const { address, addressDetails } = locationData;
+    const parsed = parseAddress(address, addressDetails);
+    
+    return {
+      ...parsed,
+      fullAddress: address,
+      latitude: locationData.latitude,
+      longitude: locationData.longitude
+    };
+  };
+
+  // Handle location selection from map
+  const handleLocationSelect = (locationData) => {
+    console.log("🗺️ Location selected:", locationData);
+    setSelectedLocation(locationData);
+    
+    // Parse address using utility function
+    const { city, district, ward, fullAddress } = parseAddressForForm(locationData);
+    
+    // Update form fields
+    if (city) {
+      setSelectedCity(city);
+      form.setFieldsValue({ city });
+    }
+    
+    if (district) {
+      setSelectedDistrict(district);
+      form.setFieldsValue({ district });
+    }
+    
+    if (ward) {
+      form.setFieldsValue({ ward });
+    }
+    
+    form.setFieldsValue({ streetAddress: fullAddress });
+    
+    // Hide map after selection
+    setShowMap(false);
   };
 
   // Handle image upload
@@ -312,11 +359,17 @@ const RoomForm = ({ roomId, onSuccess, onCancel }) => {
       console.log("📝 Form values:", values);
       console.log("🖼️ Image list:", imageList);
       console.log("🏠 Amenity list:", amenityList);
+      console.log("🗺️ Selected location:", selectedLocation);
 
       // Prepare base room data (without images yet)
       const roomData = {
         ...values,
         amenityIds: amenityList, // ✅ Gửi full amenity objects thay vì chỉ IDs
+        // Add location data if available
+        ...(selectedLocation && {
+          latitude: selectedLocation.latitude,
+          longitude: selectedLocation.longitude,
+        }),
         // DO NOT set images: [] here -- only attach if we have urls
       };
 
@@ -594,9 +647,34 @@ const RoomForm = ({ roomId, onSuccess, onCancel }) => {
                     },
                   ]}
                 >
-                  <Input placeholder="VD: 123 Đường ABC, Phường 1, Quận 1" />
+                  <Space.Compact style={{ width: "100%" }}>
+                    <Input 
+                      placeholder="VD: 123 Đường ABC, Phường 1, Quận 1"
+                      readOnly={selectedLocation}
+                      value={selectedLocation ? selectedLocation.address : undefined}
+                    />
+                    <Button 
+                      type="primary" 
+                      icon={<EnvironmentOutlined />}
+                      onClick={() => setShowMap(!showMap)}
+                    >
+                      {showMap ? "Ẩn bản đồ" : "Chọn trên bản đồ"}
+                    </Button>
+                  </Space.Compact>
                 </Form.Item>
               </Col>
+
+              {/* Map Selector */}
+              {showMap && (
+                <Col xs={24}>
+                  <MapSelector
+                    onLocationSelect={handleLocationSelect}
+                    initialPosition={selectedLocation ? [selectedLocation.latitude, selectedLocation.longitude] : [10.8231, 106.6297]}
+                    initialAddress={selectedLocation ? selectedLocation.address : ""}
+                    height="350px"
+                  />
+                </Col>
+              )}
 
               {/* <Col xs={24} md={12}>
                 <Form.Item name="latitude" label="Vĩ độ (Latitude)">
