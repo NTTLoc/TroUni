@@ -7,11 +7,13 @@ import {
   useMapEvents,
 } from "react-leaflet";
 import L from "leaflet";
-import { Card, Button, Input, Space, Alert, Typography, Spin } from "antd";
+import { Card, Button, Input, Space, Alert, Typography, Spin, List, AutoComplete } from "antd";
 import {
   SearchOutlined,
   EnvironmentOutlined,
   ReloadOutlined,
+  CheckOutlined,
+  CloseOutlined,
 } from "@ant-design/icons";
 import { useMapSelector } from "../../hooks/useMapSelector";
 import "leaflet/dist/leaflet.css";
@@ -48,11 +50,19 @@ const MapSelector = ({
     selectedAddress,
     loading,
     error,
+    searchSuggestions,
+    previewLocation,
+    isPreviewMode,
+    searchQuery,
     handleMapClick,
-    handleSearch,
+    handleSearchSuggestions,
+    handleSuggestionClick,
+    handleConfirmSelection,
+    handleCancelPreview,
     handleCurrentLocation,
     setError,
     clearError,
+    setSearchQuery
   } = useMapSelector(onLocationSelect);
 
   // Component để handle click events trên map
@@ -66,9 +76,23 @@ const MapSelector = ({
     return null;
   };
 
-  // Handle search
+  // Handle search input change
+  const onSearchChange = (value) => {
+    handleSearchSuggestions(value);
+  };
+
+  // Handle search input
   const onSearch = (value) => {
-    handleSearch(value);
+    handleSearchSuggestions(value);
+  };
+
+  // Handle suggestion selection
+  const onSelect = (value, option) => {
+    // Prevent the input from being updated with the full suggestion text
+    const suggestion = searchSuggestions.find(s => s.id === option.key);
+    if (suggestion) {
+      handleSuggestionClick(suggestion);
+    }
   };
 
   return (
@@ -84,12 +108,23 @@ const MapSelector = ({
         {/* Search Bar */}
         <div className="map-search">
           <Space.Compact style={{ width: "100%", marginBottom: 16 }}>
-            <Search
+            <AutoComplete
               placeholder="Tìm kiếm địa điểm..."
+              value={searchQuery}
               onSearch={onSearch}
-              loading={loading}
-              enterButton={<SearchOutlined />}
+              onChange={onSearchChange}
+              onSelect={onSelect}
+              options={searchSuggestions.map(suggestion => ({
+                value: suggestion.display_name,
+                key: suggestion.id,
+                label: suggestion.display_name
+              }))}
+              style={{ flex: 1 }}
               size="large"
+              filterOption={false}
+              notFoundContent={loading ? <Spin size="small" /> : "Không tìm thấy địa điểm"}
+              dropdownMatchSelectWidth={false}
+              dropdownStyle={{ maxHeight: 300, overflow: 'auto' }}
             />
             <Button
               icon={<ReloadOutlined />}
@@ -110,6 +145,38 @@ const MapSelector = ({
             style={{ marginBottom: 16 }}
             closable
             onClose={clearError}
+          />
+        )}
+
+        {/* Preview Mode */}
+        {isPreviewMode && previewLocation && (
+          <Alert
+            message="Xem trước địa điểm"
+            description={
+              <div>
+                <Text strong>{previewLocation.display_name}</Text>
+                <div style={{ marginTop: 8 }}>
+                  <Space>
+                    <Button 
+                      type="primary" 
+                      icon={<CheckOutlined />}
+                      onClick={handleConfirmSelection}
+                    >
+                      Xác nhận chọn địa điểm này
+                    </Button>
+                    <Button 
+                      icon={<CloseOutlined />}
+                      onClick={handleCancelPreview}
+                    >
+                      Hủy
+                    </Button>
+                  </Space>
+                </div>
+              </div>
+            }
+            type="info"
+            showIcon
+            style={{ marginBottom: 16 }}
           />
         )}
 

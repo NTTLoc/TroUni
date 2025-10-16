@@ -91,13 +91,19 @@ export const getDistrictsForCity = (city) => {
  */
 export const reverseGeocode = async (lat, lng) => {
   try {
-    const response = await fetch(
+    // Sử dụng proxy để tránh CORS
+    const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(
       `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&addressdetails=1&accept-language=vi`
-    );
+    )}`;
     
-    if (!response.ok) throw new Error("Network error");
+    const response = await fetch(proxyUrl);
     
-    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+    }
+    
+    const proxyData = await response.json();
+    const data = JSON.parse(proxyData.contents);
     
     return {
       display_name: data.display_name || `${lat.toFixed(6)}, ${lng.toFixed(6)}`,
@@ -106,7 +112,13 @@ export const reverseGeocode = async (lat, lng) => {
     };
   } catch (err) {
     console.error("❌ Reverse geocoding error:", err);
-    throw err;
+    
+    // Fallback: Trả về tọa độ nếu API fail
+    return {
+      display_name: `${lat.toFixed(6)}, ${lng.toFixed(6)}`,
+      address: {},
+      raw_data: {}
+    };
   }
 };
 
@@ -115,13 +127,19 @@ export const reverseGeocode = async (lat, lng) => {
  */
 export const forwardGeocode = async (query) => {
   try {
-    const response = await fetch(
+    // Sử dụng proxy để tránh CORS
+    const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(
       `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=1&addressdetails=1&accept-language=vi&countrycodes=vn`
-    );
+    )}`;
     
-    if (!response.ok) throw new Error("Network error");
+    const response = await fetch(proxyUrl);
     
-    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+    }
+    
+    const proxyData = await response.json();
+    const data = JSON.parse(proxyData.contents);
     
     if (data && data.length > 0) {
       const result = data[0];
