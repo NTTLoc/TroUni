@@ -1,0 +1,467 @@
+// PaymentModal Styles
+.payment-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 20px;
+}
+
+.payment-modal {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    max-width: 500px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+}
+
+.payment-modal__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 24px;
+    border-bottom: 1px solid #e5e7eb;
+
+    h2 {
+        margin: 0;
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: #111827;
+    }
+}
+
+.payment-modal__close {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 6px;
+    color: #6b7280;
+    transition: all 0.2s;
+
+    &:hover {
+        background: #f3f4f6;
+        color: #374151;
+    }
+}
+
+.payment-modal__content {
+    padding: 24px;
+}
+
+// Payment Info
+.payment-info {
+    margin-bottom: 24px;
+
+    .payment-info__item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 12px;
+
+        .label {
+            font-weight: 500;
+            color: #6b7280;
+        }
+
+        .value {
+            font-weight: 600;
+            color: #111827;
+        }
+
+        .transaction-code {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+
+            .copy-btn {
+                background: none;
+                border: none;
+                cursor: pointer;
+                padding: 4px;
+                border-radius: 4px;
+                color: #6b7280;
+                transition: all 0.2s;
+
+                &:hover {
+                    background: #f3f4f6;
+                    color: #374151;
+                }
+            }
+        }
+    }
+}
+
+// QR Section
+.qr-section {
+    text-align: center;
+    margin-bottom: 24px;
+
+    h3 {
+        margin: 0 0 16px 0;
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: #111827;
+    }
+
+    .qr-container {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 16px;
+
+        .qr-image {
+            max-width: 200px;
+            width: 100%;
+            height: auto;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+        }
+
+        .qr-placeholder {
+            width: 200px;
+            height: 200px;
+            border: 2px dashed #d1d5db;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #6b7280;
+        }
+    }
+
+    .timer {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        margin-top: 15px;
+        font-size: 0.95rem;
+        color: var(--text-secondary);
+        font-weight: 500;
+
+        &.expired {
+            color: #ef4444; // Red for expired
+            font-weight: 600;
+        }
+
+        svg {
+            color: #6b7280;
+
+            &.expired {
+                color: #ef4444;
+            }
+        }
+    }
+}
+
+// Bank Info
+.bank-info {
+    margin-bottom: 24px;
+
+    h3 {
+        margin: 0 0 16px 0;
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: #111827;
+    }
+
+    .bank-details {
+        background: #f9fafb;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        padding: 16px;
+
+        .bank-detail {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+
+            &:last-child {
+                margin-bottom: 0;
+            }
+
+            .label {
+                font-weight: 500;
+                color: #6b7280;
+            }
+
+            .value {
+                font-weight: 600;
+                color: #111827;
+            }
+
+            .account-number {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+
+                .copy-btn {
+                    background: none;
+                    border: none;
+                    cursor: pointer;
+                    padding: 4px;
+                    border-radius: 4px;
+                    color: #6b7280;
+                    transition: all 0.2s;
+
+                    &:hover {
+                        background: #e5e7eb;
+                        color: #374151;
+                    }
+                }
+            }
+        }
+    }
+}
+
+// Payment Instructions
+.payment-instructions {
+    margin-bottom: 24px;
+
+    h3 {
+        margin: 0 0 16px 0;
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: #111827;
+    }
+
+    ol {
+        margin: 0;
+        padding-left: 20px;
+        color: #6b7280;
+        line-height: 1.6;
+
+        li {
+            margin-bottom: 8px;
+
+            &:last-child {
+                margin-bottom: 0;
+            }
+        }
+    }
+}
+
+// Status Messages
+.status-message {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 16px;
+    border-radius: 8px;
+    margin-bottom: 16px;
+    font-weight: 500;
+
+    &.success {
+        background: #ecfdf5;
+        color: #065f46;
+        border: 1px solid #10b981;
+    }
+
+    &.error {
+        background: #fef2f2;
+        color: #991b1b;
+        border: 1px solid #ef4444;
+    }
+}
+
+// Footer
+.payment-modal__footer {
+    display: flex;
+    gap: 12px;
+    padding: 20px 24px;
+    border-top: 1px solid #e5e7eb;
+    background: #f9fafb;
+    border-radius: 0 0 12px 12px;
+
+    .btn {
+        flex: 1;
+        padding: 12px 16px;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+
+        &.btn-secondary {
+            background: white;
+            border: 1px solid #d1d5db;
+            color: #374151;
+
+            &:hover {
+                background: #f9fafb;
+                border-color: #9ca3af;
+            }
+        }
+
+        &.btn-primary {
+            background: #3b82f6;
+            border: 1px solid #3b82f6;
+            color: white;
+
+            &:hover {
+                background: #2563eb;
+                border-color: #2563eb;
+            }
+
+            &:disabled {
+                background: #9ca3af;
+                border-color: #9ca3af;
+                cursor: not-allowed;
+            }
+        }
+    }
+}
+
+// Dark mode
+[data-theme="dark"] {
+    .payment-modal {
+        background: #1f2937;
+        color: #f9fafb;
+    }
+
+    .payment-modal__header {
+        border-bottom-color: #374151;
+
+        h2 {
+            color: #f9fafb;
+        }
+    }
+
+    .payment-modal__close {
+        color: #9ca3af;
+
+        &:hover {
+            background: #374151;
+            color: #d1d5db;
+        }
+    }
+
+    .payment-info {
+        .payment-info__item {
+            .label {
+                color: #9ca3af;
+            }
+
+            .value {
+                color: #f9fafb;
+            }
+
+            .copy-btn {
+                color: #9ca3af;
+
+                &:hover {
+                    background: #374151;
+                    color: #d1d5db;
+                }
+            }
+        }
+    }
+
+    .qr-section {
+        h3 {
+            color: #f9fafb;
+        }
+
+        .qr-placeholder {
+            border-color: #4b5563;
+            color: #9ca3af;
+        }
+    }
+
+    .bank-info {
+        h3 {
+            color: #f9fafb;
+        }
+
+        .bank-details {
+            background: #374151;
+            border-color: #4b5563;
+
+            .bank-detail {
+                .label {
+                    color: #9ca3af;
+                }
+
+                .value {
+                    color: #f9fafb;
+                }
+
+                .copy-btn {
+                    color: #9ca3af;
+
+                    &:hover {
+                        background: #4b5563;
+                        color: #d1d5db;
+                    }
+                }
+            }
+        }
+    }
+
+    .payment-instructions {
+        h3 {
+            color: #f9fafb;
+        }
+
+        ol {
+            color: #9ca3af;
+        }
+    }
+
+    .payment-modal__footer {
+        background: #374151;
+        border-top-color: #4b5563;
+
+        .btn {
+            &.btn-secondary {
+                background: #4b5563;
+                border-color: #6b7280;
+                color: #f9fafb;
+
+                &:hover {
+                    background: #6b7280;
+                    border-color: #9ca3af;
+                }
+            }
+        }
+    }
+}
+
+// Responsive
+@media (max-width: 640px) {
+    .payment-modal-overlay {
+        padding: 10px;
+    }
+
+    .payment-modal {
+        max-width: 100%;
+    }
+
+    .payment-modal__header,
+    .payment-modal__content,
+    .payment-modal__footer {
+        padding: 16px;
+    }
+
+    .qr-container .qr-image {
+        max-width: 150px;
+    }
+
+    .qr-container .qr-placeholder {
+        width: 150px;
+        height: 150px;
+    }
+}
