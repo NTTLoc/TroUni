@@ -14,8 +14,8 @@ import {
   HeartOutlined,
   BellOutlined,
 } from "@ant-design/icons";
+import avatar from "../../assets/image/avatar.jpg";
 import { ProfileContext } from "../context/profile.context";
-import { assets } from "../../assets/assets";
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -67,7 +67,7 @@ const Navbar = () => {
     <div className="account-dropdown">
       {/* Header user info */}
       <div className="user-info">
-        <Avatar src={profile?.avatarUrl || assets.avatar} />
+        <Avatar src={profile?.avatarUrl || avatar} />
         <div>
           {/* Role-based info */}
           <h4
@@ -105,16 +105,12 @@ const Navbar = () => {
           <Link to={path.MANAGE_USERS}>Quản lý người dùng</Link>
           <Link to={path.MANAGE_POSTS}>Quản lý tin</Link>
         </div>
-      ) : auth.user?.role === "LANDLORD" ? (
-        <div className="menu-section">
-          <Link to={path.MANAGE_POSTS}>Quản lý tin</Link>
-          <Link to={path.CHAT}>Chat</Link>
-        </div>
       ) : (
         <div className="menu-section">
           <Link to={path.SAVED}>Tin đăng đã lưu</Link>
+          <Link to={path.SAVED_SEARCH}>Tìm kiếm đã lưu</Link>
+          <Link to={path.HISTORY}>Lịch sử xem tin</Link>
           <Link to={path.REVIEWS}>Đánh giá từ tôi</Link>
-          <Link to={path.CHAT}>Chat</Link>
         </div>
       )}
 
@@ -170,9 +166,13 @@ const Navbar = () => {
                 <Space className="avatar-menu">
                   <Avatar
                     key={profile?.avatarUrl} // <== ép render lại khi có avatar
-                    src={profile?.avatarUrl || assets.avatar}
+                    src={profile?.avatarUrl || avatar}
                     size={30}
                     icon={<UserOutlined />}
+                    onError={(e) => {
+                      e.currentTarget.src = avatar;
+                      return false;
+                    }}
                   />
                   <DownOutlined />
                 </Space>

@@ -60,6 +60,13 @@ const renderIcon = (iconName) => {
   );
 };
 
+const { Title, Text } = Typography;
+const { Search } = Input;
+
+/**
+ * AmenityManagement Component
+ * Component để quản lý amenities trong Admin Dashboard
+ */
 const AmenityManagement = () => {
   const [searchValue, setSearchValue] = useState("");
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
@@ -146,6 +153,7 @@ const AmenityManagement = () => {
       {active ? "Hoạt động" : "Tạm dừng"}
     </Tag>
   );
+
 
   // Table columns
   const columns = [

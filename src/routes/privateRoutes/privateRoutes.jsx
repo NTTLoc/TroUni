@@ -57,7 +57,7 @@ const PrivateRoutes = [
   },
   {
     path: path.CHAT,
-    element: <CheckAuth allowedRoles={["STUDENT", "LANDLORD"]} />,
+    element: <CheckAuth allowedRoles={["STUDENT"]} />,
     children: [
       {
         path: "",
