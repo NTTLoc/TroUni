@@ -265,6 +265,52 @@
           background: transparent;
         }
       }
+
+      /* --- BỘ LỌC THỜI GIAN --- */
+      .filter-section {
+        margin: 32px 0 16px 0;
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        gap: 12px;
+
+        .ant-picker {
+          background: var(--card-bg);
+          border: 1px solid rgba(0, 191, 166, 0.2);
+          color: var(--text);
+          border-radius: 8px;
+          transition: all 0.25s ease;
+
+          &:hover,
+          &:focus-within {
+            border-color: #00bfa6;
+            box-shadow: 0 0 6px rgba(0, 191, 166, 0.3);
+          }
+
+          input {
+            color: var(--text);
+          }
+        }
+
+        .ant-btn {
+          border-radius: 8px;
+          font-weight: 500;
+          background-color: #00bfa6;
+          border-color: #00bfa6;
+          color: white;
+          transition: all 0.25s ease;
+
+          &:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 191, 166, 0.25);
+            background-color: #00bfa6 !important;
+          }
+
+          .anticon {
+            margin-right: 4px;
+          }
+        }
+      }
     }
   }
 

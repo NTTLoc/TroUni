@@ -20,4 +20,20 @@ const getAllUsersApi = () => {
   return axios.get(URL_API);
 };
 
-export { getUserDetailsApi, updateProfileApi, getAllUsersApi };
+const updateUserApi = (userId, data) => {
+  const URL_API = `/user/${userId}`;
+  return axios.put(URL_API, data);
+};
+
+const deleteUserApi = (userId) => {
+  const URL_API = `/user/${userId}`;
+  return axios.delete(URL_API);
+};
+
+export {
+  getUserDetailsApi,
+  updateProfileApi,
+  getAllUsersApi,
+  updateUserApi,
+  deleteUserApi,
+};

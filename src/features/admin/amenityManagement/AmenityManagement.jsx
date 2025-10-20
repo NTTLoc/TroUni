@@ -166,13 +166,13 @@ const AmenityManagement = () => {
       key: "active",
       render: (active) => renderStatusTag(active),
     },
-    {
-      title: "Ngày tạo",
-      dataIndex: "createdAt",
-      key: "createdAt",
-      render: (date) =>
-        date ? new Date(date).toLocaleDateString("vi-VN") : "—",
-    },
+    // {
+    //   title: "Ngày tạo",
+    //   dataIndex: "createdAt",
+    //   key: "createdAt",
+    //   render: (date) =>
+    //     date ? new Date(date).toLocaleDateString("vi-VN") : "—",
+    // },
     {
       title: "Thao tác",
       key: "actions",
@@ -185,16 +185,6 @@ const AmenityManagement = () => {
           >
             Chỉnh sửa
           </Button>
-          <Popconfirm
-            title="Xác nhận xóa tiện ích này?"
-            onConfirm={() => handleDelete(record.id)}
-            okText="Xóa"
-            cancelText="Hủy"
-          >
-            <Button type="link" danger icon={<DeleteOutlined />}>
-              Xóa
-            </Button>
-          </Popconfirm>
         </Space>
       ),
     },

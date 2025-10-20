@@ -104,19 +104,23 @@ export const createRoomApi = (roomData) => {
       console.error("❌ Room creation failed:", error);
       console.error("❌ Error response:", error.response?.data);
       console.error("❌ Error status:", error.response?.status);
-      
+
       // Handle specific backend errors
       if (error.response?.data?.code === "CREATE_ROOM_ERROR") {
         const backendError = error.response.data;
         console.error("🔍 Backend Error Details:", backendError);
-        
+
         // Check if it's the lazy loading error
         if (backendError.message?.includes("lazily initialize a collection")) {
-          console.warn("⚠️ Backend lazy loading error - this is a backend issue");
-          throw new Error("Lỗi hệ thống: Backend đang gặp vấn đề với database session. Vui lòng thử lại sau.");
+          console.warn(
+            "⚠️ Backend lazy loading error - this is a backend issue"
+          );
+          throw new Error(
+            "Lỗi hệ thống: Backend đang gặp vấn đề với database session. Vui lòng thử lại sau."
+          );
         }
       }
-      
+
       throw error;
     });
 };
@@ -440,4 +444,12 @@ export const formatUpdateRoomData = (formData) => {
   if (formData.amenityIds) updateData.amenityIds = formData.amenityIds;
 
   return updateData;
+};
+
+// ============ CUA BO NE MAY CON ====================
+// ADMIN & MANAGER
+// Lấy thông tin tất cả phòng
+export const getPaginatedRoomsApi = () => {
+  const URL_API = "/rooms/paginated";
+  return axios.get(URL_API);
 };
