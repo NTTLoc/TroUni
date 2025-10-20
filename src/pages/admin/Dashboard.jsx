@@ -1,26 +1,11 @@
 import React, { useState } from "react";
-import {
-  Layout,
-  Menu,
-  Card,
-  Statistic,
-  Row,
-  Col,
-  Table,
-  Tag,
-  Button,
-  Input,
-  Space,
-} from "antd";
+import { Layout, Menu, Card } from "antd";
 import {
   HomeOutlined,
   UserOutlined,
   FileTextOutlined,
   SettingOutlined,
   ApartmentOutlined,
-  SearchOutlined,
-  PlusOutlined,
-  DollarOutlined,
 } from "@ant-design/icons";
 import Overview from "../../features/admin/overview/Overview";
 import UserManagement from "../../features/admin/userManagement/UserManagement";
@@ -32,7 +17,16 @@ import "./Dashboard.scss";
 const { Sider, Content } = Layout;
 
 const Dashboard = () => {
-  const [selectedMenu, setSelectedMenu] = useState("overview");
+  // 🔹 Lấy menu đã lưu, nếu chưa có thì mặc định "overview"
+  const [selectedMenu, setSelectedMenu] = useState(
+    localStorage.getItem("adminMenu") || "overview"
+  );
+
+  // 🔹 Mỗi khi chọn menu khác → lưu lại vào localStorage
+  const handleMenuClick = (e) => {
+    setSelectedMenu(e.key);
+    localStorage.setItem("adminMenu", e.key);
+  };
 
   const menuItems = [
     { key: "overview", icon: <HomeOutlined />, label: "Tổng quan" },
@@ -72,7 +66,7 @@ const Dashboard = () => {
           theme="light"
           mode="inline"
           selectedKeys={[selectedMenu]}
-          onClick={(e) => setSelectedMenu(e.key)}
+          onClick={handleMenuClick}
           items={menuItems}
         />
       </Sider>

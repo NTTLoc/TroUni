@@ -38,44 +38,38 @@
     }
   }
 
-  /* --- BẢNG DỮ LIỆU --- */
-  .table-section {
+  /* --- BIỂU ĐỒ --- */
+  .chart-section {
+    .ant-card {
+      background: var(--card-bg);
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      color: var(--text);
+      margin-top: 50px;
+
+      .ant-card-head-title {
+        color: var(--text);
+        font-weight: 600;
+      }
+
+      .recharts-default-tooltip {
+        background: var(--card-bg) !important;
+        border: 1px solid rgba(0, 191, 166, 0.2) !important;
+        color: var(--text) !important;
+        border-radius: 8px !important;
+        box-shadow: 0 2px 8px rgba(0, 191, 166, 0.1) !important;
+      }
+    }
+  }
+
+  .chart-section.full-width {
     margin-top: 32px;
-    background: var(--card-bg);
-    padding: 24px;
-    border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 
-    .table-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 18px;
-
-      .search-input {
-        width: 320px;
-
-        input {
-          border: none;
-          outline: none;
-          box-shadow: none !important;
-        }
-      }
-
-      .ant-btn-primary {
-        background-color: #00bfa6;
-        border-color: #00bfa6;
-        font-weight: 500;
-        border-radius: 6px;
-        transition: all 0.25s ease;
-
-        &:hover {
-          background-color: #00bfa6;
-          border-color: #00bfa6;
-          transform: translateY(-2px);
-          box-shadow: 0 4px 10px rgba(0, 191, 166, 0.2);
-        }
-      }
+    .ant-card {
+      width: 100%;
+      background: var(--card-bg);
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
     }
   }
 }

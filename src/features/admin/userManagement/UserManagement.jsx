@@ -6,8 +6,9 @@ import {
   Button,
   Input,
   Spin,
-  message,
-  Popconfirm,
+  Modal,
+  Form,
+  Select,
 } from "antd";
 import {
   SearchOutlined,
@@ -15,22 +16,34 @@ import {
   EditOutlined,
   DeleteOutlined,
 } from "@ant-design/icons";
-import { getAllUsersApi } from "../../../services/userApi";
+import {
+  getAllUsersApi,
+  updateUserApi,
+  deleteUserApi,
+} from "../../../services/userApi";
 import "./UserManagement.scss";
+import useMessage from "../../../hooks/useMessage";
 
 const UserManagement = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(false);
   const [searchValue, setSearchValue] = useState("");
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [editingUser, setEditingUser] = useState(null);
+  const [form] = Form.useForm();
+  const message = useMessage();
 
+  // 🔹 Lấy danh sách user
   const fetchUsers = async () => {
     setLoading(true);
     try {
       const res = await getAllUsersApi();
       setUsers(res.data || []);
     } catch (err) {
-      console.error("Lỗi tải danh sách người dùng:", err);
+      console.error("❌ Lỗi tải danh sách người dùng:", err);
+      message.error("Không thể tải danh sách người dùng");
     } finally {
       setLoading(false);
     }
@@ -40,7 +53,7 @@ const UserManagement = () => {
     fetchUsers();
   }, []);
 
-  // Gắn nhãn vai trò tiếng Việt
+  // 🔹 Hiển thị nhãn vai trò
   const renderRoleLabel = (role) => {
     switch (role) {
       case "ADMIN":
@@ -56,27 +69,68 @@ const UserManagement = () => {
     }
   };
 
+  // 🔹 Lọc người dùng theo tìm kiếm
   const filteredUsers = users.filter(
     (user) =>
       user.fullName?.toLowerCase().includes(searchValue.toLowerCase()) ||
       user.email?.toLowerCase().includes(searchValue.toLowerCase())
   );
 
-  const handleRowClick = (record) => {
-    message.info(`Xem chi tiết: ${record.fullName || record.username}`);
-    console.log("Thông tin chi tiết người dùng:", record);
-    // sau này bạn có thể mở modal hoặc chuyển trang chi tiết tại đây
+  // 🔹 Chỉnh sửa người dùng
+  const handleEdit = (user) => {
+    setEditingUser(user);
+    form.setFieldsValue({
+      username: user.username,
+      email: user.email,
+      role: user.role,
+      status: user.status,
+    });
+    setIsModalOpen(true);
   };
 
-  const handleDeleteSelected = () => {
+  const handleUpdate = async () => {
+    try {
+      const values = await form.validateFields();
+      setLoading(true);
+      await updateUserApi(editingUser.id, values);
+      message.success("Cập nhật người dùng thành công!");
+      setIsModalOpen(false);
+      fetchUsers();
+    } catch (err) {
+      console.error("❌ Lỗi cập nhật:", err);
+      message.error("Không thể cập nhật người dùng");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // 🔹 Mở modal xác nhận xóa
+  const openDeleteModal = () => {
     if (selectedRowKeys.length === 0) {
       message.warning("Vui lòng chọn ít nhất một người dùng để xóa.");
       return;
     }
-    message.success(`Đã xóa ${selectedRowKeys.length} người dùng.`);
-    // TODO: Gọi API xóa ở đây
+    setIsDeleteModalOpen(true);
   };
 
+  // 🔹 Thực hiện xóa người dùng
+  const handleDeleteSelected = async () => {
+    setLoading(true);
+    try {
+      await Promise.all(selectedRowKeys.map((id) => deleteUserApi(id)));
+      message.success(`Đã xóa ${selectedRowKeys.length} người dùng.`);
+      setSelectedRowKeys([]);
+      setIsDeleteModalOpen(false);
+      fetchUsers();
+    } catch (err) {
+      console.error("❌ Lỗi khi xóa người dùng:", err);
+      message.error("Không thể xóa người dùng. Vui lòng thử lại!");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // 🔹 Cấu hình bảng
   const columns = [
     {
       title: "Tên người dùng",
@@ -116,21 +170,39 @@ const UserManagement = () => {
       key: "status",
       filters: [
         { text: "Hoạt động", value: "ACTIVE" },
-        { text: "Vô hiệu hóa", value: "INACTIVE" },
+        { text: "Bị khóa", value: "LOCKED" },
+        { text: "Tạm đình chỉ", value: "SUSPENDED" },
+        { text: "Đã xóa", value: "DELETED" },
       ],
       onFilter: (value, record) => record.status === value,
-      render: (status) => (
-        <Tag color={status === "ACTIVE" ? "green" : "orange"}>
-          {status === "ACTIVE" ? "Hoạt động" : "Vô hiệu hóa"}
-        </Tag>
-      ),
+      render: (status) => {
+        const colorMap = {
+          ACTIVE: "green",
+          LOCKED: "orange",
+          SUSPENDED: "purple",
+          DELETED: "red",
+        };
+
+        const labelMap = {
+          ACTIVE: "Hoạt động",
+          LOCKED: "Bị khóa",
+          SUSPENDED: "Tạm đình chỉ",
+          DELETED: "Đã xóa",
+        };
+
+        return <Tag color={colorMap[status]}>{labelMap[status]}</Tag>;
+      },
     },
     {
       title: "Thao tác",
       key: "actions",
       render: (_, record) => (
         <Space>
-          <Button type="link" icon={<EditOutlined />}>
+          <Button
+            type="link"
+            icon={<EditOutlined />}
+            onClick={() => handleEdit(record)}
+          >
             Chỉnh sửa
           </Button>
         </Space>
@@ -157,21 +229,15 @@ const UserManagement = () => {
           >
             Làm mới
           </Button>
-          <Popconfirm
-            title="Xác nhận xóa người dùng đã chọn?"
-            onConfirm={handleDeleteSelected}
-            okText="Xóa"
-            cancelText="Hủy"
+          <Button
+            danger
+            icon={<DeleteOutlined />}
+            disabled={selectedRowKeys.length === 0}
+            className="delete-btn"
+            onClick={openDeleteModal}
           >
-            <Button
-              danger
-              icon={<DeleteOutlined />}
-              disabled={selectedRowKeys.length === 0}
-              className="delete-btn"
-            >
-              Xóa đã chọn
-            </Button>
-          </Popconfirm>
+            Xóa đã chọn
+          </Button>
         </div>
       </div>
 
@@ -188,12 +254,84 @@ const UserManagement = () => {
           columns={columns}
           dataSource={filteredUsers.map((u) => ({ ...u, key: u.id }))}
           pagination={{ pageSize: 10 }}
-          onRow={(record) => ({
-            onClick: () => handleRowClick(record),
-            style: { cursor: "pointer" },
-          })}
         />
       )}
+
+      {/* Modal chỉnh sửa */}
+      <Modal
+        title="Chỉnh sửa người dùng"
+        open={isModalOpen}
+        onCancel={() => setIsModalOpen(false)}
+        onOk={handleUpdate}
+        okText="Lưu thay đổi"
+        cancelText="Hủy"
+        confirmLoading={loading}
+      >
+        <Form form={form} layout="vertical">
+          <Form.Item
+            label="Tên người dùng"
+            name="username"
+            rules={[
+              { required: true, message: "Vui lòng nhập tên người dùng" },
+            ]}
+          >
+            <Input />
+          </Form.Item>
+
+          <Form.Item
+            label="Email"
+            name="email"
+            rules={[
+              { required: true, message: "Vui lòng nhập email" },
+              { type: "email", message: "Email không hợp lệ" },
+            ]}
+          >
+            <Input />
+          </Form.Item>
+
+          <Form.Item label="Vai trò" name="role" rules={[{ required: true }]}>
+            <Select>
+              <Select.Option value="STUDENT">Người dùng</Select.Option>
+              <Select.Option value="LANDLORD">Chủ trọ</Select.Option>
+              <Select.Option value="MANAGER">Quản lý</Select.Option>
+              <Select.Option value="ADMIN">Quản trị viên</Select.Option>
+            </Select>
+          </Form.Item>
+
+          <Form.Item
+            label="Trạng thái"
+            name="status"
+            rules={[{ required: true }]}
+          >
+            <Select>
+              <Select.Option value="ACTIVE">Hoạt động</Select.Option>
+              <Select.Option value="LOCKED">Bị khóa</Select.Option>
+              <Select.Option value="SUSPENDED">Tạm đình chỉ</Select.Option>
+            </Select>
+          </Form.Item>
+        </Form>
+      </Modal>
+
+      {/* 🗑️ Modal xác nhận xóa */}
+      <Modal
+        title="Xác nhận xóa người dùng"
+        open={isDeleteModalOpen}
+        onOk={handleDeleteSelected}
+        onCancel={() => setIsDeleteModalOpen(false)}
+        okText="Xóa"
+        cancelText="Hủy"
+        okButtonProps={{ danger: true }}
+        confirmLoading={loading}
+        centered
+      >
+        <p>
+          Bạn có chắc chắn muốn xóa <strong>{selectedRowKeys.length}</strong>{" "}
+          người dùng đã chọn không?
+        </p>
+        <p style={{ color: "gray", fontSize: "13px" }}>
+          Hành động này sẽ đặt trạng thái người dùng thành <b>DELETED</b>.
+        </p>
+      </Modal>
     </div>
   );
 };
