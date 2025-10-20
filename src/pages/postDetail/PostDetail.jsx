@@ -189,7 +189,7 @@ const PostDetail = () => {
         )}
 
         {/* Status Message khi đã đặt cọc */}
-        {roomStatus === 'WAITING' && (
+        {roomStatus === 'rented' && (
           <div className="room-status-message">
             <div className="status-card">
               <div className="status-info">

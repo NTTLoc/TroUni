@@ -1,6 +1,6 @@
 /**
  * Map Fallback Service
- * Backup services khi OpenStreetMap Nominatim fail
+ * Backup services khi Goong Maps API fail
  */
 
 /**

@@ -1,5 +1,5 @@
-// MapSelector.scss
-.map-selector {
+// GoongMapSelector.scss
+.goong-map-selector {
     .map-search {
         .ant-space-compact {
             width: 100%;
@@ -11,6 +11,9 @@
         border-radius: 8px;
         overflow: hidden;
         border: 1px solid #d9d9d9;
+        // Đảm bảo map container có height cố định
+        min-height: 400px;
+        max-height: 500px;
 
         .map-loading {
             position: absolute;
@@ -32,22 +35,27 @@
             }
         }
 
-        // Leaflet map styles
-        .leaflet-container {
+        // Goong Maps SDK styles
+        .goong-map {
             height: 100%;
             width: 100%;
             border-radius: 8px;
         }
 
-        // Custom marker popup
-        .leaflet-popup-content-wrapper {
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        // Custom marker styles
+        .goong-marker {
+            cursor: pointer;
+            transition: all 0.3s ease;
+
+            &:hover {
+                transform: scale(1.1);
+            }
         }
 
-        .leaflet-popup-content {
-            margin: 12px;
-            min-width: 200px;
+        // Custom popup styles
+        .goong-popup {
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 
             .ant-typography {
                 margin: 0;
@@ -55,17 +63,6 @@
                 &:not(:last-child) {
                     margin-bottom: 8px;
                 }
-            }
-        }
-
-        // Custom popup close button
-        .leaflet-popup-close-button {
-            color: #666;
-            font-size: 16px;
-            padding: 4px;
-
-            &:hover {
-                color: #1890ff;
             }
         }
     }
@@ -95,11 +92,24 @@
             font-size: 12px;
         }
     }
+
+    // Preview mode styles
+    .preview-location {
+        margin-bottom: 16px;
+
+        .ant-alert {
+            border-radius: 8px;
+
+            .ant-alert-message {
+                font-weight: 600;
+            }
+        }
+    }
 }
 
 // Dark mode support
 [data-theme="dark"] {
-    .map-selector {
+    .goong-map-selector {
         .map-container {
             border-color: #434343;
 
@@ -114,29 +124,21 @@
             border-color: #389e0d;
         }
 
-        // Dark mode for Leaflet
-        .leaflet-container {
+        // Dark mode for Goong Maps
+        .goong-map {
             filter: brightness(0.8) contrast(1.2);
         }
 
-        .leaflet-popup-content-wrapper {
+        .goong-popup {
             background: #1f1f1f;
             color: white;
-        }
-
-        .leaflet-popup-close-button {
-            color: #ccc;
-
-            &:hover {
-                color: #1890ff;
-            }
         }
     }
 }
 
 // Responsive design
 @media (max-width: 768px) {
-    .map-selector {
+    .goong-map-selector {
         .map-search {
             .ant-space-compact {
                 .ant-input-search {
@@ -150,6 +152,9 @@
         }
 
         .map-container {
+            min-height: 350px;
+            max-height: 400px;
+
             .location-info {
                 padding: 8px;
 
@@ -168,11 +173,12 @@
 }
 
 @media (max-width: 576px) {
-    .map-selector {
+    .goong-map-selector {
         .map-container {
-            height: 300px !important;
+            min-height: 300px !important;
+            max-height: 350px !important;
 
-            .leaflet-popup-content {
+            .goong-popup {
                 min-width: 150px;
                 margin: 8px;
 
@@ -208,7 +214,7 @@
 }
 
 // Hover effects cho map container
-.map-container {
+.goong-map-selector .map-container {
     transition: all 0.3s ease;
 
     &:hover {
@@ -217,7 +223,7 @@
 }
 
 // Custom scrollbar cho popup content nếu cần
-.leaflet-popup-content {
+.goong-popup {
     max-height: 200px;
     overflow-y: auto;
 
@@ -236,6 +242,20 @@
 
         &:hover {
             background: #a8a8a8;
+        }
+    }
+}
+
+// Fix cho marker positioning
+.goong-map-selector {
+    .map-container {
+        // Đảm bảo map container không bị lấn xuống form
+        position: relative;
+        z-index: 1;
+
+        // Fix cho marker không bị che khuất
+        .goong-marker {
+            z-index: 1000;
         }
     }
 }

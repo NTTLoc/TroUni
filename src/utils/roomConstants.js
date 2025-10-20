@@ -68,7 +68,7 @@ export const DEFAULT_SEARCH_FILTERS = {
   minArea: null,
   maxArea: null,
   roomType: "",
-  status: ROOM_STATUS.AVAILABLE
+  status: "" // ✅ Sửa: Không filter theo status để hiển thị tất cả rooms
 };
 
 // ==================== VALIDATION CONSTANTS ====================

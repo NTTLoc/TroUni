@@ -1,7 +1,34 @@
 /**
  * Alternative Map API Services
- * Backup services khi OpenStreetMap fail
+ * Backup services và Goong Maps integration
  */
+
+import { goongApi } from '../services/goongApi';
+
+/**
+ * Sử dụng Goong Maps API (chính)
+ */
+export const searchWithGoong = async (query) => {
+  try {
+    const results = await goongApi.searchPlacesWithDetail(query, { limit: 5 });
+    
+    return results.map((item) => ({
+      id: item.id,
+      display_name: item.display_name,
+      lat: item.lat,
+      lng: item.lng,
+      address: {
+        city: item.address.city || "",
+        district: item.address.district || "",
+        ward: item.address.ward || "",
+        country: item.address.country || "",
+      },
+    }));
+  } catch (err) {
+    console.error("Goong API error:", err);
+    throw err;
+  }
+};
 
 /**
  * Sử dụng Google Places API (miễn phí với quota)
@@ -111,29 +138,18 @@ export const searchWithHERE = async (query) => {
 };
 
 /**
- * Smart search với multiple APIs
+ * Smart search với Goong Maps API và fallback methods
  */
 export const smartSearch = async (query) => {
   const searchMethods = [
-    // Thử proxy trước
+    // Thử Goong Maps API trước
     async () => {
-      const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(
-        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
-          query
-        )}&limit=5&addressdetails=1&accept-language=vi&countrycodes=vn`
-      )}`;
-
-      const response = await fetch(proxyUrl);
-      if (!response.ok) throw new Error("Proxy failed");
-
-      const proxyData = await response.json();
-      const data = JSON.parse(proxyData.contents);
-
-      return data.map((item) => ({
-        id: item.place_id,
+      const results = await goongApi.searchPlacesWithDetail(query, { limit: 5 });
+      return results.map((item) => ({
+        id: item.id,
         display_name: item.display_name,
-        lat: parseFloat(item.lat),
-        lng: parseFloat(item.lon),
+        lat: item.lat,
+        lng: item.lng,
         address: item.address || {},
       }));
     },

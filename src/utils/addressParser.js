@@ -1,14 +1,15 @@
 /**
  * Address Parser Utility
- * Parse địa chỉ từ OpenStreetMap để extract city, district, ward
+ * Parse địa chỉ từ Goong Maps API để extract city, district, ward
  */
 
 import { VIETNAM_CITIES, HCM_DISTRICTS, HN_DISTRICTS } from './roomConstants';
+import { goongApi } from '../services/goongApi';
 
 /**
  * Parse địa chỉ để extract thành phố, quận/huyện, phường/xã
  * @param {string} address - Địa chỉ đầy đủ
- * @param {Object} addressDetails - Chi tiết địa chỉ từ OpenStreetMap
+ * @param {Object} addressDetails - Chi tiết địa chỉ từ Goong Maps API
  * @returns {Object} - { city, district, ward }
  */
 export const parseAddress = (address, addressDetails = {}) => {
@@ -87,31 +88,19 @@ export const getDistrictsForCity = (city) => {
 };
 
 /**
- * Reverse geocoding với OpenStreetMap
+ * Reverse geocoding với Goong Maps API
  */
 export const reverseGeocode = async (lat, lng) => {
   try {
-    // Sử dụng proxy để tránh CORS
-    const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(
-      `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&addressdetails=1&accept-language=vi`
-    )}`;
-    
-    const response = await fetch(proxyUrl);
-    
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-    }
-    
-    const proxyData = await response.json();
-    const data = JSON.parse(proxyData.contents);
+    const result = await goongApi.reverseGeocode(lat, lng);
     
     return {
-      display_name: data.display_name || `${lat.toFixed(6)}, ${lng.toFixed(6)}`,
-      address: data.address || {},
-      raw_data: data
+      display_name: result.display_name || `${lat.toFixed(6)}, ${lng.toFixed(6)}`,
+      address: result.address || {},
+      raw_data: result.raw_data || result
     };
   } catch (err) {
-    console.error("❌ Reverse geocoding error:", err);
+    console.error("❌ Goong reverse geocoding error:", err);
     
     // Fallback: Trả về tọa độ nếu API fail
     return {
@@ -123,36 +112,24 @@ export const reverseGeocode = async (lat, lng) => {
 };
 
 /**
- * Forward geocoding để search địa điểm
+ * Forward geocoding để search địa điểm với Goong Maps API
  */
 export const forwardGeocode = async (query) => {
   try {
-    // Sử dụng proxy để tránh CORS
-    const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(
-      `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=1&addressdetails=1&accept-language=vi&countrycodes=vn`
-    )}`;
+    const results = await goongApi.searchPlacesWithDetail(query, { limit: 1 });
     
-    const response = await fetch(proxyUrl);
-    
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-    }
-    
-    const proxyData = await response.json();
-    const data = JSON.parse(proxyData.contents);
-    
-    if (data && data.length > 0) {
-      const result = data[0];
+    if (results && results.length > 0) {
+      const result = results[0];
       return {
-        lat: parseFloat(result.lat),
-        lng: parseFloat(result.lon),
+        lat: result.lat,
+        lng: result.lng,
         display_name: result.display_name
       };
     }
     
     throw new Error("Không tìm thấy địa điểm");
   } catch (err) {
-    console.error("❌ Forward geocoding error:", err);
+    console.error("❌ Goong forward geocoding error:", err);
     throw err;
   }
 };

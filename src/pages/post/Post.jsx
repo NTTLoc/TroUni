@@ -3,7 +3,7 @@ import { getAllRoomsApi, searchRoomsApi } from "../../services/postApi";
 import { Spin, Typography, Button, Empty } from "antd";
 import "./Post.scss";
 import PostTab from "../../features/post/PostTab/PostTab";
-import PostList from "../../features/post/PostList/PostList";
+import PostList from "../../features/post/postList/PostList";
 import PriceFilter from "../../features/post/PriceFilter/PriceFilter";
 import LocationFilter from "../../features/post/LocationFilter/LocationFilter";
 import RoomTypeFilter from "../../features/post/roomTypeFilter/RoomTypeFilter";
