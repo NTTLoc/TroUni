@@ -3,6 +3,7 @@ import { Modal, Typography, Space } from "antd";
 import { EnvironmentOutlined, LinkOutlined } from "@ant-design/icons";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import L from "leaflet";
+import GoongTileLayer from "./GoongTileLayer";
 import "leaflet/dist/leaflet.css";
 
 const { Title, Text } = Typography;
@@ -29,9 +30,9 @@ const MapModal = ({
 }) => {
   const position = [latitude, longitude];
 
-  // Tạo link Google Maps
+  // Tạo link Google Maps và Goong Maps
   const googleMapsUrl = `https://www.google.com/maps?q=${latitude},${longitude}`;
-  const openStreetMapUrl = `https://www.openstreetmap.org/?mlat=${latitude}&mlon=${longitude}&zoom=16`;
+  const goongMapsUrl = `https://map.goong.io/?lat=${latitude}&lng=${longitude}&zoom=16`;
 
   return (
     <Modal
@@ -63,10 +64,7 @@ const MapModal = ({
           style={{ height: "100%", width: "100%" }}
           scrollWheelZoom={true}
         >
-          <TileLayer
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          />
+          <GoongTileLayer layerType="BASIC" />
           <Marker position={position}>
             <Popup>
               <div>
@@ -90,12 +88,12 @@ const MapModal = ({
             <LinkOutlined /> Mở Google Maps
           </a>
           <a 
-            href={openStreetMapUrl} 
+            href={goongMapsUrl} 
             target="_blank" 
             rel="noopener noreferrer"
             style={{ color: "#1890ff" }}
           >
-            <LinkOutlined /> Mở OpenStreetMap
+            <LinkOutlined /> Mở Goong Maps
           </a>
         </Space>
       </div>

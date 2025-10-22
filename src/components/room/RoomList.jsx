@@ -1,18 +1,33 @@
 import React, { useState, useEffect } from "react";
-import { Card, Row, Col, Pagination, Spin, Alert, Input, Select, Button, Space } from "antd";
-import { SearchOutlined, FilterOutlined, PlusOutlined } from "@ant-design/icons";
+import {
+  Card,
+  Row,
+  Col,
+  Pagination,
+  Spin,
+  Alert,
+  Input,
+  Select,
+  Button,
+  Space,
+} from "antd";
+import {
+  SearchOutlined,
+  FilterOutlined,
+  PlusOutlined,
+} from "@ant-design/icons";
 import { useRooms } from "../../hooks/useRooms";
-import { 
-  ROOM_TYPE_LABELS, 
-  ROOM_STATUS_LABELS, 
-  formatPrice, 
-  formatArea, 
+import {
+  ROOM_TYPE_LABELS,
+  ROOM_STATUS_LABELS,
+  formatPrice,
+  formatArea,
   formatFullAddress,
   getRoomTypeLabel,
   getRoomStatusLabel,
   VIETNAM_CITIES,
   HCM_DISTRICTS,
-  HN_DISTRICTS
+  HN_DISTRICTS,
 } from "../../utils/roomConstants";
 import { convertAddressForBackend } from "../../utils/addressMapping";
 import "./RoomList.scss";
@@ -30,7 +45,7 @@ const RoomList = () => {
     totalPages,
     searchRooms,
     fetchRooms,
-    setPagination
+    setPagination,
   } = useRooms();
 
   // Search và filter states
@@ -42,7 +57,7 @@ const RoomList = () => {
     minArea: null,
     maxArea: null,
     roomType: "",
-    status: "available"
+    status: "available",
   });
 
   const [showFilters, setShowFilters] = useState(false);
@@ -55,12 +70,12 @@ const RoomList = () => {
       const addressData = convertAddressForBackend({
         city: searchFilters.city,
         district: searchFilters.district,
-        ward: searchFilters.ward
+        ward: searchFilters.ward,
       });
       searchParams.city = addressData.city;
       searchParams.district = addressData.district;
     }
-    
+
     searchRooms(searchParams);
   };
 
@@ -68,19 +83,19 @@ const RoomList = () => {
   const handleFilterChange = (key, value) => {
     const newFilters = { ...searchFilters, [key]: value };
     setSearchFilters(newFilters);
-    
+
     // Convert address format cho backend khi search
     const searchParams = { ...newFilters };
     if (newFilters.city || newFilters.district) {
       const addressData = convertAddressForBackend({
         city: newFilters.city,
         district: newFilters.district,
-        ward: newFilters.ward
+        ward: newFilters.ward,
       });
       searchParams.city = addressData.city;
       searchParams.district = addressData.district;
     }
-    
+
     searchRooms(searchParams);
   };
 
@@ -94,7 +109,7 @@ const RoomList = () => {
       minArea: null,
       maxArea: null,
       roomType: "",
-      status: "available"
+      status: "available",
     };
     setSearchFilters(clearedFilters);
     fetchRooms({ page: 0 });
@@ -119,10 +134,10 @@ const RoomList = () => {
       <div className="room-list-header">
         <h2>Danh sách phòng trọ</h2>
         <div className="header-actions">
-          <Button 
-            type="primary" 
+          <Button
+            type="primary"
             icon={<PlusOutlined />}
-            onClick={() => window.location.href = "/rooms/create"}
+            onClick={() => (window.location.href = "/rooms/create")}
           >
             Đăng phòng mới
           </Button>
@@ -158,8 +173,10 @@ const RoomList = () => {
                   style={{ width: "100%" }}
                   allowClear
                 >
-                  {VIETNAM_CITIES.map(city => (
-                    <Option key={city} value={city}>{city}</Option>
+                  {VIETNAM_CITIES.map((city) => (
+                    <Option key={city} value={city}>
+                      {city}
+                    </Option>
                   ))}
                 </Select>
               </Col>
@@ -173,8 +190,10 @@ const RoomList = () => {
                   allowClear
                   disabled={!searchFilters.city}
                 >
-                  {getDistricts().map(district => (
-                    <Option key={district} value={district}>{district}</Option>
+                  {getDistricts().map((district) => (
+                    <Option key={district} value={district}>
+                      {district}
+                    </Option>
                   ))}
                 </Select>
               </Col>
@@ -188,7 +207,9 @@ const RoomList = () => {
                   allowClear
                 >
                   {Object.entries(ROOM_TYPE_LABELS).map(([key, label]) => (
-                    <Option key={key} value={key}>{label}</Option>
+                    <Option key={key} value={key}>
+                      {label}
+                    </Option>
                   ))}
                 </Select>
               </Col>
@@ -201,7 +222,9 @@ const RoomList = () => {
                   style={{ width: "100%" }}
                 >
                   {Object.entries(ROOM_STATUS_LABELS).map(([key, label]) => (
-                    <Option key={key} value={key}>{label}</Option>
+                    <Option key={key} value={key}>
+                      {label}
+                    </Option>
                   ))}
                 </Select>
               </Col>
@@ -211,7 +234,12 @@ const RoomList = () => {
                   placeholder="Giá tối thiểu (VNĐ)"
                   type="number"
                   value={searchFilters.minPrice}
-                  onChange={(e) => handleFilterChange("minPrice", e.target.value ? parseFloat(e.target.value) : null)}
+                  onChange={(e) =>
+                    handleFilterChange(
+                      "minPrice",
+                      e.target.value ? parseFloat(e.target.value) : null
+                    )
+                  }
                 />
               </Col>
 
@@ -220,7 +248,12 @@ const RoomList = () => {
                   placeholder="Giá tối đa (VNĐ)"
                   type="number"
                   value={searchFilters.maxPrice}
-                  onChange={(e) => handleFilterChange("maxPrice", e.target.value ? parseFloat(e.target.value) : null)}
+                  onChange={(e) =>
+                    handleFilterChange(
+                      "maxPrice",
+                      e.target.value ? parseFloat(e.target.value) : null
+                    )
+                  }
                 />
               </Col>
 
@@ -229,7 +262,12 @@ const RoomList = () => {
                   placeholder="Diện tích tối thiểu (m²)"
                   type="number"
                   value={searchFilters.minArea}
-                  onChange={(e) => handleFilterChange("minArea", e.target.value ? parseFloat(e.target.value) : null)}
+                  onChange={(e) =>
+                    handleFilterChange(
+                      "minArea",
+                      e.target.value ? parseFloat(e.target.value) : null
+                    )
+                  }
                 />
               </Col>
 
@@ -238,7 +276,12 @@ const RoomList = () => {
                   placeholder="Diện tích tối đa (m²)"
                   type="number"
                   value={searchFilters.maxArea}
-                  onChange={(e) => handleFilterChange("maxArea", e.target.value ? parseFloat(e.target.value) : null)}
+                  onChange={(e) =>
+                    handleFilterChange(
+                      "maxArea",
+                      e.target.value ? parseFloat(e.target.value) : null
+                    )
+                  }
                 />
               </Col>
             </Row>
@@ -246,7 +289,10 @@ const RoomList = () => {
             <div className="filter-actions">
               <Space>
                 <Button onClick={clearFilters}>Xóa bộ lọc</Button>
-                <Button type="primary" onClick={() => searchRooms(searchFilters)}>
+                <Button
+                  type="primary"
+                  onClick={() => searchRooms(searchFilters)}
+                >
                   Áp dụng bộ lọc
                 </Button>
               </Space>
@@ -341,9 +387,10 @@ const RoomCard = ({ room }) => {
               src={room.images[0].imageUrl}
               className="room-image"
             />
-            {room.boostExpiresAt && new Date(room.boostExpiresAt) > new Date() && (
-              <div className="boost-badge">Nổi bật</div>
-            )}
+            {room.boostExpiresAt &&
+              new Date(room.boostExpiresAt) > new Date() && (
+                <div className="boost-badge">Nổi bật</div>
+              )}
           </div>
         ) : (
           <div className="room-image-placeholder">
@@ -354,24 +401,24 @@ const RoomCard = ({ room }) => {
     >
       <div className="room-info">
         <h3 className="room-title">{room.title}</h3>
-        
+
         <div className="room-details">
           <div className="room-price">
             <span className="price">{formatPrice(room.pricePerMonth)}</span>
             <span className="period">/tháng</span>
           </div>
-          
+
           <div className="room-meta">
             <span className="room-type">{getRoomTypeLabel(room.roomType)}</span>
             {room.areaSqm && (
               <span className="room-area">{formatArea(room.areaSqm)}</span>
             )}
           </div>
-          
+
           <div className="room-location">
             <p>{formatFullAddress(room)}</p>
           </div>
-          
+
           <div className="room-status">
             <span className={`status-badge ${room.status}`}>
               {getRoomStatusLabel(room.status)}

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { timeAgoFormat } from "../../../utils/timeAgoFormat";
 import { ClockCircleOutlined, EnvironmentOutlined } from "@ant-design/icons";
-import MapModal from "../../../components/map/MapModal";
+import GoongMapModal from "../../../components/map/GoongMapModal";
 import "./PostMainInfo.scss";
 
 const PostMainInfo = ({ post }) => {
@@ -48,7 +48,7 @@ const PostMainInfo = ({ post }) => {
 
       {/* Map Modal */}
       {post.latitude && post.longitude && (
-        <MapModal
+        <GoongMapModal
           visible={mapModalVisible}
           onClose={() => setMapModalVisible(false)}
           latitude={parseFloat(post.latitude)}

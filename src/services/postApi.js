@@ -35,7 +35,7 @@ export const createRoomImagesApi = (roomId, imageData) => {
  * @returns {Promise} Response từ API
  */
 export const getRoomImagesApi = (roomId) => {
-  const URL_API = `/api/rooms/${roomId}/images`; // ✅ Sửa endpoint đúng
+  const URL_API = `/rooms/${roomId}/images`; // ✅ Sửa endpoint đúng
   return axios.get(URL_API);
 };
 
@@ -214,7 +214,7 @@ export const getAllRoomsApi = (params = {}) => {
  * @returns {Promise} Response từ API
  */
 export const getAllRoomsSimpleApi = () => {
-  const URL_API = "/rooms/all";
+  const URL_API = "/rooms";
   console.log("🌐 getAllRoomsSimpleApi: Calling API:", URL_API);
 
   return axios

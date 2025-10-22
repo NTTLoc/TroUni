@@ -16,6 +16,7 @@ import {
   CloseOutlined,
 } from "@ant-design/icons";
 import { useMapSelector } from "../../hooks/useMapSelector";
+import GoongTileLayer from "./GoongTileLayer";
 import "leaflet/dist/leaflet.css";
 import "./MapSelector.scss";
 
@@ -195,10 +196,7 @@ const MapSelector = ({
             style={{ height: "100%", width: "100%" }}
             ref={mapRef}
           >
-            <TileLayer
-              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            />
+            <GoongTileLayer layerType="BASIC" />
 
             {/* Click handler */}
             <MapClickHandler />

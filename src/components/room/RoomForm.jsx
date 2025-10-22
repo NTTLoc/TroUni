@@ -27,7 +27,7 @@ import {
 } from "../../services/postApi";
 import { uploadToCloudinary } from "../../services/cloudinaryApi";
 import AmenitySelector from "../amenity/AmenitySelector";
-import MapSelector from "../map/MapSelector";
+import GoongMapSelector from "../map/GoongMapSelector";
 import { parseAddress } from "../../utils/addressParser";
 import {
   ROOM_TYPE,
@@ -670,7 +670,7 @@ const RoomForm = ({ roomId, onSuccess, onCancel }) => {
               {/* Map Selector */}
               {showMap && (
                 <Col xs={24}>
-                  <MapSelector
+                  <GoongMapSelector
                     onLocationSelect={handleLocationSelect}
                     initialPosition={
                       selectedLocation
