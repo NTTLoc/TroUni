@@ -101,8 +101,8 @@
     }
 }
 
-// QR Section
-.qr-section {
+// PayOS Section
+.payos-section {
     text-align: center;
     margin-bottom: 24px;
 
@@ -113,28 +113,137 @@
         color: #111827;
     }
 
-    .qr-container {
-        display: flex;
-        justify-content: center;
+    .payos-container {
+        background: #f9fafb;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        padding: 20px;
         margin-bottom: 16px;
 
-        .qr-image {
-            max-width: 200px;
-            width: 100%;
-            height: auto;
-            border: 1px solid #e5e7eb;
-            border-radius: 8px;
+        .checkout-container {
+            text-align: center;
+
+            .checkout-info {
+                h4 {
+                    margin: 0 0 12px 0;
+                    color: #111827;
+                    font-size: 1.2rem;
+                    font-weight: 600;
+                }
+
+                p {
+                    margin: 0 0 16px 0;
+                    color: #6b7280;
+                    font-size: 1rem;
+                }
+
+                .payment-methods {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 8px;
+                    margin-bottom: 20px;
+
+                    .method {
+                        display: flex;
+                        align-items: center;
+                        padding: 8px 12px;
+                        background: white;
+                        border: 1px solid #e5e7eb;
+                        border-radius: 6px;
+                        font-size: 0.9rem;
+                        color: #374151;
+                    }
+                }
+
+                .payos-checkout-btn {
+                    background: #00C851;
+                    color: white;
+                    border: none;
+                    padding: 12px 24px;
+                    border-radius: 8px;
+                    font-size: 1.1rem;
+                    font-weight: 600;
+                    cursor: pointer;
+                    transition: all 0.3s ease;
+                    margin-bottom: 12px;
+
+                    &:hover {
+                        background: #00A041;
+                        transform: translateY(-2px);
+                        box-shadow: 0 4px 12px rgba(0, 200, 81, 0.3);
+                    }
+                }
+
+                .checkout-note {
+                    font-size: 0.85rem;
+                    color: #6b7280;
+                    margin: 0;
+                }
+            }
         }
 
-        .qr-placeholder {
-            width: 200px;
-            height: 200px;
-            border: 2px dashed #d1d5db;
-            border-radius: 8px;
+        .qr-container {
             display: flex;
-            align-items: center;
             justify-content: center;
-            color: #6b7280;
+            margin-bottom: 16px;
+
+            .qr-image {
+                max-width: 200px;
+                width: 100%;
+                height: auto;
+                border: 1px solid #e5e7eb;
+                border-radius: 8px;
+            }
+
+            .qr-placeholder {
+                width: 200px;
+                height: 200px;
+                border: 2px dashed #d1d5db;
+                border-radius: 8px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: #6b7280;
+            }
+        }
+
+        .loading-container {
+            text-align: center;
+            padding: 40px;
+
+            p {
+                color: #6b7280;
+                font-size: 1rem;
+            }
+        }
+
+        .payos-info {
+            margin-bottom: 16px;
+
+            p {
+                margin: 0 0 12px 0;
+                color: #6b7280;
+                font-size: 0.95rem;
+            }
+
+            .payment-methods {
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+
+                .method {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    padding: 8px 12px;
+                    background: white;
+                    border: 1px solid #e5e7eb;
+                    border-radius: 8px;
+                    font-size: 0.9rem;
+                    color: #374151;
+                    font-weight: 500;
+                }
+            }
         }
     }
 
@@ -370,14 +479,35 @@
         }
     }
 
-    .qr-section {
+    .payos-section {
         h3 {
             color: #f9fafb;
         }
 
-        .qr-placeholder {
+        .payos-container {
+            background: #374151;
             border-color: #4b5563;
-            color: #9ca3af;
+
+            .qr-container {
+                .qr-placeholder {
+                    border-color: #4b5563;
+                    color: #9ca3af;
+                }
+            }
+
+            .payos-info {
+                p {
+                    color: #9ca3af;
+                }
+
+                .payment-methods {
+                    .method {
+                        background: #4b5563;
+                        border-color: #6b7280;
+                        color: #d1d5db;
+                    }
+                }
+            }
         }
     }
 
