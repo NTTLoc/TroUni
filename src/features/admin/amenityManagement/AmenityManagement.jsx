@@ -6,20 +6,12 @@ import {
   Button,
   Input,
   Spin,
-  message,
-  Popconfirm,
   Modal,
   Form,
   Select,
-  Typography,
+  Switch,
 } from "antd";
 import {
-  SearchOutlined,
-  ReloadOutlined,
-  EditOutlined,
-  DeleteOutlined,
-  PlusOutlined,
-  ApartmentOutlined,
   HomeOutlined,
   WifiOutlined,
   CarOutlined,
@@ -31,69 +23,176 @@ import {
   HeartOutlined,
   CrownOutlined,
   GiftOutlined,
+  VideoCameraOutlined,
+  SafetyOutlined,
+  DollarOutlined,
+  FileTextOutlined,
+  ClockCircleOutlined,
+  SmileOutlined,
+  EnvironmentOutlined,
+  ShopOutlined,
+  SunOutlined,
+  BuildOutlined,
+  BankOutlined,
+  RestOutlined,
+  SyncOutlined,
+  DashboardOutlined,
+  PoweroffOutlined,
+  SearchOutlined,
+  EditOutlined,
+  ReloadOutlined,
+  PlusOutlined,
+  DeleteOutlined,
+  ApartmentOutlined,
 } from "@ant-design/icons";
+import * as Icons from "@ant-design/icons";
 import { useAmenities } from "../../../hooks/useAmenities";
 import useMessage from "../../../hooks/useMessage";
-import * as Icons from "@ant-design/icons";
 import "./AmenityManagement.scss";
 
+/* 🎨 Danh sách icon và tiện ích gợi ý sẵn */
 const ICON_OPTIONS = [
-  { value: "HomeOutlined", icon: <HomeOutlined /> },
-  { value: "WifiOutlined", icon: <WifiOutlined /> },
-  { value: "CarOutlined", icon: <CarOutlined /> },
-  { value: "FireOutlined", icon: <FireOutlined /> },
-  { value: "CoffeeOutlined", icon: <CoffeeOutlined /> },
-  { value: "ShoppingOutlined", icon: <ShoppingOutlined /> },
-  { value: "ThunderboltOutlined", icon: <ThunderboltOutlined /> },
-  { value: "KeyOutlined", icon: <KeyOutlined /> },
-  { value: "HeartOutlined", icon: <HeartOutlined /> },
-  { value: "CrownOutlined", icon: <CrownOutlined /> },
-  { value: "GiftOutlined", icon: <GiftOutlined /> },
+  {
+    value: "HomeOutlined",
+    icon: <HomeOutlined />,
+    label: "Nội thất / Phòng đầy đủ",
+  },
+  { value: "RestOutlined", icon: <RestOutlined />, label: "Nhà vệ sinh riêng" },
+  { value: "BankOutlined", icon: <BankOutlined />, label: "Ban công / Cửa sổ" },
+  {
+    value: "FireOutlined",
+    icon: <FireOutlined />,
+    label: "Máy lạnh / Bình nóng lạnh",
+  },
+  { value: "SyncOutlined", icon: <SyncOutlined />, label: "Máy giặt" },
+  {
+    value: "ThunderboltOutlined",
+    icon: <ThunderboltOutlined />,
+    label: "Điện / Nước riêng",
+  },
+  {
+    value: "DashboardOutlined",
+    icon: <DashboardOutlined />,
+    label: "Đồng hồ điện nước riêng",
+  },
+  {
+    value: "PoweroffOutlined",
+    icon: <PoweroffOutlined />,
+    label: "Ổ cắm điện",
+  },
+  { value: "WifiOutlined", icon: <WifiOutlined />, label: "Wi-Fi miễn phí" },
+  {
+    value: "VideoCameraOutlined",
+    icon: <VideoCameraOutlined />,
+    label: "Camera an ninh",
+  },
+  { value: "CarOutlined", icon: <CarOutlined />, label: "Chỗ để xe" },
+  { value: "SafetyOutlined", icon: <SafetyOutlined />, label: "Bảo vệ 24/7" },
+  {
+    value: "KeyOutlined",
+    icon: <KeyOutlined />,
+    label: "Khóa riêng / vân tay",
+  },
+  {
+    value: "CoffeeOutlined",
+    icon: <CoffeeOutlined />,
+    label: "Khu nấu ăn / bếp riêng",
+  },
+  {
+    value: "SunOutlined",
+    icon: <SunOutlined />,
+    label: "Sân phơi / Ánh sáng tốt",
+  },
+  {
+    value: "BuildOutlined",
+    icon: <BuildOutlined />,
+    label: "Sân thượng / Không gian chung",
+  },
+  {
+    value: "EnvironmentOutlined",
+    icon: <EnvironmentOutlined />,
+    label: "Gần trạm xe / bến bus",
+  },
+  {
+    value: "ShopOutlined",
+    icon: <ShopOutlined />,
+    label: "Gần chợ / cửa hàng",
+  },
+  {
+    value: "ShoppingOutlined",
+    icon: <ShoppingOutlined />,
+    label: "Gần siêu thị / tiện lợi",
+  },
+  {
+    value: "CrownOutlined",
+    icon: <CrownOutlined />,
+    label: "Gần trường đại học",
+  },
+  {
+    value: "DollarOutlined",
+    icon: <DollarOutlined />,
+    label: "Giá tốt / Đặt cọc thấp",
+  },
+  {
+    value: "FileTextOutlined",
+    icon: <FileTextOutlined />,
+    label: "Hợp đồng rõ ràng",
+  },
+  {
+    value: "ClockCircleOutlined",
+    icon: <ClockCircleOutlined />,
+    label: "Thuê ngắn hạn / linh hoạt",
+  },
+  {
+    value: "SmileOutlined",
+    icon: <SmileOutlined />,
+    label: "Chủ nhà thân thiện",
+  },
+  {
+    value: "HeartOutlined",
+    icon: <HeartOutlined />,
+    label: "Khu vực yên tĩnh / thân thiện",
+  },
+  {
+    value: "GiftOutlined",
+    icon: <GiftOutlined />,
+    label: "Ưu đãi / khuyến mãi",
+  },
 ];
 
+/* 🧩 Render icon từ tên DB */
 const renderIcon = (iconName) => {
   const IconComponent = Icons[iconName];
   return IconComponent ? (
-    <IconComponent />
+    <IconComponent style={{ fontSize: 18 }} />
   ) : (
-    <ApartmentOutlined style={{ color: "#888" }} />
+    <ApartmentOutlined style={{ color: "#aaa" }} />
   );
 };
 
-const { Title, Text } = Typography;
-const { Search } = Input;
-
-/**
- * AmenityManagement Component
- * Component để quản lý amenities trong Admin Dashboard
- */
 const AmenityManagement = () => {
   const [searchValue, setSearchValue] = useState("");
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editRecord, setEditRecord] = useState(null);
+
   const [form] = Form.useForm();
-  const message = useMessage();
+  const [editForm] = Form.useForm();
+  const showMsg = useMessage();
 
   const {
     amenities,
     loading,
-    error,
     fetchAllAmenities,
     createAmenity,
     deleteAmenity,
+    updateAmenity,
   } = useAmenities({ autoFetch: true });
 
-  const fetchAmenities = async () => {
-    try {
-      await fetchAllAmenities();
-    } catch (err) {
-      console.error("Lỗi tải danh sách tiện ích:", err);
-      message.error("Không thể tải danh sách tiện ích!");
-    }
-  };
-
   useEffect(() => {
-    fetchAmenities();
+    fetchAllAmenities();
   }, []);
 
   const filteredAmenities = amenities.filter(
@@ -102,96 +201,116 @@ const AmenityManagement = () => {
       item.icon?.toLowerCase().includes(searchValue.toLowerCase())
   );
 
-  const handleDelete = async (id) => {
-    try {
-      await deleteAmenity(id);
-      message.success("Đã xóa tiện ích thành công!");
-      fetchAmenities();
-    } catch (err) {
-      console.error("Lỗi xóa tiện ích:", err);
-      message.error("Không thể xóa tiện ích!");
-    }
-  };
-
-  const handleDeleteSelected = async () => {
-    if (selectedRowKeys.length === 0) {
-      message.warning("Vui lòng chọn ít nhất một tiện ích để xóa.");
-      return;
-    }
-    try {
-      await Promise.all(selectedRowKeys.map((id) => deleteAmenity(id)));
-      message.success(`Đã xóa ${selectedRowKeys.length} tiện ích.`);
-      setSelectedRowKeys([]);
-      fetchAmenities();
-    } catch (err) {
-      console.error("Lỗi xóa hàng loạt:", err);
-      message.error("Không thể xóa các tiện ích đã chọn!");
-    }
-  };
-
   const openAddModal = () => {
     form.resetFields();
     setIsModalOpen(true);
   };
 
+  /* ➕ Thêm tiện ích */
   const handleAddAmenity = async () => {
     try {
-      const values = await form.validateFields();
-      await createAmenity(values);
-      message.success("Đã thêm tiện ích mới!");
+      const { icon } = await form.validateFields();
+      const selected = ICON_OPTIONS.find((i) => i.value === icon);
+      if (!selected) return showMsg.error("Tiện ích không hợp lệ!");
+
+      const exists = amenities.some((a) => a.icon === selected.value);
+      if (exists) return showMsg.warning("Tiện ích này đã tồn tại!");
+
+      const payload = {
+        name: selected.label,
+        icon: selected.value,
+        active: true,
+      };
+      await createAmenity(payload);
+
+      showMsg.success("✅ Đã thêm tiện ích mới!");
       setIsModalOpen(false);
-      fetchAmenities();
+      fetchAllAmenities();
     } catch (err) {
-      if (err.errorFields) return;
-      console.error("Lỗi thêm tiện ích:", err);
-      message.error("Không thể thêm tiện ích!");
+      if (!err.errorFields) {
+        console.error(err);
+        showMsg.error("Không thể thêm tiện ích!");
+      }
     }
   };
 
-  const renderStatusTag = (active) => (
-    <Tag color={active ? "green" : "red"}>
-      {active ? "Hoạt động" : "Tạm dừng"}
-    </Tag>
-  );
+  /* ✏️ Mở modal chỉnh sửa */
+  const openEditModal = (record) => {
+    setEditRecord(record);
+    editForm.setFieldsValue({
+      name: record.name,
+      active: record.active,
+    });
+    setIsEditModalOpen(true);
+  };
 
+  /* 💾 Cập nhật tiện ích */
+  const handleUpdateAmenity = async () => {
+    try {
+      const values = await editForm.validateFields();
+      await updateAmenity(editRecord.id, values);
+      showMsg.success("Đã cập nhật tiện ích!");
+      setIsEditModalOpen(false);
+      fetchAllAmenities();
+    } catch (err) {
+      console.error("Lỗi cập nhật tiện ích:", err);
+      showMsg.error("Không thể cập nhật tiện ích!");
+    }
+  };
 
-  // Table columns
+  /* 🗑️ Xóa tiện ích */
+  const handleDeleteSelected = async () => {
+    try {
+      await Promise.all(selectedRowKeys.map((id) => deleteAmenity(id)));
+      showMsg.success(`Đã xóa ${selectedRowKeys.length} tiện ích.`);
+      setSelectedRowKeys([]);
+      setIsDeleteModalOpen(false);
+      fetchAllAmenities();
+    } catch (err) {
+      showMsg.error("Không thể xóa tiện ích.");
+    }
+  };
+
+  /* 🧾 Bảng */
   const columns = [
     {
-      title: "Tên tiện ích",
+      title: "Tiện ích",
       dataIndex: "name",
       key: "name",
       render: (text, record) => (
         <Space>
-          <span className="amenity-icon">{renderIcon(record.icon)}</span>
-          <span>{text || "—"}</span>
+          {renderIcon(record.icon)}
+          <span>{text}</span>
         </Space>
       ),
+    },
+    {
+      title: "Mã icon",
+      dataIndex: "icon",
+      key: "icon",
+      render: (icon) => <Tag color="blue">{icon}</Tag>,
     },
     {
       title: "Trạng thái",
       dataIndex: "active",
       key: "active",
-      render: (active) => renderStatusTag(active),
+      render: (active) => (
+        <Tag color={active ? "green" : "red"}>
+          {active ? "Hoạt động" : "Tạm dừng"}
+        </Tag>
+      ),
     },
-    // {
-    //   title: "Ngày tạo",
-    //   dataIndex: "createdAt",
-    //   key: "createdAt",
-    //   render: (date) =>
-    //     date ? new Date(date).toLocaleDateString("vi-VN") : "—",
-    // },
     {
       title: "Thao tác",
-      key: "actions",
+      key: "action",
       render: (_, record) => (
         <Space>
           <Button
             type="link"
             icon={<EditOutlined />}
-            onClick={() => message.info(`Sửa tiện ích: ${record.name}`)}
+            onClick={() => openEditModal(record)}
           >
-            Chỉnh sửa
+            Sửa
           </Button>
         </Space>
       ),
@@ -208,53 +327,38 @@ const AmenityManagement = () => {
           onChange={(e) => setSearchValue(e.target.value)}
           className="search-input"
         />
-
         <div className="actions">
           <Button
             icon={<ReloadOutlined />}
-            onClick={fetchAmenities}
+            onClick={fetchAllAmenities}
             loading={loading}
             className="refresh-btn"
           >
             Làm mới
           </Button>
-
-          <Button
-            type="primary"
-            icon={<PlusOutlined />}
-            onClick={openAddModal}
-            className="add-btn"
-          >
+          <Button type="primary" icon={<PlusOutlined />} onClick={openAddModal}>
             Thêm tiện ích
           </Button>
-
-          <Popconfirm
-            title="Xác nhận xóa các tiện ích đã chọn?"
-            onConfirm={handleDeleteSelected}
-            okText="Xóa"
-            cancelText="Hủy"
+          <Button
+            danger
+            icon={<DeleteOutlined />}
+            disabled={!selectedRowKeys.length}
+            onClick={() => setIsDeleteModalOpen(true)}
           >
-            <Button
-              danger
-              icon={<DeleteOutlined />}
-              disabled={selectedRowKeys.length === 0}
-              className="delete-btn"
-            >
-              Xóa đã chọn
-            </Button>
-          </Popconfirm>
+            Xóa đã chọn
+          </Button>
         </div>
       </div>
 
       {loading ? (
         <div className="loading">
-          <Spin tip="Đang tải tiện ích..." />
+          <Spin tip="Đang tải danh sách tiện ích..." />
         </div>
       ) : (
         <Table
           rowSelection={{
             selectedRowKeys,
-            onChange: (keys) => setSelectedRowKeys(keys),
+            onChange: setSelectedRowKeys,
           }}
           columns={columns}
           dataSource={filteredAmenities}
@@ -263,7 +367,7 @@ const AmenityManagement = () => {
         />
       )}
 
-      {/* Modal thêm tiện ích */}
+      {/* ➕ Modal thêm */}
       <Modal
         title="Thêm tiện ích mới"
         open={isModalOpen}
@@ -271,41 +375,79 @@ const AmenityManagement = () => {
         onOk={handleAddAmenity}
         okText="Thêm"
         cancelText="Hủy"
-        getContainer={false}
+        confirmLoading={loading}
       >
         <Form form={form} layout="vertical">
           <Form.Item
-            label="Tên tiện ích"
-            name="name"
-            rules={[{ required: true, message: "Vui lòng nhập tên tiện ích!" }]}
-          >
-            <Input placeholder="Nhập tên tiện ích..." />
-          </Form.Item>
-
-          <Form.Item
-            label="Biểu tượng (Icon)"
+            label="Chọn tiện ích"
             name="icon"
-            rules={[{ required: true, message: "Vui lòng chọn biểu tượng!" }]}
+            rules={[{ required: true, message: "Vui lòng chọn tiện ích!" }]}
           >
             <Select
-              placeholder="Chọn biểu tượng..."
-              className="icon-select"
-              dropdownClassName="icon-dropdown"
+              placeholder="Chọn tiện ích..."
               optionLabelProp="label"
-              getPopupContainer={(triggerNode) => triggerNode.parentNode}
+              showSearch
+              filterOption={(input, option) =>
+                option?.label?.toLowerCase().includes(input.toLowerCase())
+              }
             >
               {ICON_OPTIONS.map((item) => (
                 <Select.Option
                   key={item.value}
                   value={item.value}
-                  label={item.icon}
+                  label={item.label}
                 >
-                  <div className="icon-only-option">{item.icon}</div>
+                  <div
+                    style={{ display: "flex", alignItems: "center", gap: 10 }}
+                  >
+                    {item.icon} <span>{item.label}</span>
+                  </div>
                 </Select.Option>
               ))}
             </Select>
           </Form.Item>
         </Form>
+      </Modal>
+
+      {/* ✏️ Modal chỉnh sửa */}
+      <Modal
+        title="Chỉnh sửa tiện ích"
+        open={isEditModalOpen}
+        onCancel={() => setIsEditModalOpen(false)}
+        onOk={handleUpdateAmenity}
+        okText="Lưu"
+        cancelText="Hủy"
+        confirmLoading={loading}
+      >
+        <Form form={editForm} layout="vertical">
+          <Form.Item label="Tên tiện ích" name="name">
+            <Input disabled />
+          </Form.Item>
+          <Form.Item
+            label="Trạng thái hoạt động"
+            name="active"
+            valuePropName="checked"
+          >
+            <Switch checkedChildren="Hoạt động" unCheckedChildren="Tạm dừng" />
+          </Form.Item>
+        </Form>
+      </Modal>
+
+      {/* ❌ Modal xóa */}
+      <Modal
+        title="Xác nhận xóa tiện ích"
+        open={isDeleteModalOpen}
+        onCancel={() => setIsDeleteModalOpen(false)}
+        onOk={handleDeleteSelected}
+        okText="Xóa"
+        cancelText="Hủy"
+        okButtonProps={{ danger: true }}
+        confirmLoading={loading}
+      >
+        <p>
+          Bạn có chắc chắn muốn xóa <strong>{selectedRowKeys.length}</strong>{" "}
+          tiện ích đã chọn không?
+        </p>
       </Modal>
     </div>
   );

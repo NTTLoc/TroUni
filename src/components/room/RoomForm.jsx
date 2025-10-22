@@ -104,12 +104,12 @@ const RoomForm = ({ roomId, onSuccess, onCancel }) => {
   const parseAddressForForm = (locationData) => {
     const { address, addressDetails } = locationData;
     const parsed = parseAddress(address, addressDetails);
-    
+
     return {
       ...parsed,
       fullAddress: address,
       latitude: locationData.latitude,
-      longitude: locationData.longitude
+      longitude: locationData.longitude,
     };
   };
 
@@ -117,27 +117,28 @@ const RoomForm = ({ roomId, onSuccess, onCancel }) => {
   const handleLocationSelect = (locationData) => {
     console.log("🗺️ Location selected:", locationData);
     setSelectedLocation(locationData);
-    
+
     // Parse address using utility function
-    const { city, district, ward, fullAddress } = parseAddressForForm(locationData);
-    
+    const { city, district, ward, fullAddress } =
+      parseAddressForForm(locationData);
+
     // Update form fields
     if (city) {
       setSelectedCity(city);
       form.setFieldsValue({ city });
     }
-    
+
     if (district) {
       setSelectedDistrict(district);
       form.setFieldsValue({ district });
     }
-    
+
     if (ward) {
       form.setFieldsValue({ ward });
     }
-    
+
     form.setFieldsValue({ streetAddress: fullAddress });
-    
+
     // Hide map after selection
     setShowMap(false);
   };
@@ -648,13 +649,15 @@ const RoomForm = ({ roomId, onSuccess, onCancel }) => {
                   ]}
                 >
                   <Space.Compact style={{ width: "100%" }}>
-                    <Input 
+                    <Input
                       placeholder="VD: 123 Đường ABC, Phường 1, Quận 1"
                       readOnly={selectedLocation}
-                      value={selectedLocation ? selectedLocation.address : undefined}
+                      value={
+                        selectedLocation ? selectedLocation.address : undefined
+                      }
                     />
-                    <Button 
-                      type="primary" 
+                    <Button
+                      type="primary"
                       icon={<EnvironmentOutlined />}
                       onClick={() => setShowMap(!showMap)}
                     >
@@ -669,8 +672,17 @@ const RoomForm = ({ roomId, onSuccess, onCancel }) => {
                 <Col xs={24}>
                   <MapSelector
                     onLocationSelect={handleLocationSelect}
-                    initialPosition={selectedLocation ? [selectedLocation.latitude, selectedLocation.longitude] : [10.8231, 106.6297]}
-                    initialAddress={selectedLocation ? selectedLocation.address : ""}
+                    initialPosition={
+                      selectedLocation
+                        ? [
+                            selectedLocation.latitude,
+                            selectedLocation.longitude,
+                          ]
+                        : [10.8231, 106.6297]
+                    }
+                    initialAddress={
+                      selectedLocation ? selectedLocation.address : ""
+                    }
                     height="350px"
                   />
                 </Col>
@@ -808,11 +820,18 @@ const RoomForm = ({ roomId, onSuccess, onCancel }) => {
 
           {/* Amenities */}
           <div className="form-section">
+            <Title level={4}>Tiện ích phòng trọ</Title>
+            <p className="section-description">
+              Chọn các tiện ích có sẵn cho phòng trọ của bạn. Tối đa 20 tiện
+              ích.
+            </p>
+
+            {/* ✅ AmenitySelector mới */}
             <AmenitySelector
               selectedAmenities={amenityList}
               onSelectionChange={setAmenityList}
               roomId={roomId}
-              showCreateForm={false}
+              showCreateForm={false} // Cho phép mở form thêm tiện ích mới
               maxSelection={20}
             />
           </div>

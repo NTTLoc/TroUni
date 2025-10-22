@@ -1,256 +1,122 @@
-// AmenitySelector.scss
 .amenity-selector {
+  margin-top: 16px;
+
   .selector-header {
-    margin-bottom: 16px;
-
-    .ant-typography {
-      margin-bottom: 4px;
-    }
+    margin-bottom: 12px;
   }
 
-  .selector-filters {
+  .search-filter {
     margin-bottom: 16px;
+  }
 
-    .category-filter {
-      .ant-btn {
-        margin-bottom: 8px;
+  /* ✅ Hiển thị 2 cột mỗi hàng */
+  .amenity-list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .amenity-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #fff;
+    border: 2px solid transparent;
+    border-radius: 10px;
+    padding: 10px 14px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+
+    &:hover {
+      border-color: #1890ff;
+      transform: translateY(-1px);
+    }
+
+    &.selected {
+      border-color: #52c41a;
+      background-color: #f6ffed;
+      box-shadow: 0 4px 10px rgba(82, 196, 26, 0.15);
+      .amenity-icon,
+      .amenity-name {
+        color: #52c41a;
+        font-weight: 600;
       }
     }
-  }
 
-  .selection-summary {
-    padding: 12px;
-    background-color: #f0f2f5;
-    border-radius: 6px;
-    margin-bottom: 16px;
+    .amenity-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
 
-    .ant-space {
-      width: 100%;
-      justify-content: space-between;
-    }
-  }
+      .amenity-icon {
+        font-size: 22px;
+        color: #555;
+        transition: 0.25s;
+      }
 
-  .loading-container {
-    text-align: center;
-    padding: 40px 0;
-
-    .ant-spin {
-      margin-bottom: 16px;
-    }
-  }
-
-  .amenities-grid {
-    .ant-empty-description {
-      color: var(--text);
+      .amenity-name {
+        font-size: 14px;
+        color: #333;
+      }
     }
 
-    .amenity-card {
-      cursor: pointer;
-      transition: all 0.3s ease;
-      border: 2px solid transparent;
-      height: 120px;
-
+    .delete-icon {
+      color: #ff4d4f;
+      font-size: 16px;
       &:hover {
-        border-color: #1890ff;
-        box-shadow: 0 4px 12px rgba(24, 144, 255, 0.15);
-        transform: translateY(-2px);
-      }
-
-      &.selected {
-        border-color: #52c41a;
-        background-color: #f6ffed;
-
-        .amenity-content {
-          .amenity-name {
-            color: #52c41a;
-            font-weight: 600;
-          }
-        }
-      }
-
-      &.disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
-
-        &:hover {
-          border-color: transparent;
-          box-shadow: none;
-          transform: none;
-        }
-      }
-
-      .amenity-content {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        height: 100%;
-        padding: 8px;
-
-        .amenity-icon {
-          flex: 1;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-size: 24px;
-          margin-bottom: 8px;
-
-          img {
-            width: 32px;
-            height: 32px;
-            object-fit: contain;
-          }
-
-          .emoji-icon {
-            font-size: 28px;
-          }
-        }
-
-        .amenity-name {
-          flex: 0 0 auto;
-          text-align: center;
-          font-size: 12px;
-          line-height: 1.2;
-          margin-bottom: 4px;
-
-          .ant-typography {
-            margin: 0;
-            font-size: 12px;
-          }
-        }
-
-        .amenity-actions {
-          flex: 0 0 auto;
-
-          .selected-icon {
-            color: #52c41a;
-            font-size: 16px;
-          }
-
-          .unselected-icon {
-            color: #d9d9d9;
-            font-size: 16px;
-          }
-        }
+        color: #ff7875;
       }
     }
   }
 
-  .create-amenity-section {
-    margin-top: 24px;
-    padding: 16px;
-    background-color: #fafafa;
-    border-radius: 8px;
-
-    .ant-divider {
-      margin: 0 0 16px 0;
-    }
+  .create-form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+    margin-top: 10px;
   }
 }
 
-// Dark mode support
+/* ✅ Dark theme */
 [data-theme="dark"] {
   .amenity-selector {
-    .selection-summary {
-      background-color: #141414;
-    }
+    .amenity-item {
+      background: #1f1f1f;
+      border-color: #303030;
+      color: #ddd;
 
-    .amenity-card {
       &.selected {
-        background-color: #162312;
-      }
-    }
+        background: #162312;
+        border-color: #49aa19;
 
-    .create-amenity-section {
-      background-color: #1f1f1f;
+        .amenity-icon,
+        .amenity-name {
+          color: #73d13d;
+        }
+      }
     }
   }
 }
 
-// Responsive design
+/* ✅ Responsive — chuyển về 1 cột khi màn nhỏ */
 @media (max-width: 768px) {
   .amenity-selector {
-    .amenities-grid {
-      .amenity-card {
-        height: 100px;
-
-        .amenity-content {
-          .amenity-icon {
-            font-size: 20px;
-
-            img {
-              width: 24px;
-              height: 24px;
-            }
-
-            .emoji-icon {
-              font-size: 22px;
-            }
-          }
-
-          .amenity-name {
-            font-size: 11px;
-
-            .ant-typography {
-              font-size: 11px;
-            }
-          }
-        }
-      }
-    }
-  }
-}
-
-@media (max-width: 576px) {
-  .amenity-selector {
-    .selector-filters {
-      .category-filter {
-        .ant-space {
-          .ant-btn {
-            font-size: 12px;
-            padding: 4px 8px;
-            height: auto;
-          }
-        }
-      }
+    .amenity-list {
+      grid-template-columns: 1fr;
+      gap: 10px;
     }
 
-    .amenities-grid {
-      .amenity-card {
-        height: 80px;
+    .amenity-item {
+      padding: 8px 10px;
 
-        .amenity-content {
-          padding: 4px;
+      .amenity-icon {
+        font-size: 20px;
+      }
 
-          .amenity-icon {
-            font-size: 18px;
-            margin-bottom: 4px;
-
-            img {
-              width: 20px;
-              height: 20px;
-            }
-
-            .emoji-icon {
-              font-size: 20px;
-            }
-          }
-
-          .amenity-name {
-            font-size: 10px;
-            margin-bottom: 2px;
-
-            .ant-typography {
-              font-size: 10px;
-            }
-          }
-
-          .amenity-actions {
-            .selected-icon,
-            .unselected-icon {
-              font-size: 14px;
-            }
-          }
-        }
+      .amenity-name {
+        font-size: 13px;
       }
     }
   }

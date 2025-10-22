@@ -38,13 +38,16 @@
       gap: 10px;
       flex-wrap: wrap;
 
-      .add-btn {
+      button {
+        border-radius: 8px;
+        transition: all 0.3s ease;
+      }
+
+      .ant-btn-primary {
         background: #00bfa6;
         border: none;
         color: #fff;
         font-weight: 500;
-        border-radius: 8px;
-        transition: all 0.3s ease;
 
         &:hover {
           background: #00a891;
@@ -54,7 +57,6 @@
     }
   }
 
-  /* Table content */
   .amenity-icon {
     font-size: 18px;
     color: #00bfa6;
@@ -64,7 +66,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 200px;
+    height: 220px;
   }
 
   /* ------------ Modal (Add/Edit Form) ------------ */
@@ -80,7 +82,7 @@
     .ant-modal-header {
       background: transparent;
       border-radius: 12px 12px 0 0;
-      padding: 5px 5px;
+      padding: 5px 12px;
 
       .ant-modal-title {
         color: var(--text);
@@ -90,11 +92,11 @@
     }
 
     .ant-modal-close {
-      color: #fff;
+      color: var(--text);
       transition: 0.3s ease;
 
       &:hover {
-        color: #e6f7ff;
+        color: #00bfa6;
         transform: rotate(90deg);
       }
     }
@@ -116,8 +118,7 @@
         color: #00bfa6;
 
         &:hover {
-          border-color: #00bfa6;
-          color: #00bfa6;
+          background: rgba(0, 191, 166, 0.08);
         }
       }
 
@@ -145,28 +146,7 @@
           color: var(--text);
         }
 
-        .ant-input {
-          border-radius: 8px;
-          border: 1px solid var(--border);
-          background: var(--bg);
-          color: var(--text);
-          transition: all 0.3s ease;
-
-          &::placeholder {
-            color: #999;
-          }
-
-          &:hover {
-            border-color: #00bfa6;
-          }
-
-          &:focus {
-            border-color: #00bfa6;
-            box-shadow: 0 0 0 2px rgba(0, 191, 166, 0.15);
-          }
-        }
-
-        /* Dropdown Select */
+        /* Select */
         .ant-select {
           width: 100%;
 
@@ -174,14 +154,19 @@
             background: var(--input-bg);
             border: 1px solid var(--border);
             border-radius: 8px;
-            color: var(--text); // màu chữ chính trong select
+            color: var(--text);
+            transition: all 0.3s ease;
+
+            &:hover {
+              border-color: #00bfa6;
+            }
 
             .ant-select-selection-item {
-              color: var(--text); // chữ hiển thị sau khi chọn
+              color: var(--text);
             }
 
             .ant-select-selection-placeholder {
-              color: #999; // placeholder “Chọn biểu tượng...”
+              color: #999;
             }
           }
 
@@ -189,42 +174,46 @@
             color: var(--text);
           }
         }
+      }
 
-        /* Icon select option */
-        .icon-option {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: 8px;
+      /* Preview tiện ích đã chọn */
+      .preview-box {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-top: 10px;
+        background: var(--bg2);
+        padding: 10px 12px;
+        border-radius: 8px;
 
-          svg {
-            font-size: 18px;
-            color: #00bfa6;
-          }
+        svg {
+          font-size: 20px;
+          color: #00bfa6;
+        }
 
-          span {
-            font-size: 14px;
-          }
+        span {
+          color: var(--text);
+          font-weight: 500;
         }
       }
     }
   }
 
-  /* Select dropdown (since it's rendered inside modal container) */
+  /* Dropdown Select */
   .ant-select-dropdown {
     background: var(--card-bg);
     border-radius: 10px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 
     .ant-select-item {
+      padding: 8px 12px;
       display: flex;
-      justify-content: center;
       align-items: center;
-      padding: 8px;
-      transition: 0.2s;
+      gap: 8px;
+      transition: 0.2s ease;
 
       svg {
-        font-size: 24px;
+        font-size: 20px;
         color: #00bfa6;
       }
 
