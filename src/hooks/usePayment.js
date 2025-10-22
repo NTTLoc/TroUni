@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import paymentApi from '../services/paymentApi';
+import { formatPayOSDescription } from '../utils/paymentUtils';
 
 const usePayment = () => {
   const [paymentData, setPaymentData] = useState(null);
@@ -19,7 +20,7 @@ const usePayment = () => {
   }, []);
 
   /**
-   * Tạo thanh toán cho phòng
+   * Tạo QR thanh toán PayOS cho phòng
    */
   const createRoomPayment = useCallback(async (roomId, amount, description = null) => {
     try {
@@ -27,27 +28,31 @@ const usePayment = () => {
       setError(null);
       setPaymentStatus('pending');
 
-      const response = await paymentApi.createRoomPayment({
-        roomId,
+      // Sử dụng createPayOSPayment với roomId
+      const response = await paymentApi.createPayOSPayment({
         amount,
-        description: description || `Thanh toán phòng trọ - ${new Date().toLocaleDateString('vi-VN')}`
+        description: formatPayOSDescription(description, 'room'),
+        returnUrl: `${window.location.origin}/payment-success`, // Success page
+        cancelUrl: `${window.location.origin}/payment-cancel`, // Cancel page
+        roomId: roomId, // UUID roomId
+        type: 'room'
       });
 
-      // Validate response
-      if (!response || !response.transactionCode) {
-        console.error('Invalid payment response:', response);
-        throw new Error('Invalid payment response format');
+      // Validate response - PayOS sẽ trả về QR code hoặc checkout URL
+      if (!response || (!response.transactionCode && !response.orderCode)) {
+        console.error('Invalid PayOS QR payment response:', response);
+        throw new Error('Invalid PayOS payment response format');
       }
 
       setPaymentData(response);
       setPaymentStatus('pending');
       
       // Bắt đầu polling để check status
-      startPolling(response.transactionCode);
+      startPolling(response.transactionCode || response.orderCode);
       
       return response;
     } catch (err) {
-      setError(err.response?.data?.message || 'Có lỗi xảy ra khi tạo thanh toán');
+      setError(err.response?.data?.message || 'Có lỗi xảy ra khi tạo QR thanh toán PayOS');
       setPaymentStatus('failed');
       throw err;
     } finally {
@@ -56,35 +61,38 @@ const usePayment = () => {
   }, []);
 
   /**
-   * Tạo thanh toán VietQR thông thường
+   * Tạo thanh toán PayOS thông thường
    */
-  const createVietQRPayment = useCallback(async (amount, description = null, subscriptionId = null) => {
+  const createPayOSPayment = useCallback(async (amount, description = null, roomId = null) => {
     try {
       setIsLoading(true);
       setError(null);
       setPaymentStatus('pending');
 
-      const response = await paymentApi.createVietQRPayment({
+      const response = await paymentApi.createPayOSPayment({
         amount,
-        description: description || `Thanh toán TroUni - ${new Date().toLocaleDateString('vi-VN')}`,
-        subscriptionId
+        description: formatPayOSDescription(description, 'general'),
+        returnUrl: `${window.location.origin}/payment-success`, // Success page
+        cancelUrl: `${window.location.origin}/payment-cancel`, // Cancel page
+        roomId: roomId || null, // UUID roomId (optional)
+        type: 'general'
       });
 
-      // Validate response
-      if (!response || !response.transactionCode) {
-        console.error('Invalid payment response:', response);
-        throw new Error('Invalid payment response format');
+      // Validate response - PayOS có thể trả về QR code hoặc checkout URL
+      if (!response || (!response.qrCodeUrl && !response.checkoutUrl)) {
+        console.error('Invalid PayOS payment response:', response);
+        throw new Error('Invalid PayOS payment response format');
       }
 
       setPaymentData(response);
       setPaymentStatus('pending');
       
       // Bắt đầu polling để check status
-      startPolling(response.transactionCode);
+      startPolling(response.transactionCode || response.orderCode);
       
       return response;
     } catch (err) {
-      setError(err.response?.data?.message || 'Có lỗi xảy ra khi tạo thanh toán');
+      setError(err.response?.data?.message || 'Có lỗi xảy ra khi tạo thanh toán PayOS');
       setPaymentStatus('failed');
       throw err;
     } finally {
@@ -171,14 +179,44 @@ const usePayment = () => {
   }, []);
 
   /**
-   * Hủy thanh toán
+   * Confirm thanh toán
    */
-  const cancelPayment = useCallback(async (paymentId) => {
+  const confirmPayment = useCallback(async (transactionCode, amount, description, roomId) => {
     try {
       setIsLoading(true);
       setError(null);
 
-      const response = await paymentApi.cancelPayment(paymentId);
+      const webhookData = {
+        transactionCode,
+        amount,
+        status: 'PROCESSING',
+        description: description || `Thanh toán phòng trọ`,
+        roomId
+      };
+
+      const response = await paymentApi.confirmPayment(webhookData);
+      
+      setPaymentStatus('completed');
+      stopPolling();
+      
+      return response;
+    } catch (err) {
+      setError(err.response?.data?.message || 'Có lỗi xảy ra khi xác nhận thanh toán');
+      throw err;
+    } finally {
+      setIsLoading(false);
+    }
+  }, [stopPolling]);
+
+  /**
+   * Cancel thanh toán
+   */
+  const cancelPayment = useCallback(async (transactionCode, status = 'CANCELLED') => {
+    try {
+      setIsLoading(true);
+      setError(null);
+
+      const response = await paymentApi.cancelPayment(transactionCode, status);
       
       setPaymentStatus('cancelled');
       stopPolling();
@@ -254,8 +292,9 @@ const usePayment = () => {
     
     // Actions
     createRoomPayment,
-    createVietQRPayment,
+    createPayOSPayment,
     checkPaymentStatus,
+    confirmPayment,
     cancelPayment,
     getPaymentHistory,
     resetPayment,

@@ -15,7 +15,9 @@ const PaymentDemo = () => {
     isLoading, 
     error, 
     paymentStatus,
-    createVietQRPayment,
+    createPayOSPayment,
+    confirmPayment,
+    cancelPayment,
     resetPayment 
   } = usePayment();
 
@@ -26,10 +28,11 @@ const PaymentDemo = () => {
     }
 
     try {
-      await createVietQRPayment(amount, description);
+      // Test với roomId null (thanh toán thông thường)
+      await createPayOSPayment(amount, description, null);
       setShowModal(true);
     } catch (error) {
-      console.error('Payment creation failed:', error);
+      console.error('PayOS payment creation failed:', error);
     }
   };
 
@@ -38,14 +41,41 @@ const PaymentDemo = () => {
     resetPayment();
   };
 
-  const handlePaymentSuccess = () => {
-    setShowModal(false);
-    alert('Payment successful!');
+  const handlePaymentSuccess = async (data) => {
+    if (data.action === 'confirm') {
+      try {
+        await confirmPayment(
+          data.transactionCode,
+          data.amount,
+          data.description,
+          data.roomId
+        );
+        setShowModal(false);
+        alert('Payment confirmed successfully!');
+      } catch (error) {
+        console.error('Payment confirmation error:', error);
+        alert('Payment confirmation failed!');
+      }
+    } else {
+      setShowModal(false);
+      alert('Payment successful!');
+    }
   };
 
-  const handlePaymentError = (error) => {
-    console.error('Payment error:', error);
-    alert('Payment failed!');
+  const handlePaymentError = async (data) => {
+    if (data.action === 'cancel') {
+      try {
+        await cancelPayment(data.transactionCode, data.status);
+        setShowModal(false);
+        alert('Payment cancelled successfully!');
+      } catch (error) {
+        console.error('Payment cancellation error:', error);
+        alert('Payment cancellation failed!');
+      }
+    } else {
+      console.error('Payment error:', data);
+      alert('Payment failed!');
+    }
   };
 
   return (
@@ -120,13 +150,14 @@ const PaymentDemo = () => {
 
         {paymentData && (
           <div className="payment-info">
-            <h3>Payment Created:</h3>
-            <p><strong>Transaction Code:</strong> {paymentData.transactionCode}</p>
+            <h3>PayOS QR Payment Created:</h3>
+            <p><strong>Order Code:</strong> {paymentData.orderCode || paymentData.transactionCode}</p>
             <p><strong>Amount:</strong> {new Intl.NumberFormat('vi-VN', {
               style: 'currency',
               currency: 'VND'
             }).format(paymentData.amount)}</p>
             <p><strong>Status:</strong> {paymentStatus}</p>
+            <p><strong>QR Code:</strong> {paymentData.qrCodeUrl ? 'Available' : 'Not available'}</p>
           </div>
         )}
       </div>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { CloseOutlined, ClockCircleOutlined, CheckCircleOutlined, ExclamationCircleOutlined, CopyOutlined } from '@ant-design/icons';
+import { CloseOutlined, ClockCircleOutlined, CheckCircleOutlined, ExclamationCircleOutlined, CopyOutlined, LinkOutlined } from '@ant-design/icons';
 import paymentApi from '../../services/paymentApi';
 import './PaymentModal.scss';
 
@@ -54,7 +54,7 @@ const PaymentModal = ({
     });
   };
 
-  // Handle payment confirmation
+  // Handle confirm payment
   const handleConfirmPayment = async () => {
     if (!paymentData || !paymentData.transactionCode || !paymentData.amount) {
       alert('Không có thông tin thanh toán để xác nhận');
@@ -64,29 +64,15 @@ const PaymentModal = ({
     try {
       setIsConfirming(true);
       
-      const webhookData = {
-        transactionCode: paymentData.transactionCode,
-        amount: paymentData.amount,
-        status: 'PROCESSING',
-        description: paymentData.description || `Đặt cọc phòng trọ`,
-        bankCode: 'AGRIBANK',
-        roomId: roomId // Sử dụng roomId từ props (từ URL params)
-      };
-
-      console.log('Sending webhook to backend. Backend will update payment status to PROCESSING and room status to WAITING:', webhookData);
-      
-      const response = await paymentApi.confirmPayment(webhookData);
-      
-      console.log('Payment confirmed:', response);
-      
-      // Backend đã xử lý webhook và tự động update:
-      // 1. Payment status: PENDING → PROCESSING
-      // 2. Room status: AVAILABLE → WAITING (nếu có roomId)
-      console.log('Payment confirmed successfully. Backend has updated payment and room status.');
-      
-      // Call success callback
+      // Call success callback để xử lý confirm
       if (onPaymentSuccess) {
-        onPaymentSuccess(response);
+        await onPaymentSuccess({
+          action: 'confirm',
+          transactionCode: paymentData.transactionCode,
+          amount: paymentData.amount,
+          description: paymentData.description,
+          roomId: roomId
+        });
       }
       
       // Close modal
@@ -104,6 +90,36 @@ const PaymentModal = ({
     }
   };
 
+  // Handle cancel payment
+  const handleCancelPayment = async () => {
+    if (!paymentData || !paymentData.transactionCode) {
+      alert('Không có thông tin thanh toán để hủy');
+      return;
+    }
+
+    try {
+      setIsConfirming(true);
+      
+      // Call error callback để xử lý cancel
+      if (onPaymentError) {
+        await onPaymentError({
+          action: 'cancel',
+          transactionCode: paymentData.transactionCode,
+          status: 'CANCELLED'
+        });
+      }
+      
+      // Close modal
+      onClose();
+      
+    } catch (error) {
+      console.error('Error cancelling payment:', error);
+      alert('Có lỗi xảy ra khi hủy thanh toán');
+    } finally {
+      setIsConfirming(false);
+    }
+  };
+
   const formatAmount = (amount) => {
     return new Intl.NumberFormat('vi-VN', {
       style: 'currency',
@@ -114,22 +130,22 @@ const PaymentModal = ({
   if (!isOpen || !paymentData) return null;
 
   // Debug log để kiểm tra payment data
-  console.log('PaymentModal - paymentData:', {
+  console.log('PaymentModal - PayOS QR paymentData:', {
+    orderCode: paymentData.orderCode,
     transactionCode: paymentData.transactionCode,
     amount: paymentData.amount,
     roomIdFromProps: roomId, // RoomId từ URL params
     roomIdFromPaymentData: paymentData.roomId, // RoomId từ payment data (có thể undefined)
-    qrCodeUrl: paymentData.qrCodeUrl,
-    bankName: paymentData.bankName,
-    bankAccountNumber: paymentData.bankAccountNumber,
-    bankAccountName: paymentData.bankAccountName
+    qrCodeUrl: paymentData.qrCodeUrl, // QR code từ PayOS
+    checkoutUrl: paymentData.checkoutUrl,
+    description: paymentData.description
   });
 
   return (
     <div className="payment-modal-overlay">
       <div className="payment-modal">
         <div className="payment-modal__header">
-          <h2>Thanh toán phòng trọ</h2>
+          <h2>Thanh toán PayOS QR</h2>
           <button className="payment-modal__close" onClick={onClose}>
             <CloseOutlined style={{ fontSize: '24px' }} />
           </button>
@@ -147,13 +163,13 @@ const PaymentModal = ({
               <span className="value">{paymentData.description}</span>
             </div>
             <div className="payment-info__item">
-              <span className="label">Mã giao dịch:</span>
+              <span className="label">Mã đơn hàng:</span>
               <div className="transaction-code">
-                <span className="value">{paymentData.transactionCode}</span>
+                <span className="value">{paymentData.orderCode || paymentData.transactionCode}</span>
                 <button 
                   className="copy-btn"
-                  onClick={() => copyToClipboard(paymentData.transactionCode)}
-                  title="Sao chép mã giao dịch"
+                  onClick={() => copyToClipboard(paymentData.orderCode || paymentData.transactionCode)}
+                  title="Sao chép mã đơn hàng"
                 >
                   <CopyOutlined style={{ fontSize: '16px' }} />
                 </button>
@@ -161,66 +177,71 @@ const PaymentModal = ({
             </div>
           </div>
 
-          {/* QR Code */}
-          <div className="qr-section">
-            <h3>Quét mã QR để thanh toán</h3>
+          {/* PayOS QR Code */}
+      <div className="payos-section">
+        <h3>Thanh toán qua PayOS</h3>
+        <div className="payos-container">
+          {paymentData.checkoutUrl ? (
+            <div className="checkout-container">
+              <div className="checkout-info">
+                <h4>Chuyển hướng đến PayOS</h4>
+                <p>Bạn sẽ được chuyển hướng đến trang thanh toán PayOS để hoàn tất giao dịch.</p>
+                <div className="payment-methods">
+                  <span className="method">Thẻ ATM/Visa/Mastercard</span>
+                  <span className="method">Ví điện tử (MoMo, ZaloPay, VNPay)</span>
+                  <span className="method">Chuyển khoản ngân hàng</span>
+                </div>
+                
+                <button 
+                  className="payos-checkout-btn"
+                  onClick={() => window.open(paymentData.checkoutUrl, '_blank')}
+                >
+                  Mở PayOS Checkout
+                </button>
+                
+                <p className="checkout-note">
+                  Sau khi thanh toán thành công, bạn sẽ được chuyển hướng về trang này.
+                </p>
+              </div>
+            </div>
+          ) : paymentData.qrCodeUrl ? (
             <div className="qr-container">
-              {paymentData.qrCodeUrl ? (
-                <img 
-                  src={paymentData.qrCodeUrl}
-                  alt="QR Code thanh toán"
-                  className="qr-image"
-                />
-              ) : (
-                <div className="qr-placeholder">
-                  <p>Đang tạo QR code...</p>
-                </div>
-              )}
-            </div>
-            
-            {/* Timer */}
-            <div className={`timer ${isExpired ? 'expired' : ''}`}>
-              <ClockCircleOutlined style={{ fontSize: '16px' }} />
-              <span>QR code hết hạn sau: {formatTime(timeLeft)}</span>
-            </div>
-          </div>
-
-          {/* Bank Info */}
-          <div className="bank-info">
-            <h3>Thông tin chuyển khoản</h3>
-            <div className="bank-details">
-              <div className="bank-detail">
-                <span className="label">Ngân hàng:</span>
-                <span className="value">{paymentData.bankName}</span>
-              </div>
-              <div className="bank-detail">
-                <span className="label">Số tài khoản:</span>
-                <div className="account-number">
-                  <span className="value">{paymentData.bankAccountNumber}</span>
-                  <button 
-                    className="copy-btn"
-                    onClick={() => copyToClipboard(paymentData.bankAccountNumber)}
-                    title="Sao chép số tài khoản"
-                  >
-                    <CopyOutlined style={{ fontSize: '16px' }} />
-                  </button>
+              <img 
+                src={paymentData.qrCodeUrl}
+                alt="PayOS QR Code thanh toán"
+                className="qr-image"
+              />
+              <div className="payos-info">
+                <p>Quét mã QR để thanh toán qua PayOS</p>
+                <div className="payment-methods">
+                  <span className="method">Thẻ ATM/Visa/Mastercard</span>
+                  <span className="method">Ví điện tử (MoMo, ZaloPay, VNPay)</span>
+                  <span className="method">Chuyển khoản ngân hàng</span>
                 </div>
               </div>
-              <div className="bank-detail">
-                <span className="label">Tên tài khoản:</span>
-                <span className="value">{paymentData.bankAccountName}</span>
-              </div>
             </div>
-          </div>
+          ) : (
+            <div className="loading-container">
+              <p>Đang tạo thanh toán PayOS...</p>
+            </div>
+          )}
+        </div>
+        
+        {/* Timer */}
+        <div className={`timer ${isExpired ? 'expired' : ''}`}>
+          <ClockCircleOutlined style={{ fontSize: '16px' }} />
+          <span>Thanh toán hết hạn sau: {formatTime(timeLeft)}</span>
+        </div>
+      </div>
 
           {/* Instructions */}
           <div className="instructions">
             <h3>Hướng dẫn thanh toán</h3>
             <ol>
-              <li>Mở ứng dụng ngân hàng trên điện thoại</li>
-              <li>Quét mã QR hoặc chuyển khoản theo thông tin bên trên</li>
+              <li>Mở ứng dụng ngân hàng hoặc ví điện tử trên điện thoại</li>
+              <li>Quét mã QR PayOS bên trên</li>
               <li>Nhập đúng số tiền và nội dung chuyển khoản</li>
-              <li>Hoàn tất giao dịch và chờ xác nhận</li>
+              <li>Hoàn tất giao dịch và nhấn "Xác nhận" bên dưới</li>
             </ol>
           </div>
 
@@ -241,8 +262,13 @@ const PaymentModal = ({
         </div>
 
         <div className="payment-modal__footer">
-          <button className="btn btn-secondary" onClick={onClose}>
-            Đóng
+          <button 
+            className="btn btn-secondary"
+            onClick={handleCancelPayment}
+            disabled={isExpired || isConfirming}
+          >
+            <ExclamationCircleOutlined style={{ fontSize: '16px', marginRight: '8px' }} />
+            Hủy
           </button>
           <button 
             className="btn btn-primary"
@@ -256,7 +282,7 @@ const PaymentModal = ({
               </>
             ) : (
               <>
-                <CheckCircleOutlined style={{ fontSize: '16px' }} />
+                <CheckCircleOutlined style={{ fontSize: '16px', marginRight: '8px' }} />
                 Xác nhận
               </>
             )}

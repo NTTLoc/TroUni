@@ -20,6 +20,10 @@ export const path = {
   GROUP_FINDER: "/group-finder",
   COMMUNITY: "/community",
 
+  // PAYMENT
+  PAYMENT_SUCCESS: "/payment-success",
+  PAYMENT_CANCEL: "/payment-cancel",
+
   // PRIVATE
   ACCOUNT: "/account",
   ADMIN: "/admin",

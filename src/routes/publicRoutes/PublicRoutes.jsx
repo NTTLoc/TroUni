@@ -20,6 +20,10 @@ import RoomMatching from "../../pages/roomMatching/RoomMatching";
 import GroupFinder from "../../pages/groupFinder/GroupFinder";
 import Community from "../../pages/community/Community";
 import VideoCallPage from "../../pages/call/VideoCallPage";
+import PaymentSuccess from "../../pages/paymentSuccess/PaymentSuccess";
+import PaymentCancel from "../../pages/paymentCancel/PaymentCancel";
+import PayOSDebugTest from "../../components/debug/PayOSDebugTest";
+import PaymentCancelDebugTest from "../../components/debug/PaymentCancelDebugTest";
 
 const PublicRoutes = [
   { index: true, element: <HomePage /> },
@@ -36,6 +40,10 @@ const PublicRoutes = [
   { path: path.GROUP_FINDER, element: <GroupFinder /> },
   { path: path.COMMUNITY, element: <Community /> },
   { path: path.CALL, element: <VideoCallPage /> },
+  { path: path.PAYMENT_SUCCESS, element: <PaymentSuccess /> },
+  { path: path.PAYMENT_CANCEL, element: <PaymentCancel /> },
+  { path: "/debug/payos", element: <PayOSDebugTest /> },
+  { path: "/debug/payos-cancel", element: <PaymentCancelDebugTest /> },
   // Room management routes
   // { path: "/rooms", element: <RoomList /> },
   // { path: "/rooms/all", element: <AllRooms /> },

@@ -12,6 +12,7 @@ import PaymentModal from "../../components/payment/PaymentModal";
 import { getRoomByIdApi } from "../../services/postApi";
 import usePayment from "../../hooks/usePayment";
 import { useAuth } from "../../hooks/useAuth";
+import { formatPayOSDescription } from "../../utils/paymentUtils";
 
 const PostDetail = () => {
   const { id } = useParams(); // lấy id từ URL
@@ -28,6 +29,8 @@ const PostDetail = () => {
     error: paymentError, 
     paymentStatus,
     createRoomPayment,
+    confirmPayment,
+    cancelPayment,
     resetPayment 
   } = usePayment();
 
@@ -47,12 +50,28 @@ const PostDetail = () => {
   }, [id]);
 
   // Handle payment success
-  const handlePaymentSuccess = (response) => {
-    setShowPaymentModal(false);
-    // Reload room data to get updated status from backend
-    reloadRoomData();
-    console.log('Payment success:', response);
-    alert('Đặt cọc thành công! Chủ trọ sẽ xác nhận và cập nhật trạng thái phòng.');
+  const handlePaymentSuccess = async (response) => {
+    if (response.action === 'confirm') {
+      try {
+        await confirmPayment(
+          response.transactionCode,
+          response.amount,
+          response.description,
+          response.roomId
+        );
+        setShowPaymentModal(false);
+        reloadRoomData();
+        alert('Đặt cọc thành công! Chủ trọ sẽ xác nhận và cập nhật trạng thái phòng.');
+      } catch (error) {
+        console.error('Payment confirmation error:', error);
+        alert('Có lỗi xảy ra khi xác nhận thanh toán');
+      }
+    } else {
+      setShowPaymentModal(false);
+      reloadRoomData();
+      console.log('Payment success:', response);
+      alert('Đặt cọc thành công! Chủ trọ sẽ xác nhận và cập nhật trạng thái phòng.');
+    }
   };
 
   // Reload room data from backend
@@ -68,9 +87,20 @@ const PostDetail = () => {
   };
 
   // Handle payment error
-  const handlePaymentError = (error) => {
-    console.error('Payment error:', error);
-    alert('Có lỗi xảy ra trong quá trình thanh toán');
+  const handlePaymentError = async (error) => {
+    if (error.action === 'cancel') {
+      try {
+        await cancelPayment(error.transactionCode, error.status);
+        setShowPaymentModal(false);
+        alert('Thanh toán đã được hủy');
+      } catch (cancelError) {
+        console.error('Payment cancellation error:', cancelError);
+        alert('Có lỗi xảy ra khi hủy thanh toán');
+      }
+    } else {
+      console.error('Payment error:', error);
+      alert('Có lỗi xảy ra trong quá trình thanh toán');
+    }
   };
 
   // Handle payment button click - chỉ đặt cọc
@@ -85,17 +115,25 @@ const PostDetail = () => {
       return;
     }
 
-    // Chỉ đặt cọc 100.000 VND
-    const amount = 100000;
-    const description = `Đặt cọc phòng ${post.title}`;
+    // Test với 3000 VND
+    const amount = 3000;
+    const description = formatPayOSDescription(`Đặt cọc phòng ${post.title}`, 'room');
 
     try {
-      await createRoomPayment(
+      const response = await createRoomPayment(
         post.id,
         amount,
         description
       );
-      setShowPaymentModal(true);
+      
+      // Redirect luôn tới PayOS checkout nếu có checkoutUrl
+      if (response.checkoutUrl) {
+        console.log('🔄 Redirecting to PayOS checkout:', response.checkoutUrl);
+        window.open(response.checkoutUrl, '_blank');
+      } else {
+        // Fallback: mở modal nếu không có checkoutUrl
+        setShowPaymentModal(true);
+      }
     } catch (error) {
       handlePaymentError(error);
     }
@@ -149,7 +187,7 @@ const PostDetail = () => {
                 <div className="deposit-info">
                   <div className="deposit-amount">
                     <span className="amount-label">Số tiền đặt cọc:</span>
-                    <span className="amount-value">100.000 ₫</span>
+                    <span className="amount-value">3.000 ₫</span>
                   </div>
                   
                   <div className="deposit-benefits">
