@@ -14,13 +14,13 @@ const { Title, Text } = Typography;
  * Goong Map Modal Component
  * Modal hiển thị bản đồ Goong với vị trí cụ thể
  */
-const GoongMapModal = ({ 
-  visible, 
-  onClose, 
-  latitude, 
-  longitude, 
-  address, 
-  title = "Vị trí phòng trọ"
+const GoongMapModal = ({
+  visible,
+  onClose,
+  latitude,
+  longitude,
+  address,
+  title = "Vị trí phòng trọ",
 }) => {
   const mapContainer = useRef(null);
   const map = useRef(null);
@@ -33,27 +33,26 @@ const GoongMapModal = ({
     const initMap = async () => {
       try {
         // Import Goong Maps SDK dynamically
-        const goongjs = await import('@goongmaps/goong-js');
-        
+        const goongjs = await import("@goongmaps/goong-js");
+
         // Initialize map
         map.current = new goongjs.Map({
           container: mapContainer.current,
-          style: 'https://tiles.goong.io/assets/goong_map_web.json',
+          style: "https://tiles.goong.io/assets/goong_map_web.json",
           center: [longitude, latitude], // [lng, lat]
           zoom: 16,
-          accessToken: GOONG_CONFIG.MAPTILES_KEY
+          accessToken: GOONG_CONFIG.MAPTILES_KEY,
         });
 
         // Add marker
         marker.current = new goongjs.Marker({
-          color: '#ff4d4f'
+          color: "#ff4d4f",
         })
-        .setLngLat([longitude, latitude])
-        .addTo(map.current);
+          .setLngLat([longitude, latitude])
+          .addTo(map.current);
 
         // Add popup
-        const popup = new goongjs.Popup({ offset: 25 })
-          .setHTML(`
+        const popup = new goongjs.Popup({ offset: 25 }).setHTML(`
             <div>
               <h5>${title}</h5>
               <p>${address}</p>
@@ -61,9 +60,8 @@ const GoongMapModal = ({
           `);
 
         marker.current.setPopup(popup);
-
       } catch (error) {
-        console.error('❌ Error initializing Goong Map:', error);
+        console.error("❌ Error initializing Goong Map:", error);
       }
     };
 
@@ -105,27 +103,31 @@ const GoongMapModal = ({
       </div>
 
       {/* Map Container */}
-      <div style={{ height: "400px", width: "100%", borderRadius: "8px", overflow: "hidden" }}>
-        <div
-          ref={mapContainer}
-          style={{ height: "100%", width: "100%" }}
-        />
+      <div
+        style={{
+          height: "400px",
+          width: "100%",
+          borderRadius: "8px",
+          overflow: "hidden",
+        }}
+      >
+        <div ref={mapContainer} style={{ height: "100%", width: "100%" }} />
       </div>
 
       {/* Action Buttons */}
       <div style={{ marginTop: 16, textAlign: "center" }}>
         <Space>
-          <a 
-            href={googleMapsUrl} 
-            target="_blank" 
+          <a
+            href={googleMapsUrl}
+            target="_blank"
             rel="noopener noreferrer"
             style={{ color: "#1890ff" }}
           >
             <LinkOutlined /> Mở Google Maps
           </a>
-          <a 
-            href={goongMapsUrl} 
-            target="_blank" 
+          <a
+            href={goongMapsUrl}
+            target="_blank"
             rel="noopener noreferrer"
             style={{ color: "#1890ff" }}
           >
@@ -138,4 +140,3 @@ const GoongMapModal = ({
 };
 
 export default GoongMapModal;
-
