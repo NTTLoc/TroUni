@@ -12,17 +12,20 @@ import {
   Image,
   Divider,
   List,
+  Space,
 } from "antd";
 import {
   SearchOutlined,
   ReloadOutlined,
   DeleteOutlined,
+  PlusOutlined,
+  MinusCircleOutlined,
 } from "@ant-design/icons";
 import {
   getPaginatedRoomsApi,
   getRoomByIdApi,
   updateRoomApi,
-  deleteRoomApi, // ✅ thêm import đúng
+  deleteRoomApi,
 } from "../../../services/postApi";
 import "./PostManagement.scss";
 import useMessage from "../../../hooks/useMessage";
@@ -39,6 +42,8 @@ const PostManagement = () => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [currentRoom, setCurrentRoom] = useState(null);
+  const [hasImageChanged, setHasImageChanged] = useState(false);
+  const [hasAmenityChanged, setHasAmenityChanged] = useState(false);
   const [form] = Form.useForm();
   const message = useMessage();
 
@@ -83,6 +88,8 @@ const PostManagement = () => {
       const res = await getRoomByIdApi(record.id);
       const room = res.data;
       setCurrentRoom(room);
+      setHasImageChanged(false);
+      setHasAmenityChanged(false);
 
       form.setFieldsValue({
         title: room.title,
@@ -92,8 +99,6 @@ const PostManagement = () => {
         city: room.city,
         district: room.district,
         ward: room.ward,
-        latitude: room.latitude,
-        longitude: room.longitude,
         pricePerMonth: room.pricePerMonth,
         areaSqm: room.areaSqm,
         status: room.status,
@@ -108,40 +113,46 @@ const PostManagement = () => {
     }
   };
 
-  // 🧩 Render trạng thái
-  const renderStatusTag = (status) => {
-    const colorMap = {
-      available: "green",
-      rented: "orange",
-      hidden: "volcano",
-      pending: "blue",
-    };
-    const labelMap = {
-      available: "Sẵn có",
-      rented: "Đã thuê",
-      hidden: "Ẩn",
-      pending: "Chờ duyệt",
-    };
-    return <Tag color={colorMap[status]}>{labelMap[status]}</Tag>;
-  };
-
   // 💾 Lưu thay đổi
   const handleSave = async () => {
     try {
       const values = await form.validateFields();
       setLoading(true);
 
+      // ⚙️ Nếu không thay đổi ảnh, chỉ gửi mảng string cũ
+      const imagesPayload = hasImageChanged
+        ? currentRoom?.images
+            ?.map((img) =>
+              typeof img === "string" ? img : img.imageUrl || img.url || ""
+            )
+            .filter(Boolean)
+        : undefined; // ⚠️ undefined nghĩa là không gửi => backend giữ nguyên
+
+      // ⚙️ Nếu không thay đổi tiện ích, không gửi lên
+      const amenitiesPayload = hasAmenityChanged
+        ? currentRoom?.amenities
+            ?.map((a) => ({
+              name: a.name || "",
+              description: a.description || "",
+              iconUrl: a.iconUrl || "",
+              isActive: typeof a.isActive === "boolean" ? a.isActive : true,
+            }))
+            .filter((x) => x.name && x.name.trim())
+        : undefined;
+
       const updatedRoom = {
-        ...currentRoom,
-        ...values,
-        images: currentRoom.images?.map((img) =>
-          typeof img === "string" ? img : img.imageUrl
-        ),
-        amenities:
-          currentRoom.amenities?.map((a) => ({
-            id: a.id,
-            name: a.name,
-          })) || [],
+        title: values.title,
+        description: values.description,
+        roomType: values.roomType,
+        streetAddress: values.streetAddress,
+        city: values.city,
+        district: values.district,
+        ward: values.ward,
+        pricePerMonth: values.pricePerMonth,
+        areaSqm: values.areaSqm,
+        status: values.status,
+        ...(imagesPayload ? { images: imagesPayload } : {}),
+        ...(amenitiesPayload ? { amenities: amenitiesPayload } : {}),
       };
 
       await updateRoomApi(currentRoom.id, updatedRoom);
@@ -157,16 +168,50 @@ const PostManagement = () => {
     }
   };
 
-  // 🔹 Mở modal xác nhận xóa
-  const openDeleteModal = () => {
-    if (selectedRowKeys.length === 0) {
-      message.warning("Vui lòng chọn ít nhất một bài đăng để xóa.");
-      return;
-    }
-    setIsDeleteModalOpen(true);
+  // ➕ Thêm ảnh
+  const handleAddImage = (url) => {
+    if (!url.trim()) return;
+    const newImage = { id: Date.now(), imageUrl: url };
+    setCurrentRoom({
+      ...currentRoom,
+      images: [...(currentRoom?.images || []), newImage],
+    });
+    setHasImageChanged(true);
   };
 
-  // 🗑️ Xóa bài đăng đã chọn
+  // ❌ Xóa ảnh
+  const handleRemoveImage = (id) => {
+    setCurrentRoom({
+      ...currentRoom,
+      images: currentRoom.images.filter((img) => img.id !== id),
+    });
+    setHasImageChanged(true);
+  };
+
+  // ➕ Thêm tiện ích
+  const handleAddAmenity = (name) => {
+    if (!name.trim()) return;
+    if (currentRoom?.amenities?.some((a) => a.name === name)) {
+      message.warning("Tiện ích đã tồn tại.");
+      return;
+    }
+    setCurrentRoom({
+      ...currentRoom,
+      amenities: [...(currentRoom?.amenities || []), { name }],
+    });
+    setHasAmenityChanged(true);
+  };
+
+  // ❌ Xóa tiện ích
+  const handleRemoveAmenity = (name) => {
+    setCurrentRoom({
+      ...currentRoom,
+      amenities: currentRoom.amenities.filter((a) => a.name !== name),
+    });
+    setHasAmenityChanged(true);
+  };
+
+  // 🗑️ Xóa bài đăng
   const handleDeleteSelected = async () => {
     setLoading(true);
     try {
@@ -191,7 +236,21 @@ const PostManagement = () => {
       title: "Trạng thái",
       dataIndex: "status",
       key: "status",
-      render: (status) => renderStatusTag(status),
+      render: (status) => {
+        const colorMap = {
+          available: "green",
+          rented: "orange",
+          hidden: "volcano",
+          pending: "blue",
+        };
+        const labelMap = {
+          available: "Sẵn có",
+          rented: "Đã thuê",
+          hidden: "Ẩn",
+          pending: "Chờ duyệt",
+        };
+        return <Tag color={colorMap[status]}>{labelMap[status]}</Tag>;
+      },
     },
   ];
 
@@ -210,7 +269,6 @@ const PostManagement = () => {
             icon={<ReloadOutlined />}
             onClick={fetchPosts}
             loading={loading}
-            className="refresh-btn"
           >
             Làm mới
           </Button>
@@ -219,7 +277,7 @@ const PostManagement = () => {
             danger
             icon={<DeleteOutlined />}
             disabled={selectedRowKeys.length === 0}
-            onClick={openDeleteModal}
+            onClick={() => setIsDeleteModalOpen(true)}
           >
             Xóa đã chọn
           </Button>
@@ -246,7 +304,7 @@ const PostManagement = () => {
         />
       )}
 
-      {/* 🧩 Modal chi tiết bài đăng */}
+      {/* Modal chi tiết */}
       <Modal
         title={isEditing ? "Chỉnh sửa bài đăng" : "Chi tiết bài đăng"}
         open={isModalOpen}
@@ -261,11 +319,7 @@ const PostManagement = () => {
         width={900}
       >
         <Form form={form} layout="vertical" disabled={!isEditing}>
-          <Form.Item
-            label="Tiêu đề"
-            name="title"
-            rules={[{ required: true, message: "Vui lòng nhập tiêu đề" }]}
-          >
+          <Form.Item label="Tiêu đề" name="title" rules={[{ required: true }]}>
             <Input />
           </Form.Item>
 
@@ -291,27 +345,18 @@ const PostManagement = () => {
             <Input />
           </Form.Item>
 
-          <Divider orientation="left">Tọa độ</Divider>
-          <Form.Item label="Vĩ độ (latitude)" name="latitude">
-            <InputNumber style={{ width: "100%" }} />
-          </Form.Item>
-          <Form.Item label="Kinh độ (longitude)" name="longitude">
-            <InputNumber style={{ width: "100%" }} />
-          </Form.Item>
-
           <Divider orientation="left">Thông tin thuê</Divider>
           <Form.Item
-            label="Giá thuê mỗi tháng (VND)"
+            label="Giá thuê (VND)"
             name="pricePerMonth"
-            rules={[{ required: true, message: "Vui lòng nhập giá thuê" }]}
+            rules={[{ required: true }]}
           >
             <InputNumber style={{ width: "100%" }} />
           </Form.Item>
-
           <Form.Item
             label="Diện tích (m²)"
             name="areaSqm"
-            rules={[{ required: true, message: "Vui lòng nhập diện tích" }]}
+            rules={[{ required: true }]}
           >
             <InputNumber style={{ width: "100%" }} />
           </Form.Item>
@@ -327,44 +372,79 @@ const PostManagement = () => {
           </Form.Item>
         </Form>
 
-        {/* 🖼 Hình ảnh */}
-        {currentRoom?.images?.length > 0 && (
+        {/* ẢNH */}
+        {isEditing && (
           <>
-            <Divider orientation="left">Hình ảnh</Divider>
-            <Image.PreviewGroup>
-              <div
-                className="image-gallery"
-                style={{ display: "flex", flexWrap: "wrap", gap: 10 }}
-              >
-                {currentRoom.images.map((img, index) => (
-                  <Image
-                    key={img.id || index}
-                    width={120}
-                    height={90}
-                    src={img.imageUrl}
-                    alt={`Ảnh ${index + 1}`}
-                    style={{ objectFit: "cover", borderRadius: 6 }}
-                  />
+            <Divider orientation="left">Ảnh</Divider>
+            <Space direction="vertical" style={{ width: "100%" }}>
+              <Input.Search
+                placeholder="Nhập URL ảnh mới"
+                enterButton={<PlusOutlined />}
+                onSearch={handleAddImage}
+              />
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 10 }}>
+                {currentRoom?.images?.map((img) => (
+                  <div
+                    key={img.id || img.imageUrl}
+                    style={{ position: "relative" }}
+                  >
+                    <Image
+                      width={120}
+                      height={90}
+                      src={img.imageUrl}
+                      style={{ objectFit: "cover", borderRadius: 6 }}
+                    />
+                    <Button
+                      icon={<MinusCircleOutlined />}
+                      size="small"
+                      danger
+                      style={{
+                        position: "absolute",
+                        top: -8,
+                        right: -8,
+                        borderRadius: "50%",
+                      }}
+                      onClick={() => handleRemoveImage(img.id)}
+                    />
+                  </div>
                 ))}
               </div>
-            </Image.PreviewGroup>
+            </Space>
           </>
         )}
 
-        {/* 🛋 Tiện ích */}
-        {currentRoom?.amenities?.length > 0 && (
+        {/* TIỆN ÍCH */}
+        {isEditing && (
           <>
             <Divider orientation="left">Tiện ích</Divider>
+            <Input.Search
+              placeholder="Nhập tên tiện ích mới"
+              enterButton={<PlusOutlined />}
+              onSearch={handleAddAmenity}
+            />
             <List
               bordered
-              dataSource={currentRoom.amenities}
-              renderItem={(item) => <List.Item>{item.name}</List.Item>}
+              dataSource={currentRoom?.amenities || []}
+              renderItem={(item) => (
+                <List.Item
+                  actions={[
+                    <Button
+                      icon={<MinusCircleOutlined />}
+                      size="small"
+                      danger
+                      onClick={() => handleRemoveAmenity(item.name)}
+                    />,
+                  ]}
+                >
+                  {item.name}
+                </List.Item>
+              )}
             />
           </>
         )}
       </Modal>
 
-      {/* 🗑️ Modal xác nhận xóa */}
+      {/* Modal xóa */}
       <Modal
         title="Xác nhận xóa bài đăng"
         open={isDeleteModalOpen}
@@ -377,11 +457,7 @@ const PostManagement = () => {
         centered
       >
         <p>
-          Bạn có chắc chắn muốn xóa <b>{selectedRowKeys.length}</b> bài đăng đã
-          chọn không?
-        </p>
-        <p style={{ color: "gray", fontSize: 13 }}>
-          Hành động này sẽ **xóa mềm (soft delete)** bài đăng khỏi hệ thống.
+          Bạn có chắc muốn xóa <b>{selectedRowKeys.length}</b> bài đăng không?
         </p>
       </Modal>
     </div>

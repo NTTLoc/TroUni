@@ -6,11 +6,13 @@ import {
   FileTextOutlined,
   SettingOutlined,
   ApartmentOutlined,
+  DollarOutlined, // 💰 icon cho Payment
 } from "@ant-design/icons";
 import Overview from "../../features/admin/overview/Overview";
 import UserManagement from "../../features/admin/userManagement/UserManagement";
 import PostManagement from "../../features/admin/postManagement/PostManagement";
 import AmenityManagement from "../../features/admin/amenityManagement/AmenityManagement";
+import PaymentManagement from "../../features/admin/paymentManagement/PaymentManagement";
 import Settings from "../../features/admin/settings/Settings";
 import "./Dashboard.scss";
 
@@ -22,20 +24,23 @@ const Dashboard = () => {
     localStorage.getItem("adminMenu") || "overview"
   );
 
-  // 🔹 Mỗi khi chọn menu khác → lưu lại vào localStorage
+  // 🔹 Khi chọn menu khác → lưu lại vào localStorage
   const handleMenuClick = (e) => {
     setSelectedMenu(e.key);
     localStorage.setItem("adminMenu", e.key);
   };
 
+  // 🔹 Menu hiển thị ở sidebar
   const menuItems = [
     { key: "overview", icon: <HomeOutlined />, label: "Tổng quan" },
     { key: "users", icon: <UserOutlined />, label: "Người dùng" },
     { key: "posts", icon: <FileTextOutlined />, label: "Bài đăng" },
     { key: "amenities", icon: <ApartmentOutlined />, label: "Tiện ích" },
+    { key: "payments", icon: <DollarOutlined />, label: "Thanh toán" }, // 💰 thêm dòng này
     { key: "settings", icon: <SettingOutlined />, label: "Cài đặt" },
   ];
 
+  // 🔹 Render nội dung chính dựa theo menu được chọn
   const renderContent = () => {
     switch (selectedMenu) {
       case "overview":
@@ -46,6 +51,8 @@ const Dashboard = () => {
         return <PostManagement />;
       case "amenities":
         return <AmenityManagement />;
+      case "payments":
+        return <PaymentManagement />; // ✅ thêm phần này
       case "settings":
         return <Settings />;
       default:
