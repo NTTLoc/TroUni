@@ -21,27 +21,27 @@ const PostDetail = () => {
   const [error, setError] = useState(null);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [roomStatus, setRoomStatus] = useState(null);
-  
+
   const { auth } = useAuth();
-  const { 
-    paymentData, 
-    isLoading: paymentLoading, 
-    error: paymentError, 
+  const {
+    paymentData,
+    isLoading: paymentLoading,
+    error: paymentError,
     paymentStatus,
     createRoomPayment,
     confirmPayment,
     cancelPayment,
-    resetPayment 
+    resetPayment,
   } = usePayment();
 
   useEffect(() => {
     setLoading(true);
     getRoomByIdApi(id)
-        .then((res) => {
-          setPost(res.data);
-          setRoomStatus(res.data.status || 'AVAILABLE'); // Set room status từ response
-          setLoading(false);
-        })
+      .then((res) => {
+        setPost(res.data);
+        setRoomStatus(res.data.status || "AVAILABLE"); // Set room status từ response
+        setLoading(false);
+      })
       .catch((err) => {
         console.error(err);
         setError("Không tìm thấy bài đăng");
@@ -51,7 +51,7 @@ const PostDetail = () => {
 
   // Handle payment success
   const handlePaymentSuccess = async (response) => {
-    if (response.action === 'confirm') {
+    if (response.action === "confirm") {
       try {
         await confirmPayment(
           response.transactionCode,
@@ -61,16 +61,20 @@ const PostDetail = () => {
         );
         setShowPaymentModal(false);
         reloadRoomData();
-        alert('Đặt cọc thành công! Chủ trọ sẽ xác nhận và cập nhật trạng thái phòng.');
+        alert(
+          "Đặt cọc thành công! Chủ trọ sẽ xác nhận và cập nhật trạng thái phòng."
+        );
       } catch (error) {
-        console.error('Payment confirmation error:', error);
-        alert('Có lỗi xảy ra khi xác nhận thanh toán');
+        console.error("Payment confirmation error:", error);
+        alert("Có lỗi xảy ra khi xác nhận thanh toán");
       }
     } else {
       setShowPaymentModal(false);
       reloadRoomData();
-      console.log('Payment success:', response);
-      alert('Đặt cọc thành công! Chủ trọ sẽ xác nhận và cập nhật trạng thái phòng.');
+      console.log("Payment success:", response);
+      alert(
+        "Đặt cọc thành công! Chủ trọ sẽ xác nhận và cập nhật trạng thái phòng."
+      );
     }
   };
 
@@ -79,57 +83,56 @@ const PostDetail = () => {
     getRoomByIdApi(id)
       .then((res) => {
         setPost(res.data);
-        setRoomStatus(res.data.status || 'AVAILABLE');
+        setRoomStatus(res.data.status || "AVAILABLE");
       })
       .catch((err) => {
-        console.error('Error reloading room data:', err);
+        console.error("Error reloading room data:", err);
       });
   };
 
   // Handle payment error
   const handlePaymentError = async (error) => {
-    if (error.action === 'cancel') {
+    if (error.action === "cancel") {
       try {
         await cancelPayment(error.transactionCode, error.status);
         setShowPaymentModal(false);
-        alert('Thanh toán đã được hủy');
+        alert("Thanh toán đã được hủy");
       } catch (cancelError) {
-        console.error('Payment cancellation error:', cancelError);
-        alert('Có lỗi xảy ra khi hủy thanh toán');
+        console.error("Payment cancellation error:", cancelError);
+        alert("Có lỗi xảy ra khi hủy thanh toán");
       }
     } else {
-      console.error('Payment error:', error);
-      alert('Có lỗi xảy ra trong quá trình thanh toán');
+      console.error("Payment error:", error);
+      alert("Có lỗi xảy ra trong quá trình thanh toán");
     }
   };
 
   // Handle payment button click - chỉ đặt cọc
   const handlePaymentClick = async () => {
     if (!auth.user) {
-      alert('Vui lòng đăng nhập để đặt cọc');
+      alert("Vui lòng đăng nhập để đặt cọc");
       return;
     }
 
     if (!post) {
-      alert('Không tìm thấy thông tin phòng');
+      alert("Không tìm thấy thông tin phòng");
       return;
     }
 
     // Test với 3000 VND
     const amount = 3000;
-    const description = formatPayOSDescription(`Đặt cọc phòng ${post.title}`, 'room');
+    const description = formatPayOSDescription(
+      `Đặt cọc phòng ${post.title}`,
+      "room"
+    );
 
     try {
-      const response = await createRoomPayment(
-        post.id,
-        amount,
-        description
-      );
-      
+      const response = await createRoomPayment(post.id, amount, description);
+
       // Redirect luôn tới PayOS checkout nếu có checkoutUrl
       if (response.checkoutUrl) {
-        console.log('🔄 Redirecting to PayOS checkout:', response.checkoutUrl);
-        window.open(response.checkoutUrl, '_blank');
+        console.log("🔄 Redirecting to PayOS checkout:", response.checkoutUrl);
+        window.open(response.checkoutUrl, "_blank");
       } else {
         // Fallback: mở modal nếu không có checkoutUrl
         setShowPaymentModal(true);
@@ -169,27 +172,28 @@ const PostDetail = () => {
           phone={post.owner?.profile?.phoneNumber || "Không có SĐT"}
         />
 
+        <PostContact roomId={post.id} />
+
         <RelatedPosts />
       </div>
 
       {/* Cột phải */}
       <div className="post-detail__right">
         <PostOwner owner={post.owner} />
-        <PostContact />
-        
+
         {/* Payment Section - Chỉ hiển thị khi room chưa được đặt cọc */}
-        {roomStatus !== 'rented' && (
+        {roomStatus !== "rented" && (
           <div className="payment-section">
             <div className="payment-card">
               <div className="payment-info">
                 <h3>Đặt cọc phòng trọ</h3>
-                
+
                 <div className="deposit-info">
                   <div className="deposit-amount">
                     <span className="amount-label">Số tiền đặt cọc:</span>
                     <span className="amount-value">3.000 ₫</span>
                   </div>
-                  
+
                   <div className="deposit-benefits">
                     <h4>Lợi ích khi đặt cọc:</h4>
                     <ul>
@@ -199,14 +203,15 @@ const PostDetail = () => {
                     </ul>
                   </div>
                 </div>
-                
+
                 <p className="payment-description">
-                  Đặt cọc 100.000 ₫ để giữ chỗ phòng trọ. Số tiền còn lại sẽ được thanh toán khi nhận phòng và ký hợp đồng.
+                  Đặt cọc 100.000 ₫ để giữ chỗ phòng trọ. Số tiền còn lại sẽ
+                  được thanh toán khi nhận phòng và ký hợp đồng.
                 </p>
               </div>
-              
-              <button 
-                className={`payment-btn ${paymentLoading ? 'loading' : ''}`}
+
+              <button
+                className={`payment-btn ${paymentLoading ? "loading" : ""}`}
                 onClick={handlePaymentClick}
                 disabled={paymentLoading || !auth.user}
               >
@@ -217,8 +222,8 @@ const PostDetail = () => {
                   </>
                 ) : (
                   <>
-                    <CreditCardOutlined style={{ fontSize: '20px' }} />
-                    {auth.user ? 'Đặt cọc ngay' : 'Đăng nhập để đặt cọc'}
+                    <CreditCardOutlined style={{ fontSize: "20px" }} />
+                    {auth.user ? "Đặt cọc ngay" : "Đăng nhập để đặt cọc"}
                   </>
                 )}
               </button>
@@ -227,18 +232,20 @@ const PostDetail = () => {
         )}
 
         {/* Status Message khi đã đặt cọc */}
-        {roomStatus === 'rented' && (
+        {roomStatus === "rented" && (
           <div className="room-status-message">
             <div className="status-card">
               <div className="status-info">
                 <h3>Phòng đã được đặt cọc</h3>
                 <div className="status-badge">
-                  <CheckCircleOutlined style={{ fontSize: '20px', color: '#10b981' }} />
+                  <CheckCircleOutlined
+                    style={{ fontSize: "20px", color: "#10b981" }}
+                  />
                   <span>Đã giữ chỗ</span>
                 </div>
                 <p className="status-description">
-                  Phòng này đã được đặt cọc và đang chờ xác nhận từ chủ trọ. 
-                  Vui lòng liên hệ trực tiếp để hoàn tất thủ tục thuê phòng.
+                  Phòng này đã được đặt cọc và đang chờ xác nhận từ chủ trọ. Vui
+                  lòng liên hệ trực tiếp để hoàn tất thủ tục thuê phòng.
                 </p>
               </div>
             </div>

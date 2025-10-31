@@ -38,16 +38,15 @@ const VerifyEmail = () => {
   const handleResend = async () => {
     try {
       const res = await resendEmailApi(email);
-      console.log(res.data);
 
       if (res?.code === 200) {
-        console.log("Đã gửi lại mã. Vui lòng kiểm tra email.");
+        message.success("Đã gửi lại mã. Vui lòng kiểm tra email.");
       } else {
-        setError(res?.message || "Không thể gửi lại mã, thử lại sau.");
+        message.error("Đã gửi lại mã. Vui lòng kiểm tra email.");
       }
     } catch (err) {
       console.error("Resend error:", err);
-      setError("Có lỗi xảy ra khi gửi lại mã.");
+      message.error("Có lỗi xảy ra khi gửi lại mã.");
     }
   };
 

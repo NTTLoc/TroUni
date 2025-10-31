@@ -1,6 +1,10 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
 import { Input, Button, Spin } from "antd";
-import { SendOutlined, VideoCameraOutlined } from "@ant-design/icons";
+import {
+  SendOutlined,
+  VideoCameraOutlined,
+  ArrowDownOutlined,
+} from "@ant-design/icons";
 import { useNavigate, useLocation } from "react-router-dom";
 import MessageBubble from "../messageBubble/MessageBubble";
 import { getChatHistoryApi } from "../../../services/chatApi";
@@ -9,28 +13,26 @@ import { useChatRoom } from "../../../hooks/useChatRoom";
 const ChatWindow = ({ chat, currentUser }) => {
   const [messageInput, setMessageInput] = useState("");
   const [loading, setLoading] = useState(true);
+  const [showScrollButton, setShowScrollButton] = useState(false);
+  const messagesContainerRef = useRef(null);
   const messagesEndRef = useRef(null);
   const navigate = useNavigate();
   const location = useLocation();
-
   const [reconnectKey, setReconnectKey] = useState(0);
 
   const { messages, sendChatMessage, addHistoryMessage, resetMessages } =
     useChatRoom(chat?.id, currentUser?.id, reconnectKey);
 
-  // Load chat history khi chat thay đổi hoặc khi remount
+  // Load lịch sử chat
   const loadHistory = useCallback(async () => {
     if (!chat?.id) return;
-
     resetMessages();
     setLoading(true);
-
     try {
       const res = await getChatHistoryApi(chat.id);
       const history = Array.isArray(res.data?.data)
         ? res.data.data
         : res.data || [];
-
       history.forEach((msg) => addHistoryMessage(msg));
     } catch (err) {
       console.error(err);
@@ -43,7 +45,7 @@ const ChatWindow = ({ chat, currentUser }) => {
     loadHistory();
   }, [chat?.id, loadHistory]);
 
-  // Khi quay lại từ VideoCall, force reconnect WebSocket
+  // Reconnect khi quay lại từ video call
   useEffect(() => {
     if (location.state?.fromCall) {
       setReconnectKey(Date.now());
@@ -51,10 +53,36 @@ const ChatWindow = ({ chat, currentUser }) => {
     }
   }, [location.state?.fromCall, loadHistory]);
 
-  // Auto scroll khi messages thay đổi
+  // Auto scroll khi có tin nhắn mới (nếu người dùng đang ở gần cuối)
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    const container = messagesContainerRef.current;
+    if (!container) return;
+
+    const isAtBottom =
+      container.scrollHeight - container.scrollTop - container.clientHeight <
+      100;
+
+    if (isAtBottom) {
+      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    } else {
+      setShowScrollButton(true);
+    }
   }, [messages]);
+
+  // Theo dõi hành vi cuộn để hiện / ẩn nút “cuộn xuống”
+  const handleScroll = () => {
+    const container = messagesContainerRef.current;
+    if (!container) return;
+    const nearBottom =
+      container.scrollHeight - container.scrollTop - container.clientHeight <
+      150;
+    setShowScrollButton(!nearBottom);
+  };
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    setShowScrollButton(false);
+  };
 
   // Gửi tin nhắn
   const handleSend = () => {
@@ -67,11 +95,7 @@ const ChatWindow = ({ chat, currentUser }) => {
   const handleVideoCall = () => {
     if (!chat?.id) return;
     const callerName = currentUser?.username || "Người dùng";
-
-    // Gửi thông báo video call
     sendChatMessage(`${callerName} đang yêu cầu video call.`);
-
-    // Điều hướng sang video call và đánh dấu fromChat để có thể remount khi quay lại
     navigate(`/call?roomId=${chat.id}&name=${encodeURIComponent(callerName)}`, {
       state: { fromChat: true },
     });
@@ -89,7 +113,18 @@ const ChatWindow = ({ chat, currentUser }) => {
         />
       </div>
 
-      <div className="chat-messages">
+      <div
+        className="chat-messages"
+        ref={messagesContainerRef}
+        onScroll={handleScroll}
+        style={{
+          flex: 1,
+          overflowY: "auto",
+          padding: "10px",
+          position: "relative",
+          height: "70vh",
+        }}
+      >
         {loading ? (
           <Spin tip="Đang tải tin nhắn..." style={{ marginTop: 20 }} />
         ) : messages.length === 0 ? (
@@ -107,7 +142,23 @@ const ChatWindow = ({ chat, currentUser }) => {
         <div ref={messagesEndRef} />
       </div>
 
-      <div className="chat-input">
+      {showScrollButton && (
+        <Button
+          type="primary"
+          shape="circle"
+          icon={<ArrowDownOutlined />}
+          onClick={scrollToBottom}
+          className="scroll-to-bottom-btn"
+          style={{
+            position: "absolute",
+            bottom: 80,
+            right: 20,
+            boxShadow: "0 2px 6px rgba(0,0,0,0.3)",
+          }}
+        />
+      )}
+
+      <div className="chat-input" style={{ display: "flex", padding: "10px" }}>
         <Input
           value={messageInput}
           onChange={(e) => setMessageInput(e.target.value)}
@@ -119,6 +170,7 @@ const ChatWindow = ({ chat, currentUser }) => {
           icon={<SendOutlined />}
           onClick={handleSend}
           disabled={!messageInput.trim()}
+          style={{ marginLeft: 8 }}
         />
       </div>
     </div>

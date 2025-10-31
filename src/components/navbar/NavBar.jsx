@@ -108,9 +108,8 @@ const Navbar = () => {
       ) : (
         <div className="menu-section">
           <Link to={path.SAVED}>Tin đăng đã lưu</Link>
-          <Link to={path.SAVED_SEARCH}>Tìm kiếm đã lưu</Link>
-          <Link to={path.HISTORY}>Lịch sử xem tin</Link>
-          <Link to={path.REVIEWS}>Đánh giá từ tôi</Link>
+          <Link to={path.CHAT}>Chat</Link>
+          {/* <Link to={path.REVIEWS}>Đánh giá từ tôi</Link> */}
         </div>
       )}
 

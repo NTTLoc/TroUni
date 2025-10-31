@@ -110,7 +110,15 @@ const VideoCallPage = () => {
           break;
       }
     };
-    socket.onclose = () => console.log("WebSocket closed.");
+
+    socket.onclose = () => {
+      console.warn("WebSocket closed. Trying to reconnect...");
+      setTimeout(() => {
+        if (!joined) return;
+        joinCall(); // thử kết nối lại nếu user vẫn đang trong phòng
+      }, 3000);
+    };
+
     socket.onerror = (err) => console.error("WebSocket error:", err);
   };
 

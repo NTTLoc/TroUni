@@ -6,13 +6,15 @@ import {
   FileTextOutlined,
   SettingOutlined,
   ApartmentOutlined,
-  DollarOutlined, // 💰 icon cho Payment
+  DollarOutlined,
+  StarOutlined, // ⭐ icon cho phần đánh giá
 } from "@ant-design/icons";
 import Overview from "../../features/admin/overview/Overview";
 import UserManagement from "../../features/admin/userManagement/UserManagement";
 import PostManagement from "../../features/admin/postManagement/PostManagement";
 import AmenityManagement from "../../features/admin/amenityManagement/AmenityManagement";
 import PaymentManagement from "../../features/admin/paymentManagement/PaymentManagement";
+import ReviewManagement from "../../features/admin/reviewManagement/ReviewManagement";
 import Settings from "../../features/admin/settings/Settings";
 import "./Dashboard.scss";
 
@@ -36,7 +38,8 @@ const Dashboard = () => {
     { key: "users", icon: <UserOutlined />, label: "Người dùng" },
     { key: "posts", icon: <FileTextOutlined />, label: "Bài đăng" },
     { key: "amenities", icon: <ApartmentOutlined />, label: "Tiện ích" },
-    { key: "payments", icon: <DollarOutlined />, label: "Thanh toán" }, // 💰 thêm dòng này
+    { key: "payments", icon: <DollarOutlined />, label: "Thanh toán" },
+    { key: "reviews", icon: <StarOutlined />, label: "Đánh giá" }, // ⭐ thêm dòng này
     { key: "settings", icon: <SettingOutlined />, label: "Cài đặt" },
   ];
 
@@ -52,7 +55,9 @@ const Dashboard = () => {
       case "amenities":
         return <AmenityManagement />;
       case "payments":
-        return <PaymentManagement />; // ✅ thêm phần này
+        return <PaymentManagement />;
+      case "reviews":
+        return <ReviewManagement />; // ✅ thêm phần quản lý đánh giá
       case "settings":
         return <Settings />;
       default:
