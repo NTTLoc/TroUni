@@ -3,7 +3,7 @@ import { path } from "../../utils/constants";
 import Account from "../../pages/account/Account";
 import Dashboard from "../../pages/admin/Dashboard";
 import LandlordDashboard from "../../pages/landlord/LandlordDashboard";
-import CheckAuth from "../checkAuth/checkAuth";
+import CheckAuth from "../checkAuth/CheckAuth";
 import ManagePost from "../../pages/managePost/ManagePost";
 import Chat from "../../pages/chat/Chat";
 
@@ -18,13 +18,6 @@ const PrivateRoutes = [
       },
     ],
   },
-  // {
-  //   element: <CheckAuth allowedRoles={["STUDENT"]} />,
-  //   children: [
-  //     { path: path.ACCOUNT, element: <Account /> },
-  //     { path: path.MANAGE, element: <ManagePost /> },
-  //   ],
-  // },
   {
     path: path.ACCOUNT,
     element: <CheckAuth allowedRoles={["STUDENT"]} />,
