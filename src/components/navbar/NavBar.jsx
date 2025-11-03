@@ -128,7 +128,7 @@ const Navbar = () => {
         <Link to="/">TroUni</Link>
       </div>
 
-      <SearchBar />
+      {/* <SearchBar /> */}
 
       <nav className="navbar__links">
         {/* <Link to={path.SAVED} className="icon-btn">
