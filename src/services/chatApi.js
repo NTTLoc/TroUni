@@ -2,8 +2,8 @@ import SockJS from "sockjs-client";
 import { Client } from "@stomp/stompjs";
 import axios from "../utils/axios.customize";
 
-// const SOCKET_URL = "http://localhost:8080/ws";
-const SOCKET_URL = "https://trouni-228432317225.asia-east1.run.app/ws";
+const SOCKET_URL = "http://localhost:8080/ws";
+// const SOCKET_URL = "https://trouni-228432317225.asia-east1.run.app/ws";
 let stompClient = null;
 let isConnected = false;
 let roomCallbacks = new Map(); // roomId => callback

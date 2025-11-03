@@ -27,19 +27,18 @@ const Chat = () => {
   useEffect(() => {
     if (!currentUser?.id) return;
 
-    getChatRoomsByUserApi(currentUser.id)
-      .then(async (res) => {
+    const fetchChats = async () => {
+      try {
+        const res = await getChatRoomsByUserApi(currentUser.id);
         const chatRoomsRaw = Array.isArray(res.data) ? res.data : [];
 
-        // Chuẩn hóa dữ liệu: lấy người còn lại để hiển thị avatar + name
         const chatRooms = chatRoomsRaw.map((room) => {
           const other =
             room.participants?.find((p) => p.id !== currentUser.id) || {};
-
           return {
             id: room.id,
             name: other.username || "Người dùng",
-            avatar: other.profile.avatarUrl || assets.avatar,
+            avatar: other.profile?.avatarUrl || assets.avatar,
             userId: other.id,
             lastMessage: room.lastMessage || "Chưa có tin nhắn",
             participants: room.participants,
@@ -48,31 +47,39 @@ const Chat = () => {
 
         setConversationList(chatRooms);
 
+        // 🚫 Nếu landlord → không xử lý PostOwner chat
+        if (currentUser?.role === "LANDLORD" && chatTargetFromState) {
+          message.warning("Chủ trọ không thể nhắn tin từ bài đăng của mình!");
+          return;
+        }
+
         // ✅ Nếu đi từ PostOwner → tạo hoặc lấy room tương ứng
-        if (chatTargetFromState?.userId) {
-          try {
-            const roomRes = await createChatRoomApi(chatTargetFromState.userId);
-            const room = roomRes.data;
+        if (chatTargetFromState?.userId && currentUser?.role !== "LANDLORD") {
+          const roomRes = await createChatRoomApi(chatTargetFromState.userId);
+          const room = roomRes.data;
 
-            const other =
-              room.participants?.find((p) => p.id !== currentUser.id) || {};
+          const other =
+            room.participants?.find((p) => p.id !== currentUser.id) || {};
 
-            setSelectedChat({
-              id: room.id,
-              name: other.username || chatTargetFromState.name,
-              avatar: other.avatar || chatTargetFromState.avatar,
-              userId: other.id || chatTargetFromState.userId,
-              participants: room.participants,
-            });
-          } catch (err) {
-            console.error("❌ Failed to create/get chat room:", err);
-          }
+          setSelectedChat({
+            id: room.id,
+            name: other.username || chatTargetFromState.name,
+            avatar: other.avatar || chatTargetFromState.avatar,
+            userId: other.id || chatTargetFromState.userId,
+            participants: room.participants,
+          });
         } else if (!selectedChat && chatRooms.length > 0) {
-          // ✅ Nếu user vào thẳng /chat → auto chọn phòng đầu tiên
           setSelectedChat(chatRooms[0]);
         }
-      })
-      .catch((err) => console.error("❌ Failed to fetch chat rooms:", err));
+      } catch (err) {
+        console.error("❌ Failed to fetch chat rooms:", err);
+      }
+    };
+
+    fetchChats();
+    const interval = setInterval(fetchChats, 5000); // 🔁 Reload mỗi 5s
+
+    return () => clearInterval(interval);
   }, [currentUser, chatTargetFromState]);
 
   const handleSelectChat = (chat) => {

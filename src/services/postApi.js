@@ -407,7 +407,7 @@ export const formatRoomData = (formData) => {
     status: formData.status || "available",
     // ✅ Sửa: Backend expect amenities với format [{name: "..."}]
     amenities: formData.amenityIds
-      ? formData.amenityIds.map((amenity) => ({ name: amenity.name }))
+      ? formData.amenityIds.map((amenity) => ({ id: amenity.id }))
       : [],
     images: formData.images || [],
   };
@@ -448,8 +448,14 @@ export const formatUpdateRoomData = (formData) => {
 
 // ============ CUA BO NE MAY CON ====================
 // ADMIN & MANAGER
-// Lấy thông tin tất cả phòng
+// Lấy thông tin tất cả phòng phân trang
 export const getPaginatedRoomsApi = () => {
   const URL_API = "/rooms/paginated";
+  return axios.get(URL_API);
+};
+
+// Lấy thông tin tất cả phòng
+export const getAllRoomsAdminApi = () => {
+  const URL_API = "/rooms/all";
   return axios.get(URL_API);
 };

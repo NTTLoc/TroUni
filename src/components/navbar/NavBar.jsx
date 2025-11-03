@@ -107,7 +107,7 @@ const Navbar = () => {
         </div>
       ) : (
         <div className="menu-section">
-          <Link to={path.SAVED}>Tin đăng đã lưu</Link>
+          {/* <Link to={path.SAVED}>Tin đăng đã lưu</Link> */}
           <Link to={path.CHAT}>Chat</Link>
           {/* <Link to={path.REVIEWS}>Đánh giá từ tôi</Link> */}
         </div>
@@ -131,14 +131,14 @@ const Navbar = () => {
       <SearchBar />
 
       <nav className="navbar__links">
-        <Link to={path.SAVED} className="icon-btn">
+        {/* <Link to={path.SAVED} className="icon-btn">
           <HeartOutlined />
         </Link>
         <Link to={path.NOTIFICATIONS} className="icon-btn">
           <Badge count={1} size="small">
             <BellOutlined />
           </Badge>
-        </Link>
+        </Link> */}
 
         <div className="navbar__right">
           {auth.user?.role === "LANDLORD" && (

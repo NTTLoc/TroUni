@@ -223,7 +223,7 @@ const AmenityManagement = () => {
       };
       await createAmenity(payload);
 
-      showMsg.success("✅ Đã thêm tiện ích mới!");
+      showMsg.success("Đã thêm tiện ích mới!");
       setIsModalOpen(false);
       fetchAllAmenities();
     } catch (err) {

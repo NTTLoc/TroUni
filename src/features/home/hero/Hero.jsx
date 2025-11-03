@@ -8,10 +8,6 @@ const Hero = () => {
           Trọ UNI giúp bạn tìm được chỗ ở phù hợp, dễ dàng và nhanh chóng trong
           vài cú click.
         </p>
-        <div className="cta-buttons">
-          <button className="btn-primary">Tìm Phòng</button>
-          <button className="btn-secondary">Tìm Tiện nghi</button>
-        </div>
         <div className="hero__stats">
           <span>15,000+ phòng trọ</span>
           <span>50,000+ sinh viên</span>

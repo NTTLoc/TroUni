@@ -61,6 +61,7 @@ const RoomForm = ({ roomId, onSuccess, onCancel }) => {
   const [selectedDistrict, setSelectedDistrict] = useState("");
   const [amenityList, setAmenityList] = useState([]);
   const [selectedLocation, setSelectedLocation] = useState(null);
+  const [resetKey, setResetKey] = useState(0);
   const [showMap, setShowMap] = useState(false);
   const message = useMessage();
 
@@ -177,180 +178,6 @@ const RoomForm = ({ roomId, onSuccess, onCancel }) => {
     const newList = imageList.filter((item) => item.uid !== file.uid);
     setImageList(newList);
   };
-
-  // Handle form submission
-  // const handleSubmit = async (values) => {
-  //   try {
-  //     setLoading(true);
-
-  //     // Debug: Log form values
-  //     console.log("📝 Form values:", values);
-  //     console.log("🖼️ Image list:", imageList);
-  //     console.log("🏠 Amenity list:", amenityList);
-
-  //     // Prepare room data (không bao gồm images)
-  //     const roomData = {
-  //       ...values,
-  //       amenityIds: amenityList.map(amenity => amenity.id),
-  //       images: []
-  //     };
-
-  //     // Convert address format cho backend
-  //     if (values.city || values.district || values.ward) {
-  //       const addressData = convertAddressForBackend({
-  //         city: values.city,
-  //         district: values.district,
-  //         ward: values.ward
-  //       });
-  //       roomData.city = addressData.city;
-  //       roomData.district = addressData.district;
-  //       roomData.ward = addressData.ward;
-  //     }
-
-  //     // Clean price data - loại bỏ dấu phẩy
-  //     if (roomData.pricePerMonth) {
-  //       roomData.pricePerMonth = removeCommasFromNumber(roomData.pricePerMonth);
-  //     }
-  //     if (roomData.areaSqm) {
-  //       roomData.areaSqm = removeCommasFromNumber(roomData.areaSqm);
-  //     }
-
-  //     console.log("📤 Final room data to send:", roomData);
-
-  //     let result;
-  //     if (isEditMode) {
-  //       result = await updateRoom(roomId, roomData);
-  //       message.success("Cập nhật phòng trọ thành công!");
-  //     } else {
-  //       result = await createRoom(roomData);
-  //       message.success("Tạo phòng trọ thành công!");
-
-  //       console.log("🔍 Debug - result:", result);
-  //       console.log("🔍 Debug - result.data:", result?.data);
-  //       console.log("🔍 Debug - result.data.id:", result?.data?.id);
-  //       console.log("🔍 Debug - result.id:", result?.id);
-  //       console.log("🔍 Debug - imageList.length:", imageList.length);
-  //       console.log("🔍 Debug - condition check:", imageList.length > 0 && (result?.data?.id || result?.id));
-
-  //       // Nếu có ảnh, upload ảnh sau khi tạo phòng thành công
-  //       const roomId = result?.data?.id || result?.id;
-  //       if (imageList.length > 0 && roomId) {
-  //         try {
-  //           console.log("🖼️ Image list for upload:", imageList);
-  //           console.log("🏠 Room created successfully, ID:", roomId);
-  //           console.log("📊 Full result data:", result);
-
-  //           const imageUrls = [];
-
-  //           // Xử lý từng ảnh để lấy URL
-  //           for (const img of imageList) {
-  //             console.log("📸 Processing image:", img);
-
-  //             // Nếu có URL sẵn (đã upload trước đó)
-  //             if (img.url && !img.originFileObj) {
-  //               imageUrls.push(img.url);
-  //               continue;
-  //             }
-
-  //             // Nếu có originFileObj, cần tạo URL
-  //             if (img.originFileObj) {
-  //               try {
-  //                 console.log("📤 Processing file:", img.originFileObj.name);
-
-  //                 // Thử upload lên Cloudinary trước
-  //                 try {
-  //                   console.log("📤 Trying Cloudinary upload...");
-  //                   const cloudinaryResult = await uploadToCloudinary(img.originFileObj);
-
-  //                   if (cloudinaryResult?.secure_url) {
-  //                     imageUrls.push(cloudinaryResult.secure_url);
-  //                     console.log("✅ Real Cloudinary URL:", cloudinaryResult.secure_url);
-  //                     continue;
-  //                   }
-  //                 } catch (cloudinaryError) {
-  //                   console.warn("⚠️ Cloudinary upload failed:", cloudinaryError.message);
-  //                 }
-
-  //                 // Fallback: thử upload server nếu có
-  //                 try {
-  //                   const uploadResult = await uploadImageFileApi(img.originFileObj);
-  //                   console.log("✅ Upload result:", uploadResult);
-
-  //                   if (uploadResult?.data?.url) {
-  //                     imageUrls.push(uploadResult.data.url);
-  //                     continue;
-  //                   } else if (uploadResult?.data?.imageUrl) {
-  //                     imageUrls.push(uploadResult.data.imageUrl);
-  //                     continue;
-  //                   }
-  //                 } catch (uploadError) {
-  //                   console.warn("⚠️ Server upload failed:", uploadError.message);
-  //                 }
-
-  //                 // Fallback: tạo mock URL
-  //                 const mockUrl = generateMockImageUrl(img.originFileObj);
-  //                 console.log("🔗 Using mock URL:", mockUrl);
-  //                 imageUrls.push(mockUrl);
-
-  //               } catch (error) {
-  //                 console.error("❌ Error processing image:", error);
-  //                 message.error(`Lỗi xử lý ảnh ${img.originFileObj.name}: ${error.message}`);
-  //               }
-  //             }
-  //           }
-
-  //           console.log("🔗 Final image URLs:", imageUrls);
-
-  //           if (imageUrls.length > 0) {
-  //             const imageData = { imageUrl: imageUrls };
-  //             console.log("📤 Sending image data to room:", imageData);
-  //             console.log("🔍 Room ID to send:", roomId);
-  //             console.log("🔍 Image URLs to send:", imageUrls);
-
-  //             const imageResult = await createRoomImagesApi(roomId, imageData);
-  //             console.log("🎉 Image upload result:", imageResult);
-  //             message.success(`Lưu thành công ${imageUrls.length} ảnh vào database!`);
-  //           } else {
-  //             console.warn("⚠️ No valid image URLs found");
-  //             message.warning("Không có ảnh nào được xử lý thành công.");
-  //           }
-  //         } catch (imageError) {
-  //           console.error("❌ Upload images error:", imageError);
-  //           message.warning("Phòng trọ đã tạo nhưng upload ảnh thất bại. Vui lòng thử lại sau.");
-  //         }
-  //       }
-  //     }
-
-  //     // Reset form
-  //     form.resetFields();
-  //     setImageList([]);
-  //     setAmenityList([]);
-  //     setSelectedCity("");
-  //     setSelectedDistrict("");
-
-  //     // Call success callback
-  //     if (onSuccess) {
-  //       onSuccess(result);
-  //     }
-  //   } catch (err) {
-  //     console.error("❌ Form submission error:", err);
-
-  //     // Show detailed error message
-  //     let errorMessage = "Có lỗi xảy ra!";
-
-  //     if (err.message) {
-  //       errorMessage = err.message;
-  //     } else if (err.errors && Array.isArray(err.errors)) {
-  //       errorMessage = err.errors.join(", ");
-  //     } else if (typeof err === 'string') {
-  //       errorMessage = err;
-  //     }
-
-  //     message.error(errorMessage);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
 
   const handleSubmit = async (values) => {
     try {
@@ -472,6 +299,7 @@ const RoomForm = ({ roomId, onSuccess, onCancel }) => {
       setAmenityList([]);
       setSelectedCity("");
       setSelectedDistrict("");
+      setResetKey((prev) => prev + 1);
       if (onSuccess) onSuccess(result);
     } catch (err) {
       console.error("❌ Form submission error:", err);
@@ -687,24 +515,6 @@ const RoomForm = ({ roomId, onSuccess, onCancel }) => {
                   />
                 </Col>
               )}
-
-              {/* <Col xs={24} md={12}>
-                <Form.Item name="latitude" label="Vĩ độ (Latitude)">
-                  <Input
-                    placeholder="VD: 10.762622"
-                    style={{ width: "100%" }}
-                  />
-                </Form.Item>
-              </Col>
-
-              <Col xs={24} md={12}>
-                <Form.Item name="longitude" label="Kinh độ (Longitude)">
-                  <Input
-                    placeholder="VD: 106.660172"
-                    style={{ width: "100%" }}
-                  />
-                </Form.Item>
-              </Col> */}
             </Row>
           </div>
 
@@ -828,6 +638,7 @@ const RoomForm = ({ roomId, onSuccess, onCancel }) => {
 
             {/* ✅ AmenitySelector mới */}
             <AmenitySelector
+              key={resetKey}
               selectedAmenities={amenityList}
               onSelectionChange={setAmenityList}
               roomId={roomId}

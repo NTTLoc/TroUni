@@ -40,7 +40,7 @@ const Dashboard = () => {
     { key: "amenities", icon: <ApartmentOutlined />, label: "Tiện ích" },
     { key: "payments", icon: <DollarOutlined />, label: "Thanh toán" },
     { key: "reviews", icon: <StarOutlined />, label: "Đánh giá" }, // ⭐ thêm dòng này
-    { key: "settings", icon: <SettingOutlined />, label: "Cài đặt" },
+    // { key: "settings", icon: <SettingOutlined />, label: "Cài đặt" },
   ];
 
   // 🔹 Render nội dung chính dựa theo menu được chọn
@@ -58,8 +58,8 @@ const Dashboard = () => {
         return <PaymentManagement />;
       case "reviews":
         return <ReviewManagement />; // ✅ thêm phần quản lý đánh giá
-      case "settings":
-        return <Settings />;
+      // case "settings":
+      //   return <Settings />;
       default:
         return (
           <Card>
