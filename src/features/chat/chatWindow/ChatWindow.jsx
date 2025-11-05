@@ -9,6 +9,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import MessageBubble from "../messageBubble/MessageBubble";
 import { getChatHistoryApi } from "../../../services/chatApi";
 import { useChatRoom } from "../../../hooks/useChatRoom";
+import dayjs from "dayjs";
 
 const ChatWindow = ({ chat, currentUser }) => {
   const [messageInput, setMessageInput] = useState("");
@@ -23,7 +24,7 @@ const ChatWindow = ({ chat, currentUser }) => {
   const { messages, sendChatMessage, addHistoryMessage, resetMessages } =
     useChatRoom(chat?.id, currentUser?.id, reconnectKey);
 
-  // Load lịch sử chat
+  // 🟢 Load lịch sử chat
   const loadHistory = useCallback(async () => {
     if (!chat?.id) return;
     resetMessages();
@@ -45,7 +46,7 @@ const ChatWindow = ({ chat, currentUser }) => {
     loadHistory();
   }, [chat?.id, loadHistory]);
 
-  // Reconnect khi quay lại từ video call
+  // 🔁 Reconnect khi quay lại từ video call
   useEffect(() => {
     if (location.state?.fromCall) {
       setReconnectKey(Date.now());
@@ -53,7 +54,7 @@ const ChatWindow = ({ chat, currentUser }) => {
     }
   }, [location.state?.fromCall, loadHistory]);
 
-  // Auto scroll khi có tin nhắn mới (nếu người dùng đang ở gần cuối)
+  // 🔽 Auto scroll khi có tin nhắn mới
   useEffect(() => {
     const container = messagesContainerRef.current;
     if (!container) return;
@@ -69,7 +70,16 @@ const ChatWindow = ({ chat, currentUser }) => {
     }
   }, [messages]);
 
-  // Theo dõi hành vi cuộn để hiện / ẩn nút “cuộn xuống”
+  // ✅ Auto scroll khi load xong lịch sử (khi reload)
+  useEffect(() => {
+    if (!loading && messages.length > 0) {
+      setTimeout(() => {
+        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+      }, 200);
+    }
+  }, [loading, messages]);
+
+  // 🖱️ Theo dõi cuộn
   const handleScroll = () => {
     const container = messagesContainerRef.current;
     if (!container) return;
@@ -84,20 +94,77 @@ const ChatWindow = ({ chat, currentUser }) => {
     setShowScrollButton(false);
   };
 
-  // Gửi tin nhắn
+  // ✉️ Gửi tin nhắn
   const handleSend = () => {
     if (!messageInput.trim()) return;
     sendChatMessage(messageInput.trim());
     setMessageInput("");
+
+    // 🔽 Auto scroll ngay khi gửi tin
+    setTimeout(() => {
+      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    }, 100);
   };
 
-  // Gọi video
+  // 📹 Gọi video
   const handleVideoCall = () => {
     if (!chat?.id) return;
     const callerName = currentUser?.username || "Người dùng";
     sendChatMessage(`${callerName} đang yêu cầu video call.`);
     navigate(`/call?roomId=${chat.id}&name=${encodeURIComponent(callerName)}`, {
       state: { fromChat: true },
+    });
+  };
+
+  // 🕒 Render nhóm tin nhắn kiểu Messenger
+  const renderMessagesWithTimestamps = () => {
+    return messages.map((msg, index) => {
+      const msgTime = dayjs(msg.timestamp);
+      const isToday = msgTime.isSame(dayjs(), "day");
+
+      // Tin nhắn trước đó (nếu có)
+      const prevMsg = index > 0 ? messages[index - 1] : null;
+      const prevTime = prevMsg ? dayjs(prevMsg.timestamp) : null;
+
+      let showTimestamp = false;
+
+      if (!prevMsg) {
+        // Tin đầu tiên => hiển thị
+        showTimestamp = true;
+      } else {
+        const diffMinutes = msgTime.diff(prevTime, "minute");
+
+        // khác ngày => hiển thị ngày
+        if (!msgTime.isSame(prevTime, "day")) showTimestamp = true;
+        // cùng ngày, cách nhau >= 5 phút => hiển thị giờ mới
+        else if (diffMinutes >= 5) showTimestamp = true;
+      }
+
+      let timestampLabel = "";
+      if (showTimestamp) {
+        timestampLabel = isToday
+          ? msgTime.format("HH:mm")
+          : msgTime.format("DD/MM/YYYY");
+      }
+
+      return (
+        <React.Fragment key={msg.messageId}>
+          {showTimestamp && (
+            <div
+              className="timestamp-label"
+              style={{
+                textAlign: "center",
+                color: "#999",
+                fontSize: "12px",
+                margin: "10px 0",
+              }}
+            >
+              {timestampLabel}
+            </div>
+          )}
+          <MessageBubble message={msg} currentUser={currentUser} chat={chat} />
+        </React.Fragment>
+      );
     });
   };
 
@@ -130,14 +197,7 @@ const ChatWindow = ({ chat, currentUser }) => {
         ) : messages.length === 0 ? (
           <div className="chat-empty">Chưa có tin nhắn nào</div>
         ) : (
-          messages.map((msg) => (
-            <MessageBubble
-              key={msg.messageId}
-              message={msg}
-              currentUser={currentUser}
-              chat={chat}
-            />
-          ))
+          renderMessagesWithTimestamps()
         )}
         <div ref={messagesEndRef} />
       </div>

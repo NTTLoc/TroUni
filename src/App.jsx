@@ -1,4 +1,4 @@
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 import Navbar from "./components/navbar/NavBar";
 import Footer from "./components/footer/Footer";
 import { Spin } from "antd";
@@ -6,10 +6,10 @@ import { useAuth } from "./hooks/useAuth";
 import { useEffect } from "react";
 import { getUserApi } from "./services/authApi";
 import ScrollToTop from "./ScrollToTop";
-import TestRoomApi from "./components/debug/TestRoomApi";
 
 function App() {
   const { setAuth, appLoading, setAppLoading } = useAuth();
+  const location = useLocation();
 
   useEffect(() => {
     let isMounted = true;
@@ -20,10 +20,9 @@ function App() {
         const res = await getUserApi();
 
         if (isMounted && res?.data) {
-          const userData = res.data;
           setAuth({
             isAuthenticated: true,
-            user: userData,
+            user: res.data,
           });
         }
       } catch (error) {
@@ -45,6 +44,10 @@ function App() {
     };
   }, [setAuth, setAppLoading]);
 
+  // 🟢 Xác định các trang đặc biệt
+  const isCallPage = location.pathname.startsWith("/call");
+  const isChatPage = location.pathname.startsWith("/chat");
+
   return (
     <div className="app-layout">
       {appLoading ? (
@@ -53,12 +56,16 @@ function App() {
         </div>
       ) : (
         <>
-          <Navbar />
+          {/* 🔴 Ẩn Navbar chỉ ở trang /call */}
+          {!isCallPage && <Navbar />}
+
           <ScrollToTop />
           <main className="main-content">
             <Outlet />
           </main>
-          <Footer />
+
+          {/* 🔴 Ẩn Footer ở /chat và /call */}
+          {!isChatPage && !isCallPage && <Footer />}
         </>
       )}
     </div>

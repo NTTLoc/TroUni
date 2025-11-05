@@ -9,6 +9,7 @@ import {
   createChatRoomApi,
 } from "../../services/chatApi";
 import { assets } from "../../assets/assets";
+import useMessage from "../../hooks/useMessage";
 import "./Chat.scss";
 
 const { Sider, Content } = Layout;
@@ -18,12 +19,14 @@ const Chat = () => {
   const currentUser = auth.user;
 
   const location = useLocation();
-  const chatTargetFromState = location.state?.chatTarget; // người được chọn từ PostOwner
+  const chatTargetFromState = location.state?.chatTarget;
 
-  const [selectedChat, setSelectedChat] = useState(chatTargetFromState || null);
+  const [selectedChat, setSelectedChat] = useState(null);
   const [conversationList, setConversationList] = useState([]);
 
-  // 🟢 Lấy danh sách các phòng chat của user
+  const message = useMessage();
+
+  // 🟢 Lấy danh sách các phòng chat
   useEffect(() => {
     if (!currentUser?.id) return;
 
@@ -53,7 +56,7 @@ const Chat = () => {
           return;
         }
 
-        // ✅ Nếu đi từ PostOwner → tạo hoặc lấy room tương ứng
+        // ✅ Nếu đi từ bài đăng → tạo hoặc lấy room tương ứng
         if (chatTargetFromState?.userId && currentUser?.role !== "LANDLORD") {
           const roomRes = await createChatRoomApi(chatTargetFromState.userId);
           const room = roomRes.data;
@@ -61,15 +64,27 @@ const Chat = () => {
           const other =
             room.participants?.find((p) => p.id !== currentUser.id) || {};
 
-          setSelectedChat({
+          const newChat = {
             id: room.id,
             name: other.username || chatTargetFromState.name,
             avatar: other.avatar || chatTargetFromState.avatar,
             userId: other.id || chatTargetFromState.userId,
             participants: room.participants,
-          });
-        } else if (!selectedChat && chatRooms.length > 0) {
-          setSelectedChat(chatRooms[0]);
+          };
+
+          setSelectedChat(newChat);
+          localStorage.setItem("selectedChatId", newChat.id);
+        }
+        // ✅ Nếu reload, giữ nguyên cuộc trò chuyện cũ
+        else {
+          const savedChatId = localStorage.getItem("selectedChatId");
+          const existing = chatRooms.find((c) => c.id === savedChatId);
+          if (existing) {
+            setSelectedChat(existing);
+          } else if (chatRooms.length > 0) {
+            setSelectedChat(chatRooms[0]);
+            localStorage.setItem("selectedChatId", chatRooms[0].id);
+          }
         }
       } catch (err) {
         console.error("❌ Failed to fetch chat rooms:", err);
@@ -77,13 +92,12 @@ const Chat = () => {
     };
 
     fetchChats();
-    const interval = setInterval(fetchChats, 5000); // 🔁 Reload mỗi 5s
-
-    return () => clearInterval(interval);
   }, [currentUser, chatTargetFromState]);
 
+  // 🟢 Khi chọn chat, lưu vào localStorage
   const handleSelectChat = (chat) => {
     setSelectedChat(chat);
+    localStorage.setItem("selectedChatId", chat.id);
   };
 
   return (
