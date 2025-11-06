@@ -16,23 +16,28 @@ export const fetchAndProcessStats = async () => {
       getAllPaymentsApi(),
     ]);
 
-    console.log(roomsRes);
-
     const users = Array.isArray(usersRes?.data) ? usersRes.data : [];
     const rooms = Array.isArray(roomsRes?.data) ? roomsRes.data : [];
-    const payments = Array.isArray(paymentsRes?.data) ? paymentsRes.data : [];
+    const paymentsArray = Array.isArray(paymentsRes) ? paymentsRes : [];
 
-    // --- Doanh thu theo tháng ---
-    const revenueData = Array.from({ length: 12 }, (_, i) => ({
-      month: `Tháng ${i + 1}`,
-      revenue: parseFloat(
-        (
-          payments
-            .filter((p) => new Date(p.createdAt).getMonth() + 1 === i + 1)
-            .reduce((sum, p) => sum + (p.amount || 0), 0) / 1_000_000
-        ).toFixed(2)
-      ),
-    }));
+    // --- Doanh thu theo tháng (chỉ tính các payment COMPLETED) ---
+    const revenueData = Array.from({ length: 12 }, (_, i) => {
+      const monthRevenue = paymentsArray
+        .filter(
+          (p) =>
+            p.status === "COMPLETED" && new Date(p.createdAt).getMonth() === i
+        )
+        .reduce((sum, p) => sum + (Number(p.amount) || 0), 0);
+
+      console.log("Month", i + 1, "revenue raw:", monthRevenue);
+
+      return {
+        month: `Tháng ${i + 1}`,
+        revenue: monthRevenue, // giữ nguyên VND, không chia
+      };
+    });
+
+    console.log(revenueData);
 
     // --- Người dùng mới theo tháng ---
     const userGrowthData = Array.from({ length: 12 }, (_, i) => ({

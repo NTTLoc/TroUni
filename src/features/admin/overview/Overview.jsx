@@ -56,6 +56,15 @@ const Overview = () => {
     statusData: [],
   });
 
+  // Định dạng số theo chuẩn VNĐ
+  const formatCurrencyVND = (value) => {
+    if (!value && value !== 0) return "";
+    return value.toLocaleString("vi-VN", {
+      style: "currency",
+      currency: "VND",
+    });
+  };
+
   // =====================================================
   // 🟩 FETCH 1: API tổng quan (5 ô thống kê nhanh)
   // =====================================================
@@ -89,6 +98,7 @@ const Overview = () => {
     try {
       setLoading(true);
       const data = await fetchAndProcessStats();
+      console.log(data);
 
       // Dữ liệu cho biểu đồ
       setChartData({
@@ -174,9 +184,8 @@ const Overview = () => {
                 <Statistic
                   title="Doanh thu"
                   value={stats.totalRevenue}
-                  precision={2}
                   prefix={<DollarOutlined />}
-                  suffix="Triệu"
+                  formatter={(value) => formatCurrencyVND(value)}
                 />
               </Card>
             </Col>
@@ -200,13 +209,13 @@ const Overview = () => {
 
           {/* Biểu đồ doanh thu */}
           <div className="chart-section full-width">
-            <Card title="Doanh thu theo tháng (Triệu VNĐ)">
+            <Card title="Doanh thu theo tháng">
               <ResponsiveContainer width="100%" height={350}>
                 <LineChart data={chartData.revenueData}>
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="month" />
-                  <YAxis />
-                  <Tooltip />
+                  <YAxis tickFormatter={(value) => formatCurrencyVND(value)} />
+                  <Tooltip formatter={(value) => formatCurrencyVND(value)} />
                   <Line
                     type="monotone"
                     dataKey="revenue"

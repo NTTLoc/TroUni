@@ -15,7 +15,6 @@ import PostManagement from "../../features/admin/postManagement/PostManagement";
 import AmenityManagement from "../../features/admin/amenityManagement/AmenityManagement";
 import PaymentManagement from "../../features/admin/paymentManagement/PaymentManagement";
 import ReviewManagement from "../../features/admin/reviewManagement/ReviewManagement";
-import Settings from "../../features/admin/settings/Settings";
 import "./Dashboard.scss";
 
 const { Sider, Content } = Layout;
@@ -40,7 +39,6 @@ const Dashboard = () => {
     { key: "amenities", icon: <ApartmentOutlined />, label: "Tiện ích" },
     { key: "payments", icon: <DollarOutlined />, label: "Thanh toán" },
     { key: "reviews", icon: <StarOutlined />, label: "Đánh giá" }, // ⭐ thêm dòng này
-    // { key: "settings", icon: <SettingOutlined />, label: "Cài đặt" },
   ];
 
   // 🔹 Render nội dung chính dựa theo menu được chọn
@@ -57,9 +55,7 @@ const Dashboard = () => {
       case "payments":
         return <PaymentManagement />;
       case "reviews":
-        return <ReviewManagement />; // ✅ thêm phần quản lý đánh giá
-      // case "settings":
-      //   return <Settings />;
+        return <ReviewManagement />;
       default:
         return (
           <Card>
