@@ -12,6 +12,7 @@ import {
 } from "../../services/authApi.js";
 import useMessage from "../../hooks/useMessage.js";
 import "./AuthForm.scss";
+import { assets } from "../../assets/assets.js";
 
 const AuthForm = ({ isRegister }) => {
   const navigate = useNavigate();
@@ -91,7 +92,7 @@ const AuthForm = ({ isRegister }) => {
     <div className="page-container">
       <main className={`auth ${isRegister ? "register" : "login"}`}>
         <div className="auth__container">
-          <img src="/logo.png" alt="TroUni logo" className="auth__logo" />
+          <img src={assets.Logo} alt="TroUni logo" className="auth__logo" />
           <h2>
             {isRegister ? "Đăng ký tài khoản TroUni" : "Đăng nhập vào TroUni"}
           </h2>

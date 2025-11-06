@@ -16,6 +16,7 @@ import {
 } from "@ant-design/icons";
 import avatar from "../../assets/image/avatar.jpg";
 import { ProfileContext } from "../context/profile.context";
+import { assets } from "../../assets/assets";
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -107,9 +108,7 @@ const Navbar = () => {
         </div>
       ) : (
         <div className="menu-section">
-          {/* <Link to={path.SAVED}>Tin đăng đã lưu</Link> */}
           <Link to={path.CHAT}>Chat</Link>
-          {/* <Link to={path.REVIEWS}>Đánh giá từ tôi</Link> */}
         </div>
       )}
 
@@ -125,21 +124,13 @@ const Navbar = () => {
   return (
     <header className="navbar">
       <div className="navbar__logo">
-        <Link to="/">TroUni</Link>
+        <Link to="/">
+          <img src={assets.Logo} alt="Logo" className="logo-img" />
+          <span>TroUni</span>
+        </Link>
       </div>
 
-      {/* <SearchBar /> */}
-
       <nav className="navbar__links">
-        {/* <Link to={path.SAVED} className="icon-btn">
-          <HeartOutlined />
-        </Link>
-        <Link to={path.NOTIFICATIONS} className="icon-btn">
-          <Badge count={1} size="small">
-            <BellOutlined />
-          </Badge>
-        </Link> */}
-
         <div className="navbar__right">
           {auth.user?.role === "LANDLORD" && (
             <Link to={path.ROOM_CREATE} className="btn-solid">
@@ -164,7 +155,7 @@ const Navbar = () => {
               <a onClick={(e) => e.preventDefault()}>
                 <Space className="avatar-menu">
                   <Avatar
-                    key={profile?.avatarUrl} // <== ép render lại khi có avatar
+                    key={profile?.avatarUrl}
                     src={profile?.avatarUrl || avatar}
                     size={30}
                     icon={<UserOutlined />}

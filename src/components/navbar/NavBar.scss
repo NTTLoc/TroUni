@@ -8,6 +8,25 @@
   z-index: 1000;
   background: var(--bg-navbar);
   border-bottom: 1px solid var(--border);
+  gap: 8px;
+
+  img.logo-img {
+    width: 40px; // chỉnh size logo
+    height: auto;
+    background: transparent; // đảm bảo nền trong suốt
+  }
+
+  span {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--text); // hoặc màu gradient nếu muốn
+  }
+
+  a {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+  }
 
   &__logo {
     font-size: 1.4rem;
