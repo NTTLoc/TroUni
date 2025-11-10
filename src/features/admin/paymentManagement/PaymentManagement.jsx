@@ -31,11 +31,13 @@ const PaymentManagement = () => {
   }, []);
 
   // 🔹 Lọc thanh toán theo tìm kiếm (mã giao dịch hoặc roomId)
-  const filteredPayments = payments.filter(
-    (p) =>
-      p.transactionCode?.toLowerCase().includes(searchValue.toLowerCase()) ||
-      p.roomId?.toLowerCase().includes(searchValue.toLowerCase())
-  );
+  const filteredPayments = payments
+    .filter(
+      (p) =>
+        p.transactionCode?.toLowerCase().includes(searchValue.toLowerCase()) ||
+        p.roomId?.toLowerCase().includes(searchValue.toLowerCase())
+    )
+    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
   // 🔹 Hiển thị màu trạng thái thanh toán
   const renderStatusTag = (status) => {
@@ -126,6 +128,8 @@ const PaymentManagement = () => {
       title: "Ngày tạo",
       dataIndex: "createdAt",
       key: "createdAt",
+      sorter: (a, b) => new Date(a.createdAt) - new Date(b.createdAt),
+      defaultSortOrder: "descend",
       render: (date) =>
         new Date(date).toLocaleString("vi-VN", {
           day: "2-digit",
@@ -135,6 +139,7 @@ const PaymentManagement = () => {
           minute: "2-digit",
         }),
     },
+
     {
       title: "Thao tác",
       key: "actions",

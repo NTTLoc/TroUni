@@ -13,7 +13,13 @@ const ReviewManagement = () => {
     setLoading(true);
     try {
       const res = await getAllReviewsApi();
-      if (res.code === "SUCCESS") setReviews(res.data || []);
+      if (res.code === "SUCCESS") {
+        // Sắp xếp theo ngày tạo, mới nhất lên đầu
+        const sortedData = (res.data || []).sort(
+          (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+        );
+        setReviews(sortedData);
+      }
     } catch (err) {
       console.error("❌ Lỗi tải danh sách đánh giá:", err);
     } finally {

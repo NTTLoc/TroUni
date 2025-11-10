@@ -137,6 +137,14 @@
           transition: background 0.3s;
         }
 
+        .ant-table-thead > tr > th,
+        .ant-table-tbody > tr > td {
+          text-align: left !important; /* 👈 Căn trái toàn bộ nội dung */
+          justify-content: flex-start !important; /* 👈 Hỗ trợ nếu là flex layout */
+          align-items: center; /* 👈 Giữ nội dung canh giữa theo chiều dọc */
+          padding-left: 16px !important; /* 👈 Tạo khoảng cách lề trái nhẹ */
+        }
+
         /* Dòng xen kẽ */
         .ant-table-tbody > tr:nth-child(odd) > td {
           background: var(--bg);

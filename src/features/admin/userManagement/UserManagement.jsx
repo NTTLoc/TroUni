@@ -40,7 +40,14 @@ const UserManagement = () => {
     setLoading(true);
     try {
       const res = await getAllUsersApi();
-      setUsers(res.data || []);
+      const data = Array.isArray(res.data) ? res.data : [];
+
+      // 🔹 Sắp xếp theo createdAt mới nhất
+      const sortedData = data.sort(
+        (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+      );
+
+      setUsers(sortedData);
     } catch (err) {
       console.error("❌ Lỗi tải danh sách người dùng:", err);
       message.error("Không thể tải danh sách người dùng");

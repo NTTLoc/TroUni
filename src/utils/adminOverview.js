@@ -7,8 +7,6 @@ import { getAllPaymentsApi } from "../services/paymentApi";
  */
 export const fetchAndProcessStats = async () => {
   try {
-    console.log("📊 Fetching data from all APIs...");
-
     // Gọi đồng thời 3 API
     const [usersRes, roomsRes, paymentsRes] = await Promise.all([
       getAllUsersApi(),
@@ -29,15 +27,11 @@ export const fetchAndProcessStats = async () => {
         )
         .reduce((sum, p) => sum + (Number(p.amount) || 0), 0);
 
-      console.log("Month", i + 1, "revenue raw:", monthRevenue);
-
       return {
         month: `Tháng ${i + 1}`,
         revenue: monthRevenue, // giữ nguyên VND, không chia
       };
     });
-
-    console.log(revenueData);
 
     // --- Người dùng mới theo tháng ---
     const userGrowthData = Array.from({ length: 12 }, (_, i) => ({
