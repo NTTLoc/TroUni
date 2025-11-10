@@ -459,3 +459,9 @@ export const getAllRoomsAdminApi = () => {
   const URL_API = "/rooms/all";
   return axios.get(URL_API);
 };
+
+// Lấy tất cả phòng của landlord theo userId
+export const getAllRoomsLandlordApi = (userId) => {
+  const URL_API = `/rooms/user/${userId}`;
+  return axios.get(URL_API);
+};

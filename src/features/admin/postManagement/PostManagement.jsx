@@ -53,8 +53,17 @@ const PostManagement = () => {
     try {
       const res = await getPaginatedRoomsApi();
       const data = res.data?.content || res.data || [];
+
+      // ✅ Sắp xếp giảm dần theo createdAt (ưu tiên), nếu không có thì theo id
+      const sortedData = [...data].sort((a, b) => {
+        const dateA = new Date(a.createdAt || 0);
+        const dateB = new Date(b.createdAt || 0);
+        if (dateB - dateA !== 0) return dateB - dateA;
+        return (b.id || 0) - (a.id || 0);
+      });
+
       setPosts(
-        data.map((item, idx) => ({
+        sortedData.map((item, idx) => ({
           key: item.id || idx,
           id: item.id,
           title: item.title || "Không có tiêu đề",

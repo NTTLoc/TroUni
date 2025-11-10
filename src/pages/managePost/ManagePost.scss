@@ -1,36 +1,32 @@
 .manage-container {
   background: var(--box-profile);
   min-height: 100vh;
+  padding: 24px;
+  color: var(--text);
 }
 
+/* ===== HEADER ===== */
 .manage-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 30px;
+  flex-wrap: wrap;
+  gap: 12px;
 }
 
 .user-info {
   display: flex;
   align-items: center;
   gap: 12px;
-}
 
-.user-detail h3 {
-  margin: 0;
-  font-size: 18px;
-  font-weight: bold;
-  color: var(--text);
-}
-
-.user-detail .ant-btn-link {
-  padding: 0;
-  color: var(--text);
-  font-weight: 500;
-  transition: color 0.2s;
-
-  &:hover {
-    color: var(--hover);
+  .user-detail {
+    h3 {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--text);
+    }
   }
 }
 
@@ -39,62 +35,50 @@
   align-items: center;
   gap: 10px;
 
-  /* Input */
-  .ant-input-affix-wrapper {
-    border-radius: 999px;
-    transition: all 0.2s ease;
-
-    &:hover {
-      border-color: #00bfa6;
-    }
-
-    &:focus-within {
-      border-color: #00bfa6;
-    }
-  }
-
-  /* Button số dư */
   .ant-btn {
     border-radius: 999px;
     background: transparent;
     font-weight: 500;
-    transition: all 0.2s ease;
     color: var(--text);
+    border: 1px solid var(--border);
 
     &:hover {
       color: #00bfa6 !important;
       border-color: #00bfa6 !important;
-      background: transparent !important;
+    }
+
+    &.ant-btn-primary {
+      background: var(--primary);
+      border: none;
+
+      &:hover {
+        background: var(--secondary);
+      }
     }
   }
 }
 
+/* ===== TABS ===== */
 .manage-tabs {
   .ant-tabs-nav {
-    margin-bottom: 30px;
+    margin-bottom: 24px;
   }
 
-  /* tab item */
   .ant-tabs-tab {
     font-weight: 500;
     color: var(--text);
     transition: all 0.2s ease;
-    padding: 6px 14px;
 
     &:hover {
       color: #00bfa6;
     }
   }
 
-  /* tab đang active */
-  .ant-tabs-tab-active {
-    .ant-tabs-tab-btn {
-      color: var(--primary) !important;
-      font-weight: 600;
-    }
+  .ant-tabs-tab-active .ant-tabs-tab-btn {
+    color: var(--primary) !important;
+    font-weight: 600;
   }
 
-  /* thanh gạch dưới của antd */
   .ant-tabs-ink-bar {
     background: var(--primary) !important;
     height: 3px;
@@ -102,46 +86,70 @@
   }
 }
 
-/* Style nút ... của Tabs */
-.ant-tabs-nav-more {
-  border: none !important;
-  background: transparent !important;
-  border-radius: 6px;
-  color: var(--text) !important;
-  transition: all 0.2s;
-
-  &:focus {
-    border-color: #00bfa6 !important;
-  }
+/* ===== TABLE ===== */
+.ant-table {
+  background: var(--box-profile);
+  border-radius: 12px;
+  overflow: hidden;
 }
 
-/* Dropdown của nó (menu khi click vào dấu ...) */
-// .ant-tabs-dropdown {
-//   .ant-tabs-dropdown-menu {
-//     border-radius: 8px;
-//     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
-//   }
-
-//   .ant-tabs-dropdown-menu-item {
-//     color: var(--text);
-
-//     &:hover {
-//       background: rgba(0, 191, 166, 0.1);
-//       color: #00bfa6;
-//     }
-//   }
-// }
-
-.manage-content {
-  text-align: center;
-  margin-top: 40px;
+.ant-table-thead > tr > th {
+  background: var(--table-header-bg, #f5f5f5);
+  font-weight: 600;
   color: var(--text);
+  text-align: center;
+}
 
-  span {
+.ant-table-tbody > tr > td {
+  text-align: center;
+  vertical-align: middle;
+  color: var(--text);
+}
+
+.ant-table-tbody > tr:hover > td {
+  background: rgba(0, 191, 166, 0.05);
+  cursor: pointer;
+}
+
+/* ===== MODAL CHI TIẾT ===== */
+.ant-modal {
+  .ant-modal-title {
+    font-weight: 600;
+    font-size: 18px;
     color: var(--text);
   }
+
+  .ant-modal-body {
+    color: var(--text);
+  }
+
+  .ant-descriptions-bordered .ant-descriptions-item-label {
+    background: var(--table-header-bg, #f5f5f5);
+    font-weight: 500;
+  }
+
+  h4 {
+    margin-top: 20px;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  p {
+    margin: 4px 0;
+  }
+
+  ul {
+    padding-left: 18px;
+    margin: 6px 0;
+
+    li {
+      list-style: disc;
+      color: var(--text);
+    }
+  }
 }
 
+/* ===== BUTTON ĐĂNG TIN ===== */
 .post-btn {
   margin-top: 20px;
   background: var(--primary) !important;
@@ -157,5 +165,118 @@
 
   &:hover {
     background: var(--secondary) !important;
+  }
+}
+
+.room-detail-modal {
+  .ant-modal-content {
+    border-radius: 12px;
+    background: var(--box-profile);
+  }
+  .ant-modal-header {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+}
+
+.room-detail-wrapper {
+  color: var(--text);
+
+  .room-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+
+    h2 {
+      margin: 0;
+      font-size: 20px;
+      font-weight: 600;
+    }
+  }
+
+  .room-images {
+    margin-bottom: 16px;
+
+    .ant-carousel .slick-slide img {
+      display: block;
+      margin: 0 auto;
+    }
+  }
+
+  .room-descriptions {
+    background: transparent !important;
+    margin-bottom: 16px;
+
+    .ant-descriptions-item-label {
+      font-weight: 500;
+      background: rgba(0, 191, 166, 0.08);
+    }
+
+    .ant-descriptions-item-content {
+      color: var(--text);
+    }
+  }
+
+  .room-extra {
+    h3 {
+      margin-top: 16px;
+      font-weight: 600;
+    }
+    p {
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+
+    .amenities-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 8px;
+
+      .amenity-item {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 12px;
+        background: rgba(0, 191, 166, 0.08);
+        border-radius: 8px;
+        font-size: 14px;
+      }
+    }
+
+    .landlord-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-top: 8px;
+
+      p {
+        margin: 0;
+      }
+    }
+  }
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .manage-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .search-balance {
+    width: 100%;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .ant-table {
+    font-size: 13px;
+  }
+
+  .ant-modal {
+    width: 95% !important;
   }
 }

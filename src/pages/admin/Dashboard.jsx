@@ -7,7 +7,7 @@ import {
   SettingOutlined,
   ApartmentOutlined,
   DollarOutlined,
-  StarOutlined, // ⭐ icon cho phần đánh giá
+  StarOutlined,
 } from "@ant-design/icons";
 import Overview from "../../features/admin/overview/Overview";
 import UserManagement from "../../features/admin/userManagement/UserManagement";
