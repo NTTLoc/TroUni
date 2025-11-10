@@ -4,30 +4,34 @@
  */
 
 // Goong Maps API Keys
+// export const GOONG_CONFIG = {
+//   API_KEY: 'bYG9pMktkEuiVW9BzrWhvynpDFF3FLaDXxdfFAjE',
+//   MAPTILES_KEY: 'B333MEjdDNZai4gvVpJtAp3rPdX8oebdHsjrLWVI'
+// };
 export const GOONG_CONFIG = {
-  API_KEY: 'bYG9pMktkEuiVW9BzrWhvynpDFF3FLaDXxdfFAjE',
-  MAPTILES_KEY: 'B333MEjdDNZai4gvVpJtAp3rPdX8oebdHsjrLWVI'
+  API_KEY: import.meta.env.VITE_GOONG_API_KEY, // ✅ lấy từ environment
+  MAPTILES_KEY: import.meta.env.VITE_GOONG_MAPTILES_KEY, // nếu có
 };
 
 // Goong Maps API Endpoints
 export const GOONG_API_ENDPOINTS = {
-  AUTOCOMPLETE: '/Place/AutoComplete',
-  PLACE_DETAIL: '/Place/Detail',
-  GEOCODING: '/Geocode',
-  REVERSE_GEOCODING: '/Geocode',
-  DISTANCE: '/DistanceMatrix'
+  AUTOCOMPLETE: "/Place/AutoComplete",
+  PLACE_DETAIL: "/Place/Detail",
+  GEOCODING: "/Geocode",
+  REVERSE_GEOCODING: "/Geocode",
+  DISTANCE: "/DistanceMatrix",
 };
 
 // Goong Maps SDK Configuration
 export const GOONG_MAP_STYLES = {
   // Bản đồ cơ bản
-  BASIC: 'https://tiles.goong.io/assets/goong_map_web.json',
-  
+  BASIC: "https://tiles.goong.io/assets/goong_map_web.json",
+
   // Bản đồ vệ tinh
-  SATELLITE: 'https://tiles.goong.io/assets/goong_satellite_web.json',
-  
+  SATELLITE: "https://tiles.goong.io/assets/goong_satellite_web.json",
+
   // Bản đồ hybrid (vệ tinh + đường)
-  HYBRID: 'https://tiles.goong.io/assets/goong_hybrid_web.json'
+  HYBRID: "https://tiles.goong.io/assets/goong_hybrid_web.json",
 };
 
 // Default map settings
@@ -36,33 +40,33 @@ export const DEFAULT_MAP_SETTINGS = {
   zoom: 15,
   minZoom: 10,
   maxZoom: 18,
-  defaultStyle: GOONG_MAP_STYLES.BASIC
+  defaultStyle: GOONG_MAP_STYLES.BASIC,
 };
 
 // Helper function để build Map Style URL
-export const buildMapStyleUrl = (styleType = 'BASIC') => {
+export const buildMapStyleUrl = (styleType = "BASIC") => {
   return GOONG_MAP_STYLES[styleType] || GOONG_MAP_STYLES.BASIC;
 };
 
 // Helper function để build Goong API URL
 export const buildGoongUrl = (endpoint, params = {}) => {
   // Sử dụng proxy để tránh CORS
-  const baseUrl = '/api/goong';
+  const baseUrl = "/api/goong";
   const url = new URL(baseUrl + endpoint, window.location.origin);
-  
-  Object.keys(params).forEach(key => {
+
+  Object.keys(params).forEach((key) => {
     if (params[key] !== undefined && params[key] !== null) {
       url.searchParams.append(key, params[key]);
     }
   });
-  
+
   return url.toString();
 };
 
 // Helper function để get headers cho Goong API
 export const getGoongHeaders = () => {
   return {
-    'Content-Type': 'application/json',
-    'Accept': 'application/json'
+    "Content-Type": "application/json",
+    Accept: "application/json",
   };
 };
