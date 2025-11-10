@@ -120,7 +120,7 @@ const PostDetail = () => {
     }
 
     // Test với 3000 VND
-    const amount = 3000;
+    const amount = 50000;
     const description = formatPayOSDescription(
       `Đặt cọc phòng ${post.title}`,
       "room"
@@ -191,7 +191,7 @@ const PostDetail = () => {
                 <div className="deposit-info">
                   <div className="deposit-amount">
                     <span className="amount-label">Số tiền đặt cọc:</span>
-                    <span className="amount-value">3.000 ₫</span>
+                    <span className="amount-value">50.000 ₫</span>
                   </div>
 
                   <div className="deposit-benefits">
@@ -205,8 +205,8 @@ const PostDetail = () => {
                 </div>
 
                 <p className="payment-description">
-                  Đặt cọc 100.000 ₫ để giữ chỗ phòng trọ. Số tiền còn lại sẽ
-                  được thanh toán khi nhận phòng và ký hợp đồng.
+                  Đặt cọc 50.000 ₫ để giữ chỗ phòng trọ. Số tiền còn lại sẽ được
+                  thanh toán khi nhận phòng và ký hợp đồng.
                 </p>
               </div>
 
