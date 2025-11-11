@@ -1,13 +1,22 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom"; // thêm
 import { Row, Col, Card, Menu } from "antd";
-import { UserOutlined, LockOutlined, SettingOutlined } from "@ant-design/icons";
+import { UserOutlined, HistoryOutlined } from "@ant-design/icons";
 import AccountInfo from "../../components/account/accountInfo/AccountInfo";
-import AccountSecurity from "../../components/account/accountSecurity/AccountSecurity";
-import AccountSettings from "../../components/account/accountSettings/AccountSettings";
+import AccountHistory from "../../components/account/accountHistory/AccountHistory";
 import "./Account.scss";
 
 const Account = () => {
-  const [activeTab, setActiveTab] = useState("info");
+  const location = useLocation(); // đọc URL
+  const params = new URLSearchParams(location.search);
+  const tabFromQuery = params.get("tab"); // "info" hoặc "history"
+
+  const [activeTab, setActiveTab] = useState(tabFromQuery || "info");
+
+  // cập nhật nếu URL thay đổi
+  useEffect(() => {
+    if (tabFromQuery) setActiveTab(tabFromQuery);
+  }, [tabFromQuery]);
 
   return (
     <div className="profile-container">
@@ -26,14 +35,9 @@ const Account = () => {
                   label: "Thông tin cá nhân",
                 },
                 {
-                  key: "security",
-                  icon: <LockOutlined />,
-                  label: "Bảo mật",
-                },
-                {
-                  key: "settings",
-                  icon: <SettingOutlined />,
-                  label: "Cài đặt",
+                  key: "history",
+                  icon: <HistoryOutlined />,
+                  label: "Lịch sử giao dịch",
                 },
               ]}
             />
@@ -44,8 +48,7 @@ const Account = () => {
         <Col span={18}>
           <Card className="profile-content">
             {activeTab === "info" && <AccountInfo />}
-            {activeTab === "security" && <AccountSecurity />}
-            {activeTab === "settings" && <AccountSettings />}
+            {activeTab === "history" && <AccountHistory />}
           </Card>
         </Col>
       </Row>

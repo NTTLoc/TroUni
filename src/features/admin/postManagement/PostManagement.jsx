@@ -22,10 +22,10 @@ import {
   MinusCircleOutlined,
 } from "@ant-design/icons";
 import {
-  getPaginatedRoomsApi,
   getRoomByIdApi,
   updateRoomApi,
   deleteRoomApi,
+  getAllRoomsAdminApi,
 } from "../../../services/postApi";
 import "./PostManagement.scss";
 import useMessage from "../../../hooks/useMessage";
@@ -51,8 +51,9 @@ const PostManagement = () => {
   const fetchPosts = async () => {
     setLoading(true);
     try {
-      const res = await getPaginatedRoomsApi();
+      const res = await getAllRoomsAdminApi();
       const data = res.data?.content || res.data || [];
+      console.log(data);
 
       // ✅ Sắp xếp giảm dần theo createdAt (ưu tiên), nếu không có thì theo id
       const sortedData = [...data].sort((a, b) => {

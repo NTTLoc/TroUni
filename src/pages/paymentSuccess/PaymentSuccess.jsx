@@ -177,10 +177,11 @@ const PaymentSuccess = () => {
           <div className="action-buttons">
             <button
               className="btn btn-secondary"
-              onClick={() => navigate("/account")}
+              onClick={() => navigate("/account?tab=history")}
             >
               Xem lịch sử thanh toán
             </button>
+
             <button className="btn btn-primary" onClick={() => navigate("/")}>
               Về trang chủ
             </button>
